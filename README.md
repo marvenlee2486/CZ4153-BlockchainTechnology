@@ -1,9 +1,5 @@
 # CZ4153-BlockchainTechnology
 
-To import erc20 interface
-npm init -y
-npm install @openzeppelin/contracts
-
 need to install ganache, npm, truffle
 
 migrate:
