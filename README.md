@@ -4,7 +4,7 @@ To import erc20 interface
 npm init -y
 npm install @openzeppelin/contracts
 
-need to install ganache, npm, truffle, yarn
+need to install ganache, npm, truffle
 
 migrate:
 truffle migrate --network development
