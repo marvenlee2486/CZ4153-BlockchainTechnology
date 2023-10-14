@@ -7,7 +7,7 @@ What is ERC20 token? Watch this video to understand:
 https://www.youtube.com/watch?v=cqZhNzZoMh8
 
 Documentation:
-https://docs.openzeppelin.com/contracts/2.x/erc20
+https://docs.openzeppelin.com/cGLDToken.balanceOfontracts/2.x/erc20
 
 */
 

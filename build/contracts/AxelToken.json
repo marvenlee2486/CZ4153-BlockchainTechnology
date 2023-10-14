@@ -9069,14 +9069,65 @@
   },
   "networks": {
     "5777": {
-      "events": {},
+      "events": {
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        }
+      },
       "links": {},
-      "address": "0x3f3BeE02f8d29F769ee07C6367115dd8b9F9808B",
-      "transactionHash": "0x13c6fbf5d192a1fb2a58d6ceb23b12488c938e1eaa2bf80165a709a63f657547"
+      "address": "0x000B1FDe23454517A559f6A8da03e8Eca0dBBe77",
+      "transactionHash": "0x8ff32955d5a1350116dd472fc472d7daf85cfbea42c04a20f17dd071768a2436"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2023-10-13T08:48:14.990Z",
+  "updatedAt": "2023-10-14T08:40:30.177Z",
   "networkType": "ethereum",
   "devdoc": {
     "errors": {
