@@ -8,7 +8,6 @@ https://www.youtube.com/watch?v=cqZhNzZoMh8
 
 Documentation:
 https://docs.openzeppelin.com/cGLDToken.balanceOfontracts/2.x/erc20
-
 */
 
 contract AxelToken is ERC20 {
