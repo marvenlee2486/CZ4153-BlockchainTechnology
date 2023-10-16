@@ -1,21 +1,10 @@
 {
-  "name": "cz4153-blockchaintechnology",
-  "version": "1.0.0",
-  "description": "To import erc20 interface npm install --save-dev @openzeppelin/contracts",
-  "main": "truffle-config.js",
-  "directories": {
-    "test": "test"
+  "name": "hardhat-project",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "hardhat": "^2.18.1"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.0",
-    "openzeppelin-solidity": "4.8.1",
-    "truffle-hdwallet-provider": "^1.0.17",
-    "web3": "^4.1.2"
+    "@openzeppelin/contracts": "^5.0.0"
   }
 }
