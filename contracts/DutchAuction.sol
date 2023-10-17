@@ -88,7 +88,7 @@ contract DutchAuction {
 
     function withdrawTokens (address buyer) public{
         if (msg.sender != owner)
-            require(buyer == address(0), "Only owner of auction can withdraw tokens on winners' behalf");
+            require(buyer == address(0), "Only owner of auction can withdraw tokens on winners behalf");
         else 
             buyer = msg.sender;
 
