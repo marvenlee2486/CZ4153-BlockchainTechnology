@@ -50,7 +50,7 @@ contract DutchAuction {
 
     function getPrice() public view returns (uint256) {
         if (auctionEndedEarly || block.timestamp >= expiresAt) 
-            return Math.max(tokenAmount / revenue, reservePrice);
+            return Math.max(revenue / tokenAmount, reservePrice);
         else
             return startingPrice - discountRate * (block.timestamp - startAt);
     }
