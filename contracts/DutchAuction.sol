@@ -76,7 +76,7 @@ contract DutchAuction {
 
     function withdrawTokens() external{
         require(block.timestamp > expiresAt || auctionEndedEarly, "Auction is still ongoing");
-        require(buyersPosition[msg.sender] > 0, "You did not submit a valid bid");
+        require(buyersPosition[msg.sender] > 0, "You did not submit a valid bid or you have withdrawn your token");
 
         address buyer = msg.sender;
         uint256 clearingPrice = tokenAmount / revenue;
@@ -89,5 +89,7 @@ contract DutchAuction {
         uint256 refund = buyersPosition[buyer] - clearingPrice * tokenBought;
         if (refund > 0)payable(buyer).transfer(refund);
 
+        //clear records
+        buyersPosition[buyer] = 0;
     }
 }
