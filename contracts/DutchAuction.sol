@@ -49,7 +49,10 @@ contract DutchAuction {
     }
 
     function getPrice() public view returns (uint256) {
-        return startingPrice - discountRate * (block.timestamp - startAt);
+        if (auctionEndedEarly || block.timestamp >= expiresAt) 
+            return Math.max(tokenAmount / revenue, reservePrice);
+        else
+            return startingPrice - discountRate * (block.timestamp - startAt);
     }
 
     function updateTokenAmount() internal{
@@ -92,22 +95,20 @@ contract DutchAuction {
         require(block.timestamp > expiresAt || auctionEndedEarly, "Auction is still ongoing");
         require(buyersPosition[buyer] > 0, "You did not submit a valid bid or you have withdrawn your token");
 
-        uint256 clearingPrice = Math.max(tokenAmount / revenue, reservePrice);
+        uint256 clearingPrice = getPrice();
         uint256 bid = buyersPosition[buyer];
         uint256 tokenBought = bid / clearingPrice;
         uint256 amountPaid = tokenBought * clearingPrice;
 
-        //clear records
+        //clear records and transfer token to buyer
         buyersPosition[buyer] = 0;
-
-        //transfer token
         token.transfer(buyer, tokenBought);
 
         //refund
         uint256 refund = bid - amountPaid;
         if (refund > 0) payable(buyer).transfer(refund);
 
-        //transfer 
+        //transfer eth to seller
         payable(owner).transfer(amountPaid);
     }
 
