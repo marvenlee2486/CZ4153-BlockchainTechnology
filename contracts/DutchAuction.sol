@@ -54,9 +54,13 @@ contract DutchAuction {
 
     function updateTokenAmount() internal{
         uint256 currentPrice = getPrice();
+        tokenLeft = tokenAmount;
+        
         for (uint256 i = 0; i < buyers.length; i++) 
             tokenLeft -= buyersPosition[buyers[i]] * currentPrice;
-        if (tokenLeft <= 0) auctionEndedEarly = true;
+
+        if (tokenLeft <= 0) 
+            auctionEndedEarly = true;
     }
 
     function placeBid() external payable {
@@ -82,7 +86,8 @@ contract DutchAuction {
     function withdrawTokens (address buyer) public{
         if (msg.sender != owner)
             require(buyer == address(0), "Only owner of auction can withdraw tokens on winners' behalf");
-        else buyer = msg.sender;
+        else 
+            buyer = msg.sender;
 
         require(block.timestamp > expiresAt || auctionEndedEarly, "Auction is still ongoing");
         require(buyersPosition[buyer] > 0, "You did not submit a valid bid or you have withdrawn your token");
