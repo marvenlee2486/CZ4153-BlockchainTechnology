@@ -11,7 +11,7 @@ contract DutchAuction {
 
     address public immutable owner;
     address[] private buyers;
-    mapping(address => uint256) public buyersPosition; //address, value ETH to commit
+    mapping(address => uint256) private buyersPosition; //address, value ETH to commit
 
     uint256 public immutable startingPrice;
     uint256 public immutable reservePrice; 
