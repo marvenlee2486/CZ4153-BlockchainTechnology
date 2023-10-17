@@ -9,7 +9,7 @@ contract DutchAuction {
     uint256 public immutable tokenAmount;
     uint256 public tokenLeft;
 
-    address payable public immutable seller;
+    address public immutable owner;
     address[] private buyers;
     mapping(address => uint256) public buyersPosition; //address, value ETH to commit
 
@@ -29,7 +29,7 @@ contract DutchAuction {
         require(_duration > 0, "Duration must be more than 0");
         require(IERC20(_token).totalSupply() > 0, "Invalid ERC-20 token address");
 
-        seller = payable(msg.sender);
+        owner = msg.sender;
 
         token = IERC20(_token);
         tokenAmount = IERC20(_token).totalSupply();
@@ -41,6 +41,11 @@ contract DutchAuction {
 
         startAt = block.timestamp;
         expiresAt = block.timestamp + _duration;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the owner can call this function");
+        _;
     }
 
     function getPrice() public view returns (uint256) {
@@ -68,19 +73,26 @@ contract DutchAuction {
         buyersPosition[buyer] += bid;
         revenue += bid;
 
-        uint256 refund = bid - tokenLeft * currentPrice;
+        uint256 refund = msg.value - bid;
         if (refund > 0) payable(buyer).transfer(refund);
 
         updateTokenAmount();
     }
 
-    function withdrawTokens() external{
-        require(block.timestamp > expiresAt || auctionEndedEarly, "Auction is still ongoing");
-        require(buyersPosition[msg.sender] > 0, "You did not submit a valid bid or you have withdrawn your token");
+    function withdrawTokens (address buyer) public{
+        if (msg.sender != owner)
+            require(buyer == address(0), "Only owner of auction can withdraw tokens on winners' behalf");
+        else buyer = msg.sender;
 
-        address buyer = msg.sender;
+        require(block.timestamp > expiresAt || auctionEndedEarly, "Auction is still ongoing");
+        require(buyersPosition[buyer] > 0, "You did not submit a valid bid or you have withdrawn your token");
+
         uint256 clearingPrice = tokenAmount / revenue;
-        uint256 tokenBought = buyersPosition[buyer] / clearingPrice;
+        uint256 bid = buyersPosition[buyer];
+        uint256 tokenBought = bid / clearingPrice;
+
+        //clear records
+        buyersPosition[buyer] = 0;
 
         //transfer token
         token.transfer(buyer, tokenBought);
@@ -89,7 +101,13 @@ contract DutchAuction {
         uint256 refund = buyersPosition[buyer] - clearingPrice * tokenBought;
         if (refund > 0)payable(buyer).transfer(refund);
 
-        //clear records
-        buyersPosition[buyer] = 0;
+        //transfer revenue
+        revenue -= clearingPrice * tokenBought;
+        payable(owner).transfer(clearingPrice * tokenBought);
+    }
+
+    function transferAllTokens() external onlyOwner(){
+        for (uint256 i = 0; i < buyers.length; i++)
+            withdrawTokens(buyers[i]);
     }
 }
