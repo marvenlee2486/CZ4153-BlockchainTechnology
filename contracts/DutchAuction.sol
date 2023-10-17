@@ -92,7 +92,7 @@ contract DutchAuction {
         require(block.timestamp > expiresAt || auctionEndedEarly, "Auction is still ongoing");
         require(buyersPosition[buyer] > 0, "You did not submit a valid bid or you have withdrawn your token");
 
-        uint256 clearingPrice = tokenAmount / revenue;
+        uint256 clearingPrice = Math.max(tokenAmount / revenue, reservePrice);
         uint256 bid = buyersPosition[buyer];
         uint256 tokenBought = bid / clearingPrice;
         uint256 amountPaid = tokenBought * clearingPrice;
