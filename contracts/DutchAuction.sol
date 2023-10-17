@@ -95,6 +95,7 @@ contract DutchAuction {
         uint256 clearingPrice = tokenAmount / revenue;
         uint256 bid = buyersPosition[buyer];
         uint256 tokenBought = bid / clearingPrice;
+        uint256 amountPaid = tokenBought * clearingPrice;
 
         //clear records
         buyersPosition[buyer] = 0;
@@ -103,12 +104,11 @@ contract DutchAuction {
         token.transfer(buyer, tokenBought);
 
         //refund
-        uint256 refund = buyersPosition[buyer] - clearingPrice * tokenBought;
-        if (refund > 0)payable(buyer).transfer(refund);
+        uint256 refund = bid - amountPaid;
+        if (refund > 0) payable(buyer).transfer(refund);
 
-        //transfer revenue
-        revenue -= clearingPrice * tokenBought;
-        payable(owner).transfer(clearingPrice * tokenBought);
+        //transfer 
+        payable(owner).transfer(amountPaid);
     }
 
     function transferAllTokens() external onlyOwner(){
