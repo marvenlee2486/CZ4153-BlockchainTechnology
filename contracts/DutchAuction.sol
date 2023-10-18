@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
 contract DutchAuction {
-    IERC20 public immutable token;
+    ERC20Burnable public immutable token;
     uint256 public immutable tokenAmount;
     uint256 public tokenLeft;
 
@@ -28,12 +28,13 @@ contract DutchAuction {
         require(_startingPrice >= _reservePrice, "Starting price must be equal / larger than ending price");
         require(_reservePrice > 0 , "Reserve price must be more than 0");
         require(_duration > 0, "Duration must be more than 0");
-        require(IERC20(_token).totalSupply() > 0, "Invalid ERC-20 token address");
+        require(ERC20Burnable(_token).totalSupply() > 0, "Invalid ERC-20 token address");
+        require(ERC20Burnable(_token).balanceOf(msg.sender) > 0, "You do not have token balance");
 
         owner = msg.sender;
 
-        token = IERC20(_token);
-        tokenAmount = IERC20(_token).totalSupply();
+        token = ERC20Burnable(_token);
+        tokenAmount = token.balanceOf(owner);
         tokenLeft = tokenAmount;
 
         startingPrice = _startingPrice;
@@ -57,7 +58,7 @@ contract DutchAuction {
     }
 
     function getTokenLeft() external returns (uint256) {
-        updateTokenAmount();
+        _updateTokenAmount();
         return tokenLeft;
     }
 
@@ -65,7 +66,7 @@ contract DutchAuction {
         return buyersPosition[msg.sender];
     }
 
-    function updateTokenAmount() internal{
+    function _updateTokenAmount() internal{
         uint256 currentPrice = getPrice();
         tokenLeft = tokenAmount;
         
@@ -78,7 +79,7 @@ contract DutchAuction {
 
     function placeBid() external payable {
         uint256 currentPrice = getPrice();
-        updateTokenAmount();
+        _updateTokenAmount();
 
         require(block.timestamp < expiresAt && !auctionEndedEarly, "Auction has ended");
         require(msg.value >= currentPrice, "Bid is too low");
@@ -93,7 +94,7 @@ contract DutchAuction {
         uint256 refund = msg.value - bid;
         if (refund > 0) payable(buyer).transfer(refund);
 
-        updateTokenAmount();
+        _updateTokenAmount();
     }
 
     function withdrawTokens (address buyer) public{
@@ -111,12 +112,11 @@ contract DutchAuction {
         uint256 amountPaid = tokenBought * clearingPrice;
 
         //make sure that unsold tokens has been burned
-        if (!hasBurnedUnsoldTokens) 
-            burnUnusedToken();
+        if (!hasBurnedUnsoldTokens) _burnUnusedToken();
 
         //clear records and transfer token to buyer
         buyersPosition[buyer] = 0;
-        token.transfer(buyer, tokenBought);
+        token.transferFrom(owner, buyer, tokenBought);
 
         //refund
         uint256 refund = bid - amountPaid;
@@ -128,12 +128,13 @@ contract DutchAuction {
 
     function transferAllTokens() external onlyOwner(){
         for (uint256 i = 0; i < buyers.length; i++)
-            withdrawTokens(buyers[i]);
+            if (buyersPosition[buyers[i]] > 0) 
+                withdrawTokens(buyers[i]);
     }
 
-    function burnUnusedToken() internal{
-        address burnAddress = 0x0000000000000000000000000000000000000000;
-        token.transfer(burnAddress, tokenLeft);
+    function _burnUnusedToken() internal{
+        require(!hasBurnedUnsoldTokens, "Unsold token has been burnt");
+        token.burnFrom(owner, tokenLeft);
         hasBurnedUnsoldTokens = true;
     }
 }
