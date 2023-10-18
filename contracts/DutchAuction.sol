@@ -21,6 +21,7 @@ contract DutchAuction {
     uint256 public immutable expiresAt;
     
     bool auctionEndedEarly = false;
+    bool hasBurnedUnsoldTokens = false;
     uint256 revenue = 0;
 
     constructor(uint256 _startingPrice, uint256 _reservePrice, address _token, uint256 _duration) {
@@ -53,6 +54,15 @@ contract DutchAuction {
             return Math.max(revenue / tokenAmount, reservePrice);
         else
             return startingPrice - discountRate * (block.timestamp - startAt);
+    }
+
+    function getTokenLeft() external returns (uint256) {
+        updateTokenAmount();
+        return tokenLeft;
+    }
+
+    function getPosition() external view returns (uint256) {
+        return buyersPosition[msg.sender];
     }
 
     function updateTokenAmount() internal{
@@ -100,6 +110,10 @@ contract DutchAuction {
         uint256 tokenBought = bid / clearingPrice;
         uint256 amountPaid = tokenBought * clearingPrice;
 
+        //make sure that unsold tokens has been burned
+        if (!hasBurnedUnsoldTokens) 
+            burnUnusedToken();
+
         //clear records and transfer token to buyer
         buyersPosition[buyer] = 0;
         token.transfer(buyer, tokenBought);
@@ -115,5 +129,11 @@ contract DutchAuction {
     function transferAllTokens() external onlyOwner(){
         for (uint256 i = 0; i < buyers.length; i++)
             withdrawTokens(buyers[i]);
+    }
+
+    function burnUnusedToken() internal{
+        address burnAddress = 0x0000000000000000000000000000000000000000;
+        token.transfer(burnAddress, tokenLeft);
+        hasBurnedUnsoldTokens = true;
     }
 }
