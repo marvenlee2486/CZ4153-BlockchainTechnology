@@ -6,7 +6,7 @@
     "module": "CommonJS",
     "skipLibCheck": true,
     "esModuleInterop": true,
-
+  
     /* Bundler mode */
     "moduleResolution": "node",
     "allowImportingTsExtensions": true,
@@ -21,6 +21,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["./src", "./scripts"],
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "files": ["./hardhat.config.ts"], 
 }

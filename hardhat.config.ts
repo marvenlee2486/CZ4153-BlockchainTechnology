@@ -1,5 +1,6 @@
 import { HardhatUserConfig } from "hardhat/config";
-import helpers from "@nomicfoundation/hardhat-toolbox/network-helpers";
+import "@nomicfoundation/hardhat-toolbox"
+
 
 const config: HardhatUserConfig = {
   solidity: "0.8.20",
