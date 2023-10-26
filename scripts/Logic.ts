@@ -5,6 +5,7 @@ import { AxelToken, DutchAuction } from "../typechain-types";
 // Define a User interface to represent user data
 interface User extends Signer {
     username: string;
+    password: string;
     role: "seller" | "buyer";
 
     isSeller: boolean; 
@@ -21,16 +22,14 @@ interface BuyerData {
     auction: DutchAuction | null;
 }
 
-const users: User[] = [];
-const usernames: Set<string> = new Set();
+const users: Map<string, User> = new Map();
 
 // Function to handle user registration
 function registerUser(username: string, role: "seller" | "buyer"): void {
-    if (usernames.has(username)){
+    if (users.has(username)){
         console.log(`Sorry, this username is taken`);
         return;
     }
-    usernames.add(username);
     let sellerData: SellerData | null = null;
     let buyerData: BuyerData | null = null;
 
@@ -38,7 +37,7 @@ function registerUser(username: string, role: "seller" | "buyer"): void {
     else if (role == "buyer") buyerData = { auction: null };
 
     // Create a new user with role-specific data
-    const newUser: User = {
+    const userDetails: User = {
         username,
         role,
         isSeller: role === "seller",
@@ -46,14 +45,15 @@ function registerUser(username: string, role: "seller" | "buyer"): void {
         buyerData,
     } as User;
 
-    users.push(newUser);
+    users.set(username, userDetails);
     console.log(`User ${username} registered as a ${role}`);
 }
 
 // Function to handle login
 function loginUser(username: string, role: "seller" | "buyer"): boolean {
-    const user = users.find((u) => u.username === username && u.role === role);
-    if (user) {
+    if (users.has(username)) {
+        const user = users.get(username);
+        if (user === undefined) throw new Error ("undefined user");
         console.log(`Welcome, ${user.username}! You are logged in as a ${user.role}`);
         return true;
     } 
@@ -63,7 +63,9 @@ function loginUser(username: string, role: "seller" | "buyer"): boolean {
     }
 }
 
-async function setETHBalance(user: User, amount: number): Promise<boolean>{
+async function setETHBalance(username: string, amount: number): Promise<boolean>{
+    const user = users.get(username);
+    if (user === undefined) throw new Error ("undefined user");
     try{
         await network.provider.send('hardhat_setBalance', [user, 1000000000000000000 * amount]); // 1 ETH in Wei
     }
@@ -74,7 +76,10 @@ async function setETHBalance(user: User, amount: number): Promise<boolean>{
 }
 
 // Function to check and display ETH balance
-async function getETHBalance(user: User): Promise<bigint> {
+async function getETHBalance(username: string): Promise<bigint> {
+    const user = users.get(username);
+    if (user === undefined) throw new Error ("undefined user");
+
     let balance;
     try{
         balance = await ethers.provider.getBalance(user);
@@ -86,7 +91,10 @@ async function getETHBalance(user: User): Promise<bigint> {
 }
 
 // Function to check and display AxelToken balance
-async function getAxelTokenBalance(user: User): Promise<bigint> {
+async function getAxelTokenBalance(username: string): Promise<bigint> {
+    const user = users.get(username);
+    if (user === undefined) throw new Error ("undefined user");
+
     if (user && user.role === "seller" && user.sellerData.token) {
         const token = user.sellerData.token;
         let balance;
@@ -104,7 +112,9 @@ async function getAxelTokenBalance(user: User): Promise<bigint> {
 }
 
 // Function to create AxelToken
-async function mintAxelToken(user: User, amount: Number): Promise<boolean>{
+async function mintAxelToken(username: string, amount: Number): Promise<boolean>{
+    const user = users.get(username);
+    if (user === undefined) throw new Error ("undefined user");
     if (user && user.role === "seller") {
         if (user.sellerData.token) throw new Error("You have created a token.");
         let token;
@@ -124,7 +134,9 @@ async function mintAxelToken(user: User, amount: Number): Promise<boolean>{
 }
 
 // Function to start DutchAuction
-async function startAuction(user: User, startingPrice: Number, reservePrice: Number, duration: Number): Promise<boolean>{
+async function startAuction(username: string, startingPrice: Number, reservePrice: Number, duration: Number): Promise<boolean>{
+    const user = users.get(username);
+    if (user === undefined) throw new Error ("undefined user");
     if (user && user.role === "seller") {
         if (user.sellerData.token == null) throw new Error("Need to create token first.");
         if (user.sellerData.auction) throw new Error("You have started an auction.");
@@ -144,7 +156,7 @@ async function startAuction(user: User, startingPrice: Number, reservePrice: Num
         }
 
         const token = user.sellerData.token;
-        const balance = await getAxelTokenBalance(user);
+        const balance = await getAxelTokenBalance(username);
 
         try{
             await token.connect(user).approve(auction, balance);
@@ -163,7 +175,9 @@ async function startAuction(user: User, startingPrice: Number, reservePrice: Num
 }
 
 // Function to transfer token if you win
-async function transferToken(user: User, auction: DutchAuction): Promise<boolean>{
+async function transferToken(username: string, auction: DutchAuction): Promise<boolean>{
+    const user = users.get(username);
+    if (user === undefined) throw new Error ("undefined user");
     if (user && user.role === "buyer") {
         if (user.buyerData.auction == null) throw new Error("You have not joined an auction.");
         const auction = user.buyerData.auction;
@@ -182,7 +196,9 @@ async function transferToken(user: User, auction: DutchAuction): Promise<boolean
 }
 
 // Function to transfer all tokens to winners after DutchAuction ends
-async function transferAllTokens(user: User): Promise<boolean>{
+async function transferAllTokens(username: string): Promise<boolean>{
+    const user = users.get(username);
+    if (user === undefined) throw new Error ("undefined user");
     if (user && user.role === "seller") {
         if (user.sellerData.auction == null) throw new Error("You have not started an auction.");
         const auction = user.sellerData.auction;
@@ -201,12 +217,22 @@ async function transferAllTokens(user: User): Promise<boolean>{
 
 // Function to get all auctions that have started
 function getAllAuctions(): DutchAuction[]{
-    const auctions = users.flatMap(user => user.sellerData?.auction || []);
+    const auctions: Array<DutchAuction> = [];
+
+    users.forEach((value, key) => {
+        const auction = value.sellerData.auction;
+        if (auction == null) return;
+        auctions.push(auction);
+    });
+
     return auctions;
 }
 
 // Function to join auction
-function joinAuction(user: User, auction: DutchAuction): boolean{
+function joinAuction(username: string, auction: DutchAuction): boolean{
+    const user = users.get(username);
+    if (user === undefined) throw new Error ("undefined user");
+
     const auctions = getAllAuctions();
     if (!(auctions).includes(auction)) throw new Error("Auction does not exist")
     if (user && user.role == "buyer"){
@@ -219,7 +245,10 @@ function joinAuction(user: User, auction: DutchAuction): boolean{
     }
 }
 
-async function placeBid(user: User, amount: number): Promise<boolean>{
+async function placeBid(username: string, amount: number): Promise<boolean>{
+    const user = users.get(username);
+    if (user === undefined) throw new Error ("undefined user");
+
     if (user && user.role == "buyer"){
         if (user.buyerData.auction == null) throw new Error("You have not joined an auction.");
         const auction = user.buyerData.auction;
