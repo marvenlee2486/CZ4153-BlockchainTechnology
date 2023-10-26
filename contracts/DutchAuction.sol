@@ -127,6 +127,7 @@ contract DutchAuction {
     }
 
     function transferAllTokens() external onlyOwner(){
+        require(block.timestamp > expiresAt || auctionEndedEarly, "Auction is still ongoing");
         for (uint256 i = 0; i < buyers.length; i++)
             if (buyersPosition[buyers[i]] > 0) 
                 withdrawTokens(buyers[i]);
