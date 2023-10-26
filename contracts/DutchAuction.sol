@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 // 2. REFACTOR the require to be revert with Custom error (require will return error(string) that actually cost more)
 // 3. REFACTOR Changed the logic into state machine pattern using enum.  for better practice and readlibility.
 // 4. Add proper documentation -  https://docs.soliditylang.org/en/develop/natspec-format.html (unfortunately it is part of the grading tho haha)
+// 5. REFACTOR to Safe Math
 
 // Functionality needed
 // 1. Refund cases - I put 10 dollar, but the price is 7 .. so essentially, I get 1 token only .. and 3 ether refund 
