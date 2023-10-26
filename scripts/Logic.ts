@@ -21,16 +21,16 @@ interface BuyerData {
     auction: DutchAuction | null;
 }
 
-
 const users: User[] = [];
+const usernames: Set<string> = new Set();
 
 // Function to handle user registration
 function registerUser(username: string, role: "seller" | "buyer"): void {
-    if (users.find((u) => u.username === username)){
+    if (usernames.has(username)){
         console.log(`Sorry, this username is taken`);
         return;
     }
-
+    usernames.add(username);
     let sellerData: SellerData | null = null;
     let buyerData: BuyerData | null = null;
 
