@@ -175,9 +175,10 @@ async function startAuction(username: string, startingPrice: Number, reservePric
 }
 
 // Function to transfer token if you win
-async function transferToken(username: string, auction: DutchAuction): Promise<boolean>{
+async function transferToken(username: string, sellerUsername: string): Promise<boolean>{
     const user = users.get(username);
-    if (user === undefined) throw new Error ("undefined user");
+    const seller = users.get(sellerUsername);
+    if (user === undefined || seller == undefined) throw new Error ("undefined user / seller");
     if (user && user.role === "buyer") {
         if (user.buyerData.auction == null) throw new Error("You have not joined an auction.");
         const auction = user.buyerData.auction;
@@ -215,29 +216,26 @@ async function transferAllTokens(username: string): Promise<boolean>{
     }
 }
 
-// Function to get all auctions that have started
-function getAllAuctions(): DutchAuction[]{
-    const auctions: Array<DutchAuction> = [];
-
+// Function to get all auctions that have started, here buyers can choose their sellers
+function getAllSellers(): Array<string>{
+    const sellers: Array<string> = [];
     users.forEach((value, key) => {
-        const auction = value.sellerData.auction;
-        if (auction == null) return;
-        auctions.push(auction);
+        sellers.push(key);
     });
-
-    return auctions;
+    return sellers;
 }
 
 // Function to join auction
-function joinAuction(username: string, auction: DutchAuction): boolean{
+function joinAuction(username: string, sellerUsername: string): boolean{
     const user = users.get(username);
-    if (user === undefined) throw new Error ("undefined user");
+    const seller = users.get(sellerUsername);
+    if (user === undefined || seller == undefined) throw new Error ("undefined user / seller");
 
-    const auctions = getAllAuctions();
-    if (!(auctions).includes(auction)) throw new Error("Auction does not exist")
+    const sellers = getAllSellers();
+    if (!(sellers).includes(sellerUsername)) throw new Error("Auction does not exist")
     if (user && user.role == "buyer"){
         if (user.buyerData.auction) throw new Error("You have joined an auction.");
-        user.buyerData.auction = auction;
+        user.buyerData.auction = seller.sellerData.auction;
         return true;
     }
     else{
