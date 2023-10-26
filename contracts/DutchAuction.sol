@@ -55,7 +55,7 @@ contract DutchAuction {
 
         startingPrice = _startingPrice;
         reservePrice = _reservePrice;
-        discountRate = (reservePrice - startingPrice) / _duration;
+        discountRate = (startingPrice - reservePrice) / _duration;
 
         startAt = block.timestamp;
         expiresAt = block.timestamp + _duration;

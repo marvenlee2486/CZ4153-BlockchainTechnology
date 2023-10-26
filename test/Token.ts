@@ -8,7 +8,7 @@ describe("Token contract", function () {
   const initialAmount: number = 100;
   async function deployTokenFixture() {
     const [owner, addr1, buyer] = await ethers.getSigners();
-    const axelToken = await ethers.deployContract("AxelToken", [initialAmount]);
+    const axelToken = await ethers.deployContract("AxelToken", [initialAmount], owner);
     await axelToken.waitForDeployment();
 
     // Fixtures can return anything you consider useful for your tests
