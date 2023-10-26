@@ -3,6 +3,7 @@ const { ethers } = require("hardhat");
 const { loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const assert = require('assert');
 
+// TODO ADD Documentation
 describe("Token contract", function () {
   const initialAmount: number = 100;
   async function deployTokenFixture() {

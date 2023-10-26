@@ -4,6 +4,19 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
+// TODO REFACTOR
+// 1. REFACTOR the update logic as its cost a lot of gas if everytime it is revoked (considered caching it)
+// 2. REFACTOR the require to be revert with Custom error (require will return error(string) that actually cost more)
+// 3. REFACTOR Changed the logic into state machine pattern using enum.  for better practice and readlibility.
+// 4. Add proper documentation -  https://docs.soliditylang.org/en/develop/natspec-format.html (unfortunately it is part of the grading tho haha)
+
+// Functionality needed
+// 1. Refund cases - I put 10 dollar, but the price is 7 .. so essentially, I get 1 token only .. and 3 ether refund 
+
+
+// For presentation purpose
+// 1. Mentioned that the discount rate is calculated based on duration ... (Bs on this)
+// 2. Mentioned how we handle with the updates.address
 contract DutchAuction {
     ERC20Burnable public immutable token;
     uint256 public immutable tokenAmount;
@@ -23,6 +36,9 @@ contract DutchAuction {
     bool auctionEndedEarly = false;
     bool hasBurnedUnsoldTokens = false;
     uint256 revenue = 0;
+    
+    // TODO add token amount, I think it would be best for user to choose how many token instead of all token is bid
+    // TODO do we actually need duration as parameter? I know it is better but the documentation said that 20 mins
 
     constructor(uint256 _startingPrice, uint256 _reservePrice, address _token, uint256 _duration) {
         require(_startingPrice >= _reservePrice, "Starting price must be equal / larger than ending price");
