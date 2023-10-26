@@ -6,13 +6,12 @@ import LoginPage from './pages/LoginPage'
 import RootLayout, {loader as rootLoader} from './pages/RootLayout'
 import ErrorPage from "./pages/ErrorPage";
 import Dashboard from './components/Dashboard'
-import PrivateRoute from './pages/PrivateRoute'
 import { UserProvider } from './context/UserContext'
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element:<PrivateRoute><RootLayout /></PrivateRoute> ,
+    element:<RootLayout />,
     errorElement: <ErrorPage />,
     loader: rootLoader,
     children: [

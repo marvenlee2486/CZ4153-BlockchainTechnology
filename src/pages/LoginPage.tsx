@@ -25,7 +25,7 @@ const LoginPage: React.FC = () => {
       <div className="w-60 xl flex flex-col items-center justify-center h-40 gap-1 p-5 bg-white rounded-sm">
       <h2>Select a User to Login</h2>
         {userStore.map(user => (
-          <button className=' bg-blue-600 text-white rounded-md w-[60%]' key={user.uid} onClick={() => handleLogin(user)}>
+          <button className=' w-20 text-white bg-blue-600 rounded-md' key={user.uid} onClick={() => handleLogin(user)}>
             {user.name}
           </button>
         ))}
