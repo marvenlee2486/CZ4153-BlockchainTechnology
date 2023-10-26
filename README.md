@@ -1,13 +1,31 @@
-# Sample Hardhat Project
+# Basic Sample Hardhat Project with TypeScript
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+For TypeScript Configuration use this [link](https://hardhat.org/guides/typescript.html)
+
+Below command will compile the contract and generates Typescript typings for contracts
+```shell
+npx hardhat compile
+```
+
+Below command will run TypeScript compiler and convert all TypeScript files to JS and placed them in dist folder
+```shell
+tsc
+```
+
+Below command will deploy contracts on hardhat network
+```shell
+npx hardhat run dist/scripts/sample-script.js
+```
+
 
 Try running some of the following tasks:
 
 ```shell
-npx hardhat help
+npx hardhat accounts
+npx hardhat compile
+npx hardhat clean
 npx hardhat test
-REPORT_GAS=true npx hardhat test
 npx hardhat node
-npx hardhat run scripts/deploy.ts
+node scripts/sample-script.js
+npx hardhat help
 ```
