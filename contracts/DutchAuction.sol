@@ -85,13 +85,18 @@ contract DutchAuction {
 
     function _updateTokenAmount() internal{
         uint256 currentPrice = getPrice();
-        tokenLeft = tokenAmount;
+        int256 tempTokenLeft = int(tokenAmount);
         
         for (uint256 i = 0; i < buyers.length; i++) 
-            tokenLeft -= buyersPosition[buyers[i]] * currentPrice;
+            tempTokenLeft -= int(buyersPosition[buyers[i]] * currentPrice);
 
-        if (tokenLeft <= 0) 
+        if (tempTokenLeft <= 0) {
+            tokenLeft = 0;
             auctionEndedEarly = true;
+        }
+        else {
+            tokenLeft = uint(tempTokenLeft);
+        }
     }
 
     function placeBid() external payable {
@@ -145,6 +150,9 @@ contract DutchAuction {
 
     function transferAllTokens() external onlyOwner(){
         require(block.timestamp > expiresAt || auctionEndedEarly, "Auction is still ongoing");
+        //make sure that unsold tokens has been burned
+        if (!hasBurnedUnsoldTokens) _burnUnusedToken();
+        
         for (uint256 i = 0; i < buyers.length; i++)
             if (buyersPosition[buyers[i]] > 0) 
                 withdrawTokens(buyers[i]);
