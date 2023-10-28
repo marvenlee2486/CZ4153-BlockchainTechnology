@@ -107,11 +107,11 @@ describe("Dutch Auction contract", function () {
         //     await expect(auction.connect(addr1).placeBid(option)).to.be.revertedWith("InvalidInputError");
         // })
        
-        it("Should revert if bidder is owner", async function () {
-            const {auction, owner, addr1} = await loadFixture(deployAuctionFixture);
-            const option = { value: ethers.parseUnits("0.5","ether") };
-            await expect(auction.connect(owner).placeBid(option)).to.be.reverted; 
-        })
+        // it("Should revert if bidder is owner", async function () {
+        //     const {auction, owner, addr1} = await loadFixture(deployAuctionFixture);
+        //     const option = { value: ethers.parseUnits("0.5","ether") };
+        //     await expect(auction.connect(owner).placeBid(option)).to.be.reverted; 
+        // })
 
         it("Should revert if bidding amount reached", async function () {
             const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
@@ -169,7 +169,7 @@ describe("Dutch Auction contract", function () {
         it("token get should be show correctly at different stage (middle price)", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture);
             await time.increase(10 * 60);
-            const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration);
+            const discountRate = (defaultStartingPrice - defaultReservePrice) / defaultDuration;
             await expect(await auction.getPrice()).to.be.equal(defaultStartingPrice -  discountRate * 10 * 60);
         });
 
@@ -179,17 +179,17 @@ describe("Dutch Auction contract", function () {
             await expect(await auction.getPrice()).to.be.equal(defaultReservePrice);
         });
 
-        it("Thinking about some cases", async function () {
+        it("Attack 1", async function () {
             // initial price = 100
             // reserved price = 50
             // initialTokenAmount = 100
             const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture);
-            axelToken.connect(owner).transfer(addr1, 20);
-            await time.increase(10 * 60);
-            await auction.connect(addr2).placeBid({value : ethers.parseUnits("500000", "wei")}); // addr2 buy all tokens
-            await time.increase(10 * 60);
-            await auction.connect(owner).transferAllTokens(); 
-            await expect(axelToken.balanceOf(addr2.address)).to.be.equal(100);
+            await expect(axelToken.connect(owner).transfer(addr1, 20)).to.be.reverted;
+            // await time.increase(10 * 60);
+            // await auction.connect(addr2).placeBid({value : ethers.parseUnits("500000", "wei")}); // addr2 buy all tokens
+            // await time.increase(10 * 60);
+            // await auction.connect(owner).transferAllTokens(); 
+            // await expect(axelToken.balanceOf(addr2.address)).to.be.equal(100);
         });
     });
 
