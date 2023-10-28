@@ -3,7 +3,7 @@ pragma solidity >=0.6.0 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
-
+import "hardhat/console.sol";
 // TODO REFACTOR
 // 1. REFACTOR the update logic as its cost a lot of gas if everytime it is revoked (considered caching it)
 // 2. REFACTOR the require to be revert with Custom error (require will return error(string) that actually cost more)
@@ -70,7 +70,7 @@ contract DutchAuction {
     function startAuction() public{
         require(token.transferFrom(owner, address(this), tokenAmount), "Token transfer failed");
         require(!auctionStarted, "Auction has started");
-
+    
         startAt = block.timestamp;
         expiresAt = block.timestamp + duration;
         auctionStarted = true;
@@ -85,10 +85,8 @@ contract DutchAuction {
             return startingPrice - discountRate * (block.timestamp - startAt);
     }
 
-    function getTokenLeft() external returns (uint256) {
-        require(auctionStarted, "Auction has not started");
-
-        _updateTokenAmount();
+    function getTokenLeft() external view returns (uint256) {
+        // _updateTokenAmount();
         return tokenLeft;
     }
 
@@ -102,11 +100,12 @@ contract DutchAuction {
         require(auctionStarted, "Auction has not started");
         
         uint256 currentPrice = getPrice();
+        
         int256 tempTokenLeft = int(tokenAmount);
         
         for (uint256 i = 0; i < buyers.length; i++) 
-            tempTokenLeft -= int(buyersPosition[buyers[i]] * currentPrice);
-
+            tempTokenLeft -= int(buyersPosition[buyers[i]] / currentPrice);
+        
         if (tempTokenLeft <= 0) {
             tokenLeft = 0;
             auctionEndedEarly = true;
@@ -128,7 +127,7 @@ contract DutchAuction {
         address buyer = msg.sender;
         if (buyersPosition[buyer] == 0) buyers.push(buyer); //new buyer
 
-        uint256 bid = Math.max(tokenLeft * currentPrice, msg.value);
+        uint256 bid = Math.min(tokenLeft * currentPrice, msg.value);
         buyersPosition[buyer] += bid;
         revenue += bid;
 
@@ -137,29 +136,28 @@ contract DutchAuction {
 
         _updateTokenAmount();
     }
-
+    
     function withdrawTokens (address buyer) public{
         require(auctionStarted, "Auction has not started");
 
         if (msg.sender != owner)
-            require(buyer == address(0), "Only owner of auction can withdraw tokens on winners behalf");
+            require(buyer == msg.sender, "Only owner of auction can withdraw tokens on winners behalf");
         else 
             buyer = msg.sender;
 
         require(block.timestamp > expiresAt || auctionEndedEarly, "Auction is still ongoing");
         require(buyersPosition[buyer] > 0, "You did not submit a valid bid or you have withdrawn your token");
-
+        
         uint256 clearingPrice = getPrice();
         uint256 bid = buyersPosition[buyer];
         uint256 tokenBought = bid / clearingPrice;
         uint256 amountPaid = tokenBought * clearingPrice;
-
         //make sure that unsold tokens has been burned
         if (!hasBurnedUnsoldTokens) _burnUnusedToken();
 
         //clear records and transfer token to buyer
         buyersPosition[buyer] = 0;
-        token.transferFrom(address(this), buyer, tokenBought);
+        token.transfer(buyer, tokenBought);
 
         //refund
         uint256 refund = bid - amountPaid;
@@ -183,7 +181,8 @@ contract DutchAuction {
     function _burnUnusedToken() internal{
         require(auctionStarted, "Auction has not started");
         require(!hasBurnedUnsoldTokens, "Unsold token has been burnt");
-        token.burnFrom(address(this), tokenLeft);
+        _updateTokenAmount();
+        token.burn(tokenLeft);
         hasBurnedUnsoldTokens = true;
     }
 }

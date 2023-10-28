@@ -7,8 +7,8 @@ const assert = require('assert');
 
 describe("Dutch Auction contract", function () {
     const initialAmount = 100;
-    const defaultStartingPrice = 100;
-    const defaultReservePrice = 50; 
+    const defaultStartingPrice = 10000;
+    const defaultReservePrice = 5000; 
     const defaultDuration = 20 * 60;
     async function deployTokenFixture() {
         const [owner, addr1, addr2, addr3] = await ethers.getSigners();
@@ -27,9 +27,12 @@ describe("Dutch Auction contract", function () {
             const auction = await ethers.deployContract("DutchAuction", [startingPrice, reservePrice, tokenAddress, duration], owner);
             await auction.waitForDeployment();
             // expect(auction.owner).to.equal(owner.address);
-            console.log(await auction.getTokenLeft());
+            await axelToken.connect(owner).approve(await auction.getAddress(), initialAmount);
+            await auction.connect(owner).startAuction();
             expect(await auction.getTokenLeft()).to.equal(await axelToken.totalSupply());
             expect(await auction.getPrice()).to.equal(startingPrice);
+            expect(await axelToken.balanceOf(owner.address)).to.be.equal(0);
+            expect(await axelToken.balanceOf(await auction.getAddress())).to.be.equal(initialAmount);
             // expect(auction.reservePrice).to.equal(reservePrice);
             // expect(auction.expiresAt - auction.startAt).to.equal(duration)
             // TODO expect duration to be a float number? discountRate TO DISCUSS
@@ -71,8 +74,12 @@ describe("Dutch Auction contract", function () {
             const reservePrice = 50; 
             const Duration = 20;
             const tokenAddress = await axelToken.getAddress();
+            const auction = await ethers.deployContract("DutchAuction", [startingPrice, reservePrice, tokenAddress, Duration])
+            await auction.waitForDeployment();
+            await axelToken.connect(owner).approve(await auction.getAddress(), initialAmount);
             await axelToken.connect(owner).transfer(addr1, initialAmount);
-            await expect(ethers.deployContract("DutchAuction", [startingPrice, reservePrice, tokenAddress, Duration])).to.be.reverted;
+
+            await expect(auction.connect(owner).startAuction()).to.be.reverted;
         });
 
     });
@@ -82,6 +89,8 @@ describe("Dutch Auction contract", function () {
         const tokenAddress = await axelToken.getAddress();
         const auction = await ethers.deployContract("DutchAuction", [defaultStartingPrice, defaultReservePrice, tokenAddress, defaultDuration]);
         await auction.waitForDeployment();
+        await axelToken.connect(owner).approve(await auction.getAddress(), initialAmount);
+        await auction.connect(owner).startAuction();
         return {axelToken, auction, owner, addr1, addr2, addr3};
     }
 
@@ -106,7 +115,7 @@ describe("Dutch Auction contract", function () {
 
         it("Should revert if bidding amount reached", async function () {
             const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
-            const option = {value: ethers.parseUnits("10000", "wei")};
+            const option = {value: ethers.parseUnits("1000000", "wei")};
             await auction.connect(addr1).placeBid(option)
             await expect(auction.connect(addr1).placeBid(option)).to.be.reverted;
             // TODO Get the state function
@@ -114,7 +123,7 @@ describe("Dutch Auction contract", function () {
 
         it("Should revert if current timestamp exceed the duration", async function () {
             const {auction, addr1} = await loadFixture(deployAuctionFixture); 
-            const option = {value: ethers.parseUnits("10000", "wei")};
+            const option = {value: ethers.parseUnits("1000000", "wei")};
             await time.increase(20 * 60);
             await expect(auction.connect(addr1).placeBid(option)).to.be.reverted; 
             // TODO Get the state function
@@ -145,11 +154,11 @@ describe("Dutch Auction contract", function () {
         it("token leftover should be burned (partial burned)", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture);
             await time.increase(10 * 60);
-            auction.connect(addr1).placeBid({value : ethers.parseUnits("100", "wei")});
+            auction.connect(addr1).placeBid({value : ethers.parseUnits("10000", "wei")});
             await time.increase(10 * 60);
-            await auction.connect(addr1).withdrawTokens(addr2)
+            await auction.connect(addr1).withdrawTokens(addr1)
             // await auction.connect(owner).transferAllTokens();
-            await expect(await axelToken.totalSupply()).to.be.equal(initialAmount - 100 / defaultReservePrice );
+            await expect(await axelToken.totalSupply()).to.be.equal(10000 / defaultReservePrice );
         });
 
         it("token get should be show correctly at different stage (original price)", async function () {
@@ -160,7 +169,8 @@ describe("Dutch Auction contract", function () {
         it("token get should be show correctly at different stage (middle price)", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture);
             await time.increase(10 * 60);
-            await expect(await auction.getPrice()).to.be.equal((defaultStartingPrice + defaultReservePrice) / 2);
+            const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration);
+            await expect(await auction.getPrice()).to.be.equal(defaultStartingPrice -  discountRate * 10 * 60);
         });
 
         it("token get should be show correctly at different stage (reserved price)", async function () {
@@ -176,7 +186,7 @@ describe("Dutch Auction contract", function () {
             const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture);
             axelToken.connect(owner).transfer(addr1, 20);
             await time.increase(10 * 60);
-            await auction.connect(addr2).placeBid({value : ethers.parseUnits("5000", "wei")}); // addr2 buy all tokens
+            await auction.connect(addr2).placeBid({value : ethers.parseUnits("500000", "wei")}); // addr2 buy all tokens
             await time.increase(10 * 60);
             await auction.connect(owner).transferAllTokens(); 
             await expect(axelToken.balanceOf(addr2.address)).to.be.equal(100);
