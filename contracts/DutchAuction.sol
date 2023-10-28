@@ -46,7 +46,7 @@ contract DutchAuction {
         require(_reservePrice > 0 , "Reserve price must be more than 0");
         require(_duration > 0, "Duration must be more than 0");
         require(ERC20Burnable(_token).totalSupply() > 0, "Invalid ERC-20 token address");
-        require(ERC20Burnable(_token).balanceOf(msg.sender) > 0, "You do not have token balance");
+        require(ERC20Burnable(_token).balanceOf(address(this)) == ERC20Burnable(_token).totalSupply(), "You need to auction and sell the entire tokens");
 
         owner = msg.sender;
 
