@@ -29,7 +29,7 @@ describe("Dutch Auction contract", function () {
             // expect(auction.owner).to.equal(owner.address);
             await axelToken.connect(owner).approve(await auction.getAddress(), initialAmount);
             await auction.connect(owner).startAuction();
-            expect(await auction.getTokenLeft()).to.equal(await axelToken.totalSupply());
+            expect(await auction.getTokenLeft()).to.emit(auction, "TokenLeft").withArgs(await axelToken.totalSupply());
             expect(await auction.getPrice()).to.equal(startingPrice);
             expect(await axelToken.balanceOf(owner.address)).to.be.equal(0);
             expect(await axelToken.balanceOf(await auction.getAddress())).to.be.equal(initialAmount);
@@ -169,7 +169,7 @@ describe("Dutch Auction contract", function () {
         it("token get should be show correctly at different stage (middle price)", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture);
             await time.increase(10 * 60);
-            const discountRate = (defaultStartingPrice - defaultReservePrice) / defaultDuration;
+            const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration); // TODO
             await expect(await auction.getPrice()).to.be.equal(defaultStartingPrice -  discountRate * 10 * 60);
         });
 

@@ -19,6 +19,10 @@ import "hardhat/console.sol";
 // 1. Mentioned that the discount rate is calculated based on duration ... (Bs on this)
 // 2. Mentioned how we handle with the updates.address
 contract DutchAuction {
+    event TokenLeft(
+        uint256 tokenleft
+    );
+
     ERC20Burnable public immutable token;
     uint256 public immutable tokenAmount;
     uint256 public tokenLeft;
@@ -85,8 +89,9 @@ contract DutchAuction {
             return startingPrice - discountRate * (block.timestamp - startAt);
     }
 
-    function getTokenLeft() external view returns (uint256) {
-        // _updateTokenAmount();
+    function getTokenLeft() external returns (uint256) {
+        _updateTokenAmount();
+        emit TokenLeft(tokenLeft);
         return tokenLeft;
     }
 
