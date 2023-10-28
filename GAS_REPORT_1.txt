@@ -1,0 +1,80 @@
+Script started on Sun Oct 29 04:21:42 2023
+[1m[7m%[27m[1m[0m                                                                                                                                             [0m[27m[24m[Jmarvenlee@Zongs-MacBook-Pro CZ4153-BlockchainTechnology % [K[?2004hE exitscript -q GAS_REPORT_1.txt vagrant up[30D[3P[17C             [14D[23Dtee[3P[17C   [16D                [17Dnpx hardhat --helpconfig EXPORT_GAS=True     D[11D           [12D[8Dhelp    [16DREPORT_GAS=true npx hardhat test [33D[16P[12Cgas-reporter         [9D:merge 'gasReporterOutput-*.json'[33D                                 [33D[24DREPORT_GAS=true npx hardhat test [?2004l
+[0m[0m
+[0m  Dutch Auction contract[0m
+[0m    Dutch Auction Creation Stage[0m
+    [32m  [32m✔[39m[0m[90m Should be able to start auction on construction[0m
+    [32m  [32m✔[39m[0m[90m Should revert when startingPrice is not positive[0m
+    [32m  [32m✔[39m[0m[90m Should revert when Duration is not positive[0m
+    [32m  [32m✔[39m[0m[90m Should revert when reservePrice is higher than startingPrice[0m
+    [32m  [32m✔[39m[0m[90m Should revert when there is no tokens left[0m
+[0m    Dutch Auction Biding Stage[0m
+    [32m  [32m✔[39m[0m[90m Should be able to bid if amount sufficient[0m
+    [32m  [32m✔[39m[0m[90m Should revert if bidding amount reached[0m
+    [32m  [32m✔[39m[0m[90m Should revert if current timestamp exceed the duration[0m
+    [32m  [32m✔[39m[0m[90m Should show the correct price at each stage[0m
+[0m    Dutch Auction Ending Stage[0m
+    [32m  [32m✔[39m[0m[90m Should be end earlier if drop until reserved price[0m
+    [32m  [32m✔[39m[0m[90m token leftover should be burned (all tokens burned)[0m
+    [32m  [32m✔[39m[0m[90m token leftover should be burned (partial burned)[0m
+    [32m  [32m✔[39m[0m[90m token get should be show correctly at different stage (original price)[0m
+    [32m  [32m✔[39m[0m[90m token get should be show correctly at different stage (middle price)[0m
+    [32m  [32m✔[39m[0m[90m token get should be show correctly at different stage (reserved price)[0m
+    [32m  [32m✔[39m[0m[90m Attack 1[0m
+[0m    Dutch Auction Distributing Stage[0m
+    [32m  [32m✔[39m[0m[90m Should be able to refund extra amount if last one give extra bid[0m
+[33m10000000000000000000000n[39m
+    [32m  [32m✔[39m[0m[90m Should be able to withdraw the token if wins some token (and check if the refund amount is correct)[0m
+    [32m  [32m✔[39m[0m[90m Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2[0m
+    [32m  [32m✔[39m[0m[90m Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr3[0m
+    [32m  [32m✔[39m[0m[90m Should not be able to withdraw if I did not bid[0m
+    [32m  [32m✔[39m[0m[90m Owner Should be able to withdraw all tokens for the winner[0m
+    [32m  [32m✔[39m[0m[90m Not-Owner Should not be able to withdraw all tokens for the winner[0m
+
+[0m  Token contract[0m
+  [32m  [32m✔[39m[0m[90m Should assign the total supply of tokens to the owner initially[0m
+  [32m  [32m✔[39m[0m[90m Should be able to approve by owner ('approve' method) and transfer to buyer[0m
+  [32m  [32m✔[39m[0m[90m Should be able to transfer the tokens from owner 'transfer' methods[0m
+  [32m  [32m✔[39m[0m[90m Should be able to burn the tokens ('burn' and 'burn from' methods)[0m
+  [32m  [32m✔[39m[0m[90m Should not be able to transfer the tokens if not approved[0m
+  [32m  [32m✔[39m[0m[90m Should not be able to transfer the tokens if amount not enough[0m
+
+·--------------------------------------|----------------------------|-------------|-----------------------------·
+|         [90mSolc version: 0.8.20[39m         ·  [90mOptimizer enabled: false[39m  ·  [90mRuns: 200[39m  ·  [90mBlock limit: 30000000 gas[39m  │
+·······································|····························|·············|······························
+|  [32m[1mMethods[22m[39m                                                                                                      │
+·················|·····················|··············|·············|·············|···············|··············
+|  [1mContract[22m      ·  [1mMethod[22m             ·  [32mMin[39m         ·  [32mMax[39m        ·  [32mAvg[39m        ·  [1m# calls[22m      ·  [1musd (avg)[22m  │
+·················|·····················|··············|·············|·············|···············|··············
+|  [90mAxelToken[39m     ·  approve            ·           -  ·          -  ·      46892  ·            [90m5[39m  ·          [32m[90m-[32m[39m  │
+·················|·····················|··············|·············|·············|···············|··············
+|  [90mAxelToken[39m     ·  burn               ·           -  ·          -  ·      34065  ·            [90m1[39m  ·          [32m[90m-[32m[39m  │
+·················|·····················|··············|·············|·············|···············|··············
+|  [90mAxelToken[39m     ·  burnFrom           ·           -  ·          -  ·      35562  ·            [90m1[39m  ·          [32m[90m-[32m[39m  │
+·················|·····················|··············|·············|·············|···············|··············
+|  [90mAxelToken[39m     ·  transfer           ·       [36m47372[39m  ·      [31m52172[39m  ·      49772  ·            [90m2[39m  ·          [32m[90m-[32m[39m  │
+·················|·····················|··············|·············|·············|···············|··············
+|  [90mAxelToken[39m     ·  transferFrom       ·           -  ·          -  ·      53589  ·            [90m1[39m  ·          [32m[90m-[32m[39m  │
+·················|·····················|··············|·············|·············|···············|··············
+|  [90mDutchAuction[39m  ·  getTokenLeft       ·           -  ·          -  ·      34871  ·            [90m2[39m  ·          [32m[90m-[32m[39m  │
+·················|·····················|··············|·············|·············|···············|··············
+|  [90mDutchAuction[39m  ·  placeBid           ·      [36m101427[39m  ·     [31m155914[39m  ·     130594  ·           [90m10[39m  ·          [32m[90m-[32m[39m  │
+·················|·····················|··············|·············|·············|···············|··············
+|  [90mDutchAuction[39m  ·  startAuction       ·           -  ·          -  ·     118332  ·            [90m2[39m  ·          [32m[90m-[32m[39m  │
+·················|·····················|··············|·············|·············|···············|··············
+|  [90mDutchAuction[39m  ·  transferAllTokens  ·       [36m43440[39m  ·     [31m185337[39m  ·     114389  ·            [90m2[39m  ·          [32m[90m-[32m[39m  │
+·················|·····················|··············|·············|·············|···············|··············
+|  [90mDutchAuction[39m  ·  withdrawTokens     ·       [36m93333[39m  ·     [31m109169[39m  ·     104931  ·            [90m7[39m  ·          [32m[90m-[32m[39m  │
+·················|·····················|··············|·············|·············|···············|··············
+|  [32m[1mDeployments[22m[39m                         ·                                          ·  [1m% of limit[22m   ·             │
+·······································|··············|·············|·············|···············|··············
+|  AxelToken                           ·           -  ·          -  ·    1031832  ·        [90m3.4 %[39m  ·          [32m[90m-[32m[39m  │
+·······································|··············|·············|·············|···············|··············
+|  DutchAuction                        ·     [36m1966437[39m  ·    [31m1966473[39m  ·    1966453  ·        [90m6.6 %[39m  ·          [32m[90m-[32m[39m  │
+·--------------------------------------|--------------|-------------|-------------|---------------|-------------·
+
+[92m [0m[32m 29 passing[0m[90m (1s)[0m
+
+[1m[7m%[27m[1m[0m                                                                                                                                             [0m[27m[24m[Jmarvenlee@Zongs-MacBook-Pro CZ4153-BlockchainTechnology % [K[?2004heexit[?2004l
+
+Script done on Sun Oct 29 04:21:56 2023

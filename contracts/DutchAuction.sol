@@ -99,7 +99,6 @@ contract DutchAuction {
 
     function getPosition() external view returns (uint256) {
         require(auctionStarted, "Auction has not started");
-
         return buyersPosition[msg.sender];
     }
 

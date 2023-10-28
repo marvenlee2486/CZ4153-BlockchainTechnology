@@ -251,7 +251,7 @@ describe("Dutch Auction contract", function () {
         it("Should be able to withdraw the token if wins some token (and check if the refund amount is correct)", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
             // console.log(addr3.cumulativeGasUsed * addr3.gasPrice);
-
+            expect(await auction.connect(addr1).getPosition()).to.be.equal(addr1_payingPrice);
             const beforeBalance = await ethers.provider.getBalance(addr1.address);
             const tx1 = await auction.connect(addr1).withdrawTokens(addr1);
             const tx1_receipt = await tx1.wait();
@@ -264,7 +264,7 @@ describe("Dutch Auction contract", function () {
         it("Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
             // console.log(addr3.cumulativeGasUsed * addr3.gasPrice);
-
+            expect(await auction.connect(addr2).getPosition()).to.be.equal(addr2_payingPrice);
             const beforeBalance = await ethers.provider.getBalance(addr2.address);
             const tx1 = await auction.connect(addr2).withdrawTokens(addr2);
             const tx1_receipt = await tx1.wait();
@@ -277,7 +277,7 @@ describe("Dutch Auction contract", function () {
         it("Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr3", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
             // console.log(addr3.cumulativeGasUsed * addr3.gasPrice);
-
+            expect(await auction.connect(addr3).getPosition()).to.be.equal(clearingPrice * addr3_token);
             const beforeBalance = await ethers.provider.getBalance(addr3.address);
             const tx1 = await auction.connect(addr3).withdrawTokens(addr3);
             const tx1_receipt = await tx1.wait();
