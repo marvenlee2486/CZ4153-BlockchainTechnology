@@ -31,9 +31,11 @@ contract DutchAuction {
     uint256 public immutable reservePrice; 
     uint256 public immutable discountRate;
     
-    uint256 public immutable startAt;
-    uint256 public immutable expiresAt;
+    uint256 public startAt;
+    uint256 public expiresAt;
+    uint256 public immutable duration;
     
+    bool auctionStarted = false;
     bool auctionEndedEarly = false;
     bool hasBurnedUnsoldTokens = false;
     uint256 revenue = 0;
@@ -46,20 +48,18 @@ contract DutchAuction {
         require(_reservePrice > 0 , "Reserve price must be more than 0");
         require(_duration > 0, "Duration must be more than 0");
         require(ERC20Burnable(_token).totalSupply() > 0, "Invalid ERC-20 token address");
-        require(ERC20Burnable(_token).balanceOf(address(this)) == ERC20Burnable(_token).totalSupply(), "You need to auction and sell the entire tokens");
-
         owner = msg.sender;
 
         token = ERC20Burnable(_token);
         tokenAmount = token.balanceOf(owner);
         tokenLeft = tokenAmount;
 
+        duration = _duration;
+
         startingPrice = _startingPrice;
         reservePrice = _reservePrice;
-        discountRate = (startingPrice - reservePrice) / _duration;
+        discountRate = (startingPrice - reservePrice) / duration;
 
-        startAt = block.timestamp;
-        expiresAt = block.timestamp + _duration;
     }
 
     modifier onlyOwner() {
@@ -67,7 +67,17 @@ contract DutchAuction {
         _;
     }
 
+    function startAuction() public{
+        require(token.transferFrom(owner, address(this), tokenAmount), "Token transfer failed");
+        require(!auctionStarted, "Auction has started");
+
+        startAt = block.timestamp;
+        expiresAt = block.timestamp + duration;
+    }   
+
     function getPrice() public view returns (uint256) {
+        require(auctionStarted, "Auction has not started");
+
         if (auctionEndedEarly || block.timestamp >= expiresAt) 
             return Math.max(revenue / tokenAmount, reservePrice);
         else
@@ -75,15 +85,21 @@ contract DutchAuction {
     }
 
     function getTokenLeft() external returns (uint256) {
+        require(auctionStarted, "Auction has not started");
+
         _updateTokenAmount();
         return tokenLeft;
     }
 
     function getPosition() external view returns (uint256) {
+        require(auctionStarted, "Auction has not started");
+
         return buyersPosition[msg.sender];
     }
 
     function _updateTokenAmount() internal{
+        require(auctionStarted, "Auction has not started");
+        
         uint256 currentPrice = getPrice();
         int256 tempTokenLeft = int(tokenAmount);
         
@@ -100,6 +116,8 @@ contract DutchAuction {
     }
 
     function placeBid() external payable {
+        require(auctionStarted, "Auction has not started");
+
         uint256 currentPrice = getPrice();
         _updateTokenAmount();
 
@@ -120,6 +138,8 @@ contract DutchAuction {
     }
 
     function withdrawTokens (address buyer) public{
+        require(auctionStarted, "Auction has not started");
+
         if (msg.sender != owner)
             require(buyer == address(0), "Only owner of auction can withdraw tokens on winners behalf");
         else 
@@ -138,7 +158,7 @@ contract DutchAuction {
 
         //clear records and transfer token to buyer
         buyersPosition[buyer] = 0;
-        token.transferFrom(owner, buyer, tokenBought);
+        token.transferFrom(address(this), buyer, tokenBought);
 
         //refund
         uint256 refund = bid - amountPaid;
@@ -149,6 +169,7 @@ contract DutchAuction {
     }
 
     function transferAllTokens() external onlyOwner(){
+        require(auctionStarted, "Auction has not started");
         require(block.timestamp > expiresAt || auctionEndedEarly, "Auction is still ongoing");
         //make sure that unsold tokens has been burned
         if (!hasBurnedUnsoldTokens) _burnUnusedToken();
@@ -159,8 +180,9 @@ contract DutchAuction {
     }
 
     function _burnUnusedToken() internal{
+        require(auctionStarted, "Auction has not started");
         require(!hasBurnedUnsoldTokens, "Unsold token has been burnt");
-        token.burnFrom(owner, tokenLeft);
+        token.burnFrom(address(this), tokenLeft);
         hasBurnedUnsoldTokens = true;
     }
 }
