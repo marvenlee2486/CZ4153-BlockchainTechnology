@@ -34,13 +34,14 @@ contract DutchAuction {
     uint256 public immutable startingPrice;
     uint256 public immutable reservePrice; 
     uint256 public immutable discountRate;
-    
+    uint256 public earlierClearingPrice;
     uint256 public startAt;
     uint256 public expiresAt;
     uint256 public immutable duration;
     
     bool auctionStarted = false;
     bool auctionEndedEarly = false;
+    bool endedEarlyTemp = false;
     bool hasBurnedUnsoldTokens = false;
     uint256 revenue = 0;
     
@@ -82,8 +83,9 @@ contract DutchAuction {
 
     function getPrice() public view returns (uint256) {
         require(auctionStarted, "Auction has not started");
-
-        if (auctionEndedEarly || block.timestamp >= expiresAt) 
+        if (endedEarlyTemp) 
+            return earlierClearingPrice;
+        else if (auctionEndedEarly || block.timestamp >= expiresAt) 
             return Math.max(revenue / tokenAmount, reservePrice);
         else
             return startingPrice - discountRate * (block.timestamp - startAt);
@@ -131,17 +133,48 @@ contract DutchAuction {
 
         address buyer = msg.sender;
         if (buyersPosition[buyer] == 0) buyers.push(buyer); //new buyer
-
+        // console.log(tokenLeft);
+        // console.log(currentPrice);
+        // console.log(msg.value);
         uint256 bid = Math.min(tokenLeft * currentPrice, msg.value);
         buyersPosition[buyer] += bid;
         revenue += bid;
-
+        
         uint256 refund = msg.value - bid;
-        if (refund > 0) payable(buyer).transfer(refund);
-
+        if (refund > 0) {
+            payable(buyer).transfer(refund);
+            // console.log("REFUND AMOUNT");
+            // console.log(refund);
+            endedEarlyTemp = true;
+            earlierClearingPrice = currentPrice;
+        }
         _updateTokenAmount();
     }
-    
+
+    function _withdrawTokens (address buyer) private{
+        require(auctionStarted, "Auction has not started");
+        require(block.timestamp > expiresAt || auctionEndedEarly, "Auction is still ongoing");
+        require(buyersPosition[buyer] > 0, "You did not submit a valid bid or you have withdrawn your token");
+        
+        uint256 clearingPrice = getPrice();
+        uint256 bid = buyersPosition[buyer];
+        uint256 tokenBought = bid / clearingPrice;
+        uint256 amountPaid = tokenBought * clearingPrice;
+        //make sure that unsold tokens has been burned
+        if (!hasBurnedUnsoldTokens) _burnUnusedToken();
+
+        //clear records and transfer token to buyer
+        buyersPosition[buyer] = 0;
+        token.transfer(buyer, tokenBought);
+
+        //refund
+        uint256 refund = bid - amountPaid;
+        if (refund > 0) payable(buyer).transfer(refund);
+
+        //transfer eth to seller
+        payable(owner).transfer(amountPaid);
+    }
+
     function withdrawTokens (address buyer) public{
         require(auctionStarted, "Auction has not started");
 
@@ -180,7 +213,7 @@ contract DutchAuction {
         
         for (uint256 i = 0; i < buyers.length; i++)
             if (buyersPosition[buyers[i]] > 0) 
-                withdrawTokens(buyers[i]);
+                _withdrawTokens(buyers[i]);
     }
 
     function _burnUnusedToken() internal{
