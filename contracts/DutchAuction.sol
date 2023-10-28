@@ -73,6 +73,7 @@ contract DutchAuction {
 
         startAt = block.timestamp;
         expiresAt = block.timestamp + duration;
+        auctionStarted = true;
     }   
 
     function getPrice() public view returns (uint256) {
