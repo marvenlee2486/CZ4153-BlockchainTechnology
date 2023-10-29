@@ -33,8 +33,10 @@ contract DutchAuction {
 
     address public immutable owner;
     address[] private buyers;
+
     mapping(address => uint256) private buyersPosition; //address, value ETH to commit
     mapping(address => uint256) private funds; 
+
     uint256 public immutable startingPrice;
     uint256 public immutable reservePrice; 
     uint256 public immutable discountRate;
@@ -96,10 +98,9 @@ contract DutchAuction {
     }
 
     constructor(uint256 _startingPrice, uint256 _reservePrice, address _token, uint256 _duration) {
-        require(_startingPrice >= _reservePrice, "Starting price must be equal / larger than ending price");
-        require(_reservePrice > 0 , "Reserve price must be more than 0");
-        require(_duration > 0, "Duration must be more than 0");
-        require(ERC20Burnable(_token).totalSupply() > 0, "Invalid ERC-20 token address");
+        if(_startingPrice < _reservePrice || _reservePrice == 0 || _duration == 0 || ERC20Burnable(_token).totalSupply() == 0)
+            revert ConstructorInvalidInput();
+
         owner = msg.sender;
 
         token = ERC20Burnable(_token);
@@ -111,16 +112,18 @@ contract DutchAuction {
         startingPrice = _startingPrice;
         reservePrice = _reservePrice;
         discountRate = (startingPrice - reservePrice) / duration;
-
     }
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can call this function");
+        if(msg.sender != owner)
+            revert OnlyOwnerCanCallFunction();
+        // require(msg.sender == owner, "Only the owner can call this function");
         _;
     }
 
     function startAuction() public onlyOwner atStage(Stages.AuctionConstructed){
-        require(token.transferFrom(owner, address(this), tokenAmount), "Token transfer failed");
+        token.transferFrom(owner, address(this), tokenAmount);
+        // require(token.transferFrom(owner, address(this), tokenAmount), "Token transfer failed");
         
     
         startAt = block.timestamp;
@@ -171,9 +174,10 @@ contract DutchAuction {
     function placeBid() external payable timedTransitions atStage(Stages.AuctionStarted) {
         
         uint256 currentPrice = getPrice();
-        _updateTokenAmount();
+        if(msg.value < currentPrice) revert InvalidBidValue();
 
-        require(msg.value >= currentPrice, "Bid is too low");
+        _updateTokenAmount();
+        
 
         address buyer = msg.sender;
         if (buyersPosition[buyer] == 0) buyers.push(buyer); //new buyer
@@ -193,7 +197,8 @@ contract DutchAuction {
     }
 
     function _withdrawTokens (address buyer) private timedTransitions atStage(Stages.AuctionEnded){
-        require(buyersPosition[buyer] > 0, "You did not submit a valid bid or you have withdrawn your token");
+        if (buyersPosition[buyer] == 0) revert InvalidWithdrawer();
+        // require(buyersPosition[buyer] > 0, "You did not submit a valid bid or you have withdrawn your token");
         
         uint256 bid = buyersPosition[buyer];
         uint256 tokenBought = bid / clearingPrice;
@@ -213,12 +218,14 @@ contract DutchAuction {
 
     function withdrawTokens (address buyer) public timedTransitions atStage(Stages.AuctionEnded){
 
-        if (msg.sender != owner)
-            require(buyer == msg.sender, "Only owner of auction can withdraw tokens on winners behalf");
+        if (msg.sender != owner && buyer != msg.sender)
+            revert InvalidWithdrawer();
+            //require(buyer == msg.sender, "Only owner of auction can withdraw tokens on winners behalf");
         else 
             buyer = msg.sender;
 
-        require(buyersPosition[buyer] > 0, "You did not submit a valid bid or you have withdrawn your token");
+        if (buyersPosition[buyer] == 0) revert InvalidWithdrawer();
+        //require(buyersPosition[buyer] > 0, "You did not submit a valid bid or you have withdrawn your token");
         
         uint256 bid = buyersPosition[buyer];
         uint256 tokenBought = bid / clearingPrice;
@@ -248,7 +255,8 @@ contract DutchAuction {
     }
 
     function withdrawFunds() external{
-        require(funds[msg.sender] > 0, "Do not have enough funds to withdraw"); 
+        if( funds[msg.sender] == 0) revert InvalidWithdrawer();
+        // require(funds[msg.sender] > 0, "Do not have enough funds to withdraw"); 
         // to prevent recentry attack
         uint256 amount = funds[msg.sender];
         funds[msg.sender] = 0; 
