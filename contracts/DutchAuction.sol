@@ -239,6 +239,7 @@ contract DutchAuction {
                 _withdrawTokens(buyers[i]);
     }
     
+    // SHOULD WE LIMIT getFUNDS AND WITDRAWFUNDS? TODO and TOASK
     function getFunds(address addr) external view returns (uint256) {
         return funds[addr];
     }

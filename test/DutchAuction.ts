@@ -149,7 +149,11 @@ describe("Dutch Auction contract", function () {
         it("Should be able to bid if amount sufficient", async function () {
             const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
             const option = { value: ethers.parseUnits("0.5","ether") };
-            await auction.connect(addr1).placeBid(option);
+            const auctionInitialAmount = await ethers.provider.getBalance(auction.getAddress());
+            await checkBalanceTransaction(addr1, auction.connect(addr1).placeBid(option), -1 * 0.5 * 1e18);
+
+            const expectedAuctionAmount = auctionInitialAmount + BigInt(0.5 * 1e18);
+            expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(expectedAuctionAmount);
         })
 
         // it("Should revert if balance insuficient", async function () {
@@ -168,31 +172,50 @@ describe("Dutch Auction contract", function () {
             const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
             const option = {value: ethers.parseUnits("1000000", "wei")};
             await auction.connect(addr1).placeBid(option)
+
+            const initialAmount = await ethers.provider.getBalance(auction.getAddress());
+
+            // Since the bidding amount reached, so should not be able to place any more bid
             await expect(auction.connect(addr1).placeBid(option)).to.be.reverted;
-            // TODO Get the state function
+
+            // Expect the ether of the account is not changed for auction account because the placeBid is reverted
+            expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(initialAmount);
+           
+            // Expect the state function to be auction ended
+            // expect(await auction.stage.toString()).to.be.equal(auction.Stages.AuctionEnded.toString()); NOT SUPPORTED
         })
 
         it("Should revert if current timestamp exceed the duration", async function () {
             const {auction, addr1} = await loadFixture(deployAuctionFixture); 
             const option = {value: ethers.parseUnits("1000000", "wei")};
             await time.increase(20 * 60);
+
+            const initialAmount = await ethers.provider.getBalance(auction.getAddress());
+
             await expect(auction.connect(addr1).placeBid(option)).to.be.reverted; 
+            
+            // Expect the ether of the account is not changed for auction account because the placeBid is reverted
+            expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(initialAmount);
+           
             // TODO Get the state function
         })
 
-        it("Should show the correct price at each stage", async function () {
-            // should show the correct price
-            // TODO Get the state function
-        })
         // Only can give ethers. TODO
 
         // Should not be able to withdraw if bidding haven,t donee
+        it("Should revert if try to called withdraw function during auctionStart stages", async function(){
+            const {auction, owner, addr1} = await loadFixture(deployAuctionFixture);
+
+            await expect(auction.connect(owner).startAuction()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).withdrawTokens(addr1.address)).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).transferAllTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+        })
     });
 
     
     describe("Dutch Auction Ending Stage", function(){
         it("Should be end earlier if drop until reserved price", async function () {
-            // TODO URGENT RETHINK
+            // TODO URGENT RETHINK and check with prof Issue#02
         });
 
         it("token leftover should be burned (all tokens burned)", async function () {
@@ -290,10 +313,16 @@ describe("Dutch Auction contract", function () {
             
             // check auction internal refund amount
             expect(await auction.getFunds(addr3.address)).to.be.equal(refundAmount);
+            // Check account balances for auction contract
+            const initialAuctionAmount = await ethers.provider.getBalance(auction.getAddress());
             // check execution of withdraw funds
             await checkBalanceTransaction(addr3, auction.connect(addr3).withdrawFunds(), refundAmount);
+            // Check if auction accoount is really reduced;
+            expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(initialAuctionAmount - refundAmount);
             // check if internal refund amount is corrected
             expect(await auction.getFunds(addr3.address)).to.be.equal(0); 
+            
+            
         });
 
         it("Should be able to withdraw the token if wins some token (and check if the refund amount is correct)", async function () {
@@ -308,7 +337,11 @@ describe("Dutch Auction contract", function () {
             const expectedRefund =  BigInt(addr1_payingPrice - addr1_token * clearingPrice);
             expect(await auction.connect(addr1).getFunds(addr1.address)).to.be.equal(expectedRefund);
 
+            const initialAuctionAmount = await ethers.provider.getBalance(auction.getAddress());
             await checkBalanceTransaction(addr1, auction.connect(addr1).withdrawFunds(), expectedRefund);
+            // Check if auction accoount is really reduced;
+            expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(initialAuctionAmount - expectedRefund);
+            
         });
 
         it("Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2", async function () {
@@ -322,8 +355,10 @@ describe("Dutch Auction contract", function () {
 
             const expectedRefund =  BigInt(addr2_payingPrice - addr2_token * clearingPrice);
             expect(await auction.connect(addr2).getFunds(addr2.address)).to.be.equal(expectedRefund);
-
+            const initialAuctionAmount = await ethers.provider.getBalance(auction.getAddress());
             await checkBalanceTransaction(addr2, auction.connect(addr2).withdrawFunds(), expectedRefund);
+            // Check if auction accoount is really reduced;
+            expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(initialAuctionAmount - expectedRefund);
         });
 
         // it("Should not be able to withdraw more than token I have", async function () {
@@ -354,6 +389,13 @@ describe("Dutch Auction contract", function () {
             expect(await axelToken.balanceOf(addr1)).to.be.equal(0);
             expect(await axelToken.balanceOf(addr2)).to.be.equal(0);
             expect(await axelToken.balanceOf(addr3)).to.be.equal(0); 
+        });
+
+        it("Shoudl Not be able to call certain function if auction end", async function(){
+            const {auction, owner, addr1} = await loadFixture(afterBiddingFixture);
+            
+            await expect(auction.connect(owner).startAuction()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).placeBid({value : ethers.parseUnits("0.5", "ether")})).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
         });
     });
 
