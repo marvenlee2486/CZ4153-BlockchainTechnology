@@ -233,6 +233,7 @@ describe("Dutch Auction contract", function () {
             await auction.connect(addr1).withdrawTokens(addr1)
             // await auction.connect(owner).transferAllTokens();
             await expect(await axelToken.totalSupply()).to.be.equal(10000 / defaultReservePrice );
+            expect(await auction.connect(owner).getFunds(owner.address)).to.be.equal(10000);
         });
 
         it("token get should be show correctly at different stage (original price)", async function () {

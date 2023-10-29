@@ -8,17 +8,13 @@ import "./ErrorDutchAuction.sol";
 // TODO REFACTOR
 // 1. REFACTOR the update logic as its cost a lot of gas if everytime it is revoked (considered caching it)
 // 2. REFACTOR the require to be revert with Custom error (require will return error(string) that actually cost more)
-// 3. REFACTOR Changed the logic into state machine pattern using enum.  for better practice and readlibility.
 // 4. Add proper documentation -  https://docs.soliditylang.org/en/develop/natspec-format.html (unfortunately it is part of the grading tho haha)
 // 5. REFACTOR to Safe Math
-
-// Functionality needed
-// 1. Refund cases - I put 10 dollar, but the price is 7 .. so essentially, I get 1 token only .. and 3 ether refund 
-
 
 // For presentation purpose
 // 1. Mentioned that the discount rate is calculated based on duration ... (Bs on this)
 // 2. Mentioned how we handle with the updates.address
+
 contract DutchAuction {
     event TokenLeft(
         uint256 tokenleft
@@ -69,14 +65,21 @@ contract DutchAuction {
         token.burn(tokenLeft);
     }
 
+    function _revealClearingPrice() internal{
+        // TODO Delete when fractional issue solved
+        if (block.timestamp >= expiresAt)
+            clearingPrice = reservePrice;
+        else 
+            clearingPrice = getPrice();
+        _updateTokenAmount(); 
+        // console.log(clearingPrice);
+        funds[owner] = clearingPrice * (tokenAmount - tokenLeft);
+    }
+    
     function nextStage() internal {
         stage = Stages(uint(stage) + 1);
         if (stage == Stages.RevealClearingPrice){
-            // TODO Delete when fractional issue solved
-            if (block.timestamp >= expiresAt)
-                clearingPrice = reservePrice;
-            else 
-                clearingPrice = getPrice();
+            _revealClearingPrice(); 
             nextStage();
             _burnUnusedToken();
         }
@@ -202,10 +205,10 @@ contract DutchAuction {
 
         //refund
         uint256 refund = bid - amountPaid;
-        if (refund > 0) payable(buyer).transfer(refund);
+        if (refund > 0) funds[buyer] += refund;
 
         //transfer eth to seller
-        payable(owner).transfer(amountPaid);
+        //payable(owner).transfer(amountPaid);
     }
 
     function withdrawTokens (address buyer) public timedTransitions atStage(Stages.AuctionEnded){
@@ -228,9 +231,9 @@ contract DutchAuction {
         //refund
         uint256 refund = bid - amountPaid;
         if (refund > 0) funds[buyer] += refund;
-        funds[owner] += amountPaid;
+        //funds[owner] += amountPaid;
         //transfer eth to seller
-        payable(owner).transfer(amountPaid);
+        //payable(owner).transfer(amountPaid);
     }
 
     function transferAllTokens() external onlyOwner() timedTransitions atStage(Stages.AuctionEnded){
