@@ -38,7 +38,7 @@ contract DutchAuction {
     address public immutable owner;
     address[] private buyers;
     mapping(address => uint256) private buyersPosition; //address, value ETH to commit
-
+    mapping(address => uint256) private funds; 
     uint256 public immutable startingPrice;
     uint256 public immutable reservePrice; 
     uint256 public immutable discountRate;
@@ -72,6 +72,7 @@ contract DutchAuction {
     function nextStage() internal {
         stage = Stages(uint(stage) + 1);
         if (stage == Stages.RevealClearingPrice){
+            // TODO Delete when fractional issue solved
             if (block.timestamp >= expiresAt)
                 clearingPrice = reservePrice;
             else 
@@ -182,7 +183,7 @@ contract DutchAuction {
         
         uint256 refund = msg.value - bid;
         if (refund > 0) {
-            payable(buyer).transfer(refund);
+            funds[buyer] = refund;
             nextStage();
         }
         _updateTokenAmount();
@@ -226,8 +227,8 @@ contract DutchAuction {
 
         //refund
         uint256 refund = bid - amountPaid;
-        if (refund > 0) payable(buyer).transfer(refund);
-
+        if (refund > 0) funds[buyer] += refund;
+        funds[owner] += amountPaid;
         //transfer eth to seller
         payable(owner).transfer(amountPaid);
     }
@@ -236,5 +237,20 @@ contract DutchAuction {
         for (uint256 i = 0; i < buyers.length; i++)
             if (buyersPosition[buyers[i]] > 0) 
                 _withdrawTokens(buyers[i]);
+    }
+    
+    function getFunds(address addr) external view returns (uint256) {
+        return funds[addr];
+    }
+
+    function withdrawFunds() external{
+        require(funds[msg.sender] > 0, "Do not have enough funds to withdraw"); 
+        // to prevent recentry attack
+        uint256 amount = funds[msg.sender];
+        funds[msg.sender] = 0; 
+
+        payable(msg.sender).transfer(amount);
+        // in this way an attack would only cause its own withdrawal to failed.
+        // TODO Think see need to require here or not to see if transfer is success.
     }
 }

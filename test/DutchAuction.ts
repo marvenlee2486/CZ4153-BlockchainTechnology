@@ -5,6 +5,16 @@ const { ethers } = require("hardhat");
 const { loadFixture, time } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const assert = require('assert');
 
+async function checkBalanceTransaction(addr, txPromise, amount){
+    const initialAmount: BigInt = await ethers.provider.getBalance(addr.address);
+    const tx = await txPromise;
+    const receipt = await tx.wait();
+    const gasUsedPaid: BigInt = BigInt(receipt.cumulativeGasUsed) * BigInt(receipt.gasPrice); 
+    const expectedAmount: BigInt = initialAmount - gasUsedPaid + BigInt(amount);
+    expect(await ethers.provider.getBalance(addr.address)).to.be.equal(expectedAmount);
+}
+    
+
 describe("Dutch Auction contract", function () {
     const initialAmount = 100;
     const defaultStartingPrice = 10000;
@@ -260,7 +270,7 @@ describe("Dutch Auction contract", function () {
     }
 
     describe("Dutch Auction Distributing Stage", function(){
-        it("Should be able to refund extra amount if last one give extra bid", async function () {
+        it("Should be able automatically without user input refund into internal funds storage if last one give extra bid", async function () {
             
             const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture);
             //console.log(await ethers.provider.getBalance(addr3.address));
@@ -269,64 +279,53 @@ describe("Dutch Auction contract", function () {
             await auction.connect(addr1).placeBid({value: ethers.parseUnits(String(halfTotalSupply),"wei")});
             await time.increase(defaultDuration / 2);
             await auction.connect(addr2).placeBid({value: ethers.parseUnits(String(middlePrice + 1),"wei")});
-            const tx = await auction.connect(addr3).placeBid({value: ethers.parseUnits(String(halfTotalSupply),"wei")});
-            const receipt = await tx.wait();
-            // console.log(await receipt.gasPrice)
-            // console.log(receipt.cumulativeGasUsed)
-            expect(receipt.cumulativeGasUsed).to.be.equal(receipt.gasUsed);
-            const gasUsed = BigInt(receipt.cumulativeGasUsed) * BigInt(receipt.gasPrice);
+            
+            await checkBalanceTransaction(addr3, auction.connect(addr3).placeBid({value: ethers.parseUnits(String(halfTotalSupply),"wei")}), 0 - halfTotalSupply);
             
             const clearingPrice: number = Number(await auction.getPrice());
             const addr1_token: number = Math.floor(halfTotalSupply / clearingPrice);
             const addr2_token: number = 1;
             const addr3_token: number = initialAmount - addr1_token - addr2_token;
+            const refundAmount = BigInt(halfTotalSupply) - BigInt(addr3_token * clearingPrice);
             
-            const initialBalance = BigInt(10000000000000000000000);
-            const expectedNewBalance = initialBalance - BigInt(addr3_token * clearingPrice) - gasUsed;
-            // console.log(expectedNewBalance);
-            // console.log(addr3_token);
-            // console.log(clearingPrice);
-            expect(await ethers.provider.getBalance(addr3.address)).to.be.equal(expectedNewBalance) // TODO Change when the floating point precision loss problem solved
+            // check auction internal refund amount
+            expect(await auction.getFunds(addr3.address)).to.be.equal(refundAmount);
+            // check execution of withdraw funds
+            await checkBalanceTransaction(addr3, auction.connect(addr3).withdrawFunds(), refundAmount);
+            // check if internal refund amount is corrected
+            expect(await auction.getFunds(addr3.address)).to.be.equal(0); 
         });
 
         it("Should be able to withdraw the token if wins some token (and check if the refund amount is correct)", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
             // console.log(addr3.cumulativeGasUsed * addr3.gasPrice);
             expect(await auction.connect(addr1).getPosition()).to.be.equal(addr1_payingPrice);
-            const beforeBalance = await ethers.provider.getBalance(addr1.address);
-            const tx1 = await auction.connect(addr1).withdrawTokens(addr1);
-            const tx1_receipt = await tx1.wait();
-            const gasUsed = BigInt(tx1_receipt.gasUsed) * BigInt(tx1_receipt.gasPrice);
+
+            await checkBalanceTransaction(addr1, auction.connect(addr1).withdrawTokens(addr1), 0);
+            
             expect(await axelToken.balanceOf(addr1.address)).to.be.equal(addr1_token);
-            const expectedBalance = beforeBalance - gasUsed + BigInt(addr1_payingPrice - addr1_token * clearingPrice);
-            expect(await ethers.provider.getBalance(addr1.address)).to.be.equal(expectedBalance)
+
+            const expectedRefund =  BigInt(addr1_payingPrice - addr1_token * clearingPrice);
+            expect(await auction.connect(addr1).getFunds(addr1.address)).to.be.equal(expectedRefund);
+
+            await checkBalanceTransaction(addr1, auction.connect(addr1).withdrawFunds(), expectedRefund);
         });
 
         it("Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
             // console.log(addr3.cumulativeGasUsed * addr3.gasPrice);
             expect(await auction.connect(addr2).getPosition()).to.be.equal(addr2_payingPrice);
-            const beforeBalance = await ethers.provider.getBalance(addr2.address);
-            const tx1 = await auction.connect(addr2).withdrawTokens(addr2);
-            const tx1_receipt = await tx1.wait();
-            const gasUsed = BigInt(tx1_receipt.gasUsed) * BigInt(tx1_receipt.gasPrice);
+            
+            await checkBalanceTransaction(addr2, auction.connect(addr2).withdrawTokens(addr2), 0);
+            
             expect(await axelToken.balanceOf(addr2.address)).to.be.equal(addr2_token);
-            const expectedBalance = beforeBalance - gasUsed + BigInt(addr2_payingPrice - addr2_token * clearingPrice);
-            expect(await ethers.provider.getBalance(addr2.address)).to.be.equal(expectedBalance)
+
+            const expectedRefund =  BigInt(addr2_payingPrice - addr2_token * clearingPrice);
+            expect(await auction.connect(addr2).getFunds(addr2.address)).to.be.equal(expectedRefund);
+
+            await checkBalanceTransaction(addr2, auction.connect(addr2).withdrawFunds(), expectedRefund);
         });
 
-        it("Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr3", async function () {
-            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
-            // console.log(addr3.cumulativeGasUsed * addr3.gasPrice);
-            expect(await auction.connect(addr3).getPosition()).to.be.equal(clearingPrice * addr3_token);
-            const beforeBalance = await ethers.provider.getBalance(addr3.address);
-            const tx1 = await auction.connect(addr3).withdrawTokens(addr3);
-            const tx1_receipt = await tx1.wait();
-            const gasUsed = BigInt(tx1_receipt.gasUsed) * BigInt(tx1_receipt.gasPrice);
-            expect(await axelToken.balanceOf(addr3.address)).to.be.equal(addr3_token);
-            const expectedBalance = beforeBalance - gasUsed + 0n;
-            expect(await ethers.provider.getBalance(addr3.address)).to.be.equal(expectedBalance)
-        });
         // it("Should not be able to withdraw more than token I have", async function () {
            
         // });
