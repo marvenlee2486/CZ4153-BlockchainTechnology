@@ -115,7 +115,7 @@ contract DutchAuction {
         _;
     }
 
-    function startAuction() public atStage(Stages.AuctionConstructed){
+    function startAuction() public onlyOwner atStage(Stages.AuctionConstructed){
         require(token.transferFrom(owner, address(this), tokenAmount), "Token transfer failed");
         
     
@@ -136,7 +136,7 @@ contract DutchAuction {
             return startingPrice - discountRate * (block.timestamp - startAt);
     }
 
-    function getTokenLeft() external returns (uint256) {
+    function getTokenLeft() external auctionStart returns (uint256) {
         _updateTokenAmount();
         emit TokenLeft(tokenLeft);
         return tokenLeft;
