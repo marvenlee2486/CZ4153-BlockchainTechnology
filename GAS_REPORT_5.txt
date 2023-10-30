@@ -1,0 +1,109 @@
+Script started on Tue Oct 31 05:17:30 2023
+[1m[7m%[27m[1m[0m                                                                                                                                             [0m[27m[24m[Jmarvenlee@Zongs-MacBook-Pro CZ4153-BlockchainTechnology % [K[?2004heecho "Optimization 1 & Optimization 2" "(")"[1C[1C[1Cg)"e)"t)"t)"e)"r)" )"c)"a)"n)" )"a)"s)"k)" )"d)"u)"r)"i)"n)"g)" )")" )" )" )" )" )" )" i)"f)" )"a)"u)"c)"t)"i)"o)"n)" )"a)"h)"v)"e)"n)",)")" )" )" )" )" )" h)"a)"v)"e)"n)",)"t)" )"s)"t)"a)"t)")" r)"t)"[1C)"[1C & Optimization 2 (getter can ask if auction haven,t start))"[61D( & Optimization 2 (getter can ask if auction haven,t start))" [K[A[80C) & Optimization 2 (getter can ask if auction haven,t start))"[A[80Ci) & Optimization 2 (getter can ask if auction haven,t start[1B)"[A[79C[P[60C)" [A[78CR) & Optimization 2 (getter can ask if auction haven,t start[1B)"[A[79Ce) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cv) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ce) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ca) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cl) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C ) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cl) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Co) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cg) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ci) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cc) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C ) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C[P[48Cve[P[12C [A[78C[P[49Cen[P[11C [A[78C[P[50Cn,[P[10C [A[78C[P[51C,t[P[9C [A[78C[P[52Ct start))" [A[78C[P[53C start))" [A[78C[P[54Cstart))" [A[78C[P[55Ctart))" [A[78C[P[56Cart))" [A[78Ca) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cl) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C ) & Optimization 2 (getter can ask if auction haven,t start))"[A[79CB) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ci) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cd) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C ) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cl) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Co) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cg) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ci) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C[P[46Cha[P[14C [A[78C[P[47Cav[P[13C [A[78C[P[48Cve[P[12C [A[78C[P[49Cen[P[11C [A[78Cr) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C[P[49Cen[P[11C [A[78C[P[50Cn,[P[10C [A[78C ) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cl) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Co) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cg) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ci) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cc) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C,) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C ) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cr) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ce) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cm) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Co) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cv) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ce) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C ) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cs) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ct) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C[P[34C i[P[26C [A[78C[P[35Cif[P[25C [A[78Co) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cn) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ce) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C ) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cs) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C[P[31Cas[P[29C [A[78Cu) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cn) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cn) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ce) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cc) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ce) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cs) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cs) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ca) & Optimization 2 (ge[1Bter can ask if auction haven,t start))"[A[79Cr) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cy) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C ) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cs) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C[P[19C(g[P[41C [A[78Ce) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C[P[19C(g[P[41C [A[78Cs) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ct) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ca) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Cg) & Optimization 2 (getter can ask if auction haven,t start))"[A[79Ce) & Optimization 2 (getter can ask if auction haven,t start))"[A[79C[?2004l[1B
+Optimization 1 (Reveal Bid logic, remove one unnecessary stage) & Optimization 2 (getter can ask if auction haven,t start))
+[1m[7m%[27m[1m[0m                                                                                                                                             [0m[27m[24m[Jmarvenlee@Zongs-MacBook-Pro CZ4153-BlockchainTechnology % [K[?2004hecho "Optimization 1 (Reveal Bid logic, remove one unnecessary stage) & Optimization 2 (getter can ask if auction haven,t start))"[K[A[11Cexit[K[1B[K[A[62CREPORT_GAS=true npx hardhat test [33Decho "After refactor code to update token and withdraw logic can be view function"[82DREPORT_GAS=true npx hardhat test                                                  [49D[?2004l[1B[33m[1mWarning:[22m[39m SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+--> contracts/ErrorDutchAuction.sol
+
+
+Compiled 11 Solidity files successfully (evm target: paris).
+[0m[0m
+[0m  Dutch Auction contract[0m
+
+  [31m  1) Error due to not testing Clearing Price properly[0m
+[0m    Dutch Auction Creation Stage[0m
+    [32m  [32m✔[39m[0m[90m Should be able to start auction when owner approve[0m
+    [32m  [32m✔[39m[0m[90m Only owner can start Auction[0m
+    [32m  [32m✔[39m[0m[90m Should Not be able to start Auction if owner did not approve[0m
+    [32m  [32m✔[39m[0m[90m Should Not be able to call any function if owner did not start auction[0m
+    [32m  [32m✔[39m[0m[90m Should revert when startingPrice is not positive[0m
+    [32m  [32m✔[39m[0m[90m Should revert when Duration is not positive[0m
+    [32m  [32m✔[39m[0m[90m Should revert when reservePrice is higher than startingPrice[0m
+    [32m  [32m✔[39m[0m[90m Should revert when there is no tokens left[0m
+    [32m  [32m✔[39m[0m[90m Should revert when there is not enought tokens left to start auction[0m
+[0m    Dutch Auction Biding Stage[0m
+    [32m  [32m✔[39m[0m[90m Should be able to bid if amount sufficient[0m
+    [32m  [32m✔[39m[0m[90m Should be able to bid if bid new amount again[0m
+    [32m  [32m✔[39m[0m[90m Should be able to show correct amount of tokenLeft at any point of time[0m
+    [32m  [32m✔[39m[0m[90m Should revert if bidding amount not enought[0m
+    [32m  [32m✔[39m[0m[90m Should revert if bidding amount reached triggered by User place too much[0m
+    [32m  [32m✔[39m[0m[90m Should revert if bidding amount reached triggered by time increase[0m
+    [32m  [32m✔[39m[0m[90m Should revert if current timestamp exceed the duration[0m
+    [32m  [32m✔[39m[0m[90m Should revert if try to called function non-callable at this stage[0m
+[0m    Dutch Auction Ending Stage[0m
+    [32m  [32m✔[39m[0m[90m token leftover should be burned (all tokens burned)[0m
+    [32m  [32m✔[39m[0m[90m token leftover should be burned (partial burned)[0m
+    [32m  [32m✔[39m[0m[90m token get should be show correctly at different stage (original price)[0m
+    [32m  [32m✔[39m[0m[90m token get should be show correctly at different stage (middle price)[0m
+    [32m  [32m✔[39m[0m[90m token get should be show correctly at different stage (reserved price)[0m
+    [32m  [32m✔[39m[0m[90m Attack 1[0m
+    [32m  [32m✔[39m[0m[90m Should Not be able to call certain function if auction end[0m
+[0m    Dutch Auction Distributing Stage (Bidding ended earlier)[0m
+    [32m  [32m✔[39m[0m[90m Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount[0m
+    [32m  [32m✔[39m[0m[90m Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1[0m
+    [32m  [32m✔[39m[0m[90m Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2[0m
+    [32m  [32m✔[39m[0m[90m Should be able for owner to withdraw bid (revenue)[0m
+    [32m  [32m✔[39m[0m[90m Non Owner Should not able to withdraw owner funds and check owner funds[0m
+    [32m  [32m✔[39m[0m[90m After all owner and bidders withdraw tokens and funds, auction POV should contains nothing[0m
+    [32m  [32m✔[39m[0m[90m Should not be able to withdraw again[0m
+    [32m  [32m✔[39m[0m[90m Should not be able to withdraw if I did not bid[0m
+
+[0m  Token contract[0m
+  [32m  [32m✔[39m[0m[90m Should assign the total supply of tokens to the owner initially[0m
+  [32m  [32m✔[39m[0m[90m Should be able to approve by owner ('approve' method) and transfer to buyer[0m
+  [32m  [32m✔[39m[0m[90m Should be able to transfer the tokens from owner 'transfer' methods[0m
+  [32m  [32m✔[39m[0m[90m Should be able to burn the tokens ('burn' and 'burn from' methods)[0m
+  [32m  [32m✔[39m[0m[90m Should not be able to transfer the tokens if not approved[0m
+  [32m  [32m✔[39m[0m[90m Should not be able to transfer the tokens if amount not enough[0m
+
+·-----------------------------------|----------------------------|-------------|-----------------------------·
+|       [90mSolc version: 0.8.20[39m        ·  [90mOptimizer enabled: false[39m  ·  [90mRuns: 200[39m  ·  [90mBlock limit: 30000000 gas[39m  │
+····································|····························|·············|······························
+|  [32m[1mMethods[22m[39m                                                                                                   │
+·················|··················|··············|·············|·············|···············|··············
+|  [1mContract[22m      ·  [1mMethod[22m          ·  [32mMin[39m         ·  [32mMax[39m        ·  [32mAvg[39m        ·  [1m# calls[22m      ·  [1musd (avg)[22m  │
+·················|··················|··············|·············|·············|···············|··············
+|  [90mAxelToken[39m     ·  approve         ·           -  ·          -  ·      46892  ·            [90m7[39m  ·          [32m[90m-[32m[39m  │
+·················|··················|··············|·············|·············|···············|··············
+|  [90mAxelToken[39m     ·  burn            ·       [36m27252[39m  ·      [31m34065[39m  ·      30659  ·            [90m2[39m  ·          [32m[90m-[32m[39m  │
+·················|··················|··············|·············|·············|···············|··············
+|  [90mAxelToken[39m     ·  burnFrom        ·           -  ·          -  ·      35562  ·            [90m1[39m  ·          [32m[90m-[32m[39m  │
+·················|··················|··············|·············|·············|···············|··············
+|  [90mAxelToken[39m     ·  transfer        ·           -  ·          -  ·      52172  ·            [90m2[39m  ·          [32m[90m-[32m[39m  │
+·················|··················|··············|·············|·············|···············|··············
+|  [90mAxelToken[39m     ·  transferFrom    ·           -  ·          -  ·      53589  ·            [90m1[39m  ·          [32m[90m-[32m[39m  │
+·················|··················|··············|·············|·············|···············|··············
+|  [90mDutchAuction[39m  ·  placeBid        ·       [36m51950[39m  ·     [31m227653[39m  ·     137743  ·           [90m24[39m  ·          [32m[90m-[32m[39m  │
+·················|··················|··············|·············|·············|···············|··············
+|  [90mDutchAuction[39m  ·  startAuction    ·           -  ·          -  ·     119112  ·            [90m3[39m  ·          [32m[90m-[32m[39m  │
+·················|··················|··············|·············|·············|···············|··············
+|  [90mDutchAuction[39m  ·  withdrawBid     ·       [36m25908[39m  ·      [31m65853[39m  ·      34546  ·            [90m7[39m  ·          [32m[90m-[32m[39m  │
+·················|··················|··············|·············|·············|···············|··············
+|  [90mDutchAuction[39m  ·  withdrawTokens  ·       [36m65828[39m  ·     [31m126657[39m  ·      73947  ·           [90m13[39m  ·          [32m[90m-[32m[39m  │
+·················|··················|··············|·············|·············|···············|··············
+|  [32m[1mDeployments[22m[39m                      ·                                          ·  [1m% of limit[22m   ·             │
+····································|··············|·············|·············|···············|··············
+|  AxelToken                        ·           -  ·          -  ·    1031832  ·        [90m3.4 %[39m  ·          [32m[90m-[32m[39m  │
+····································|··············|·············|·············|···············|··············
+|  DutchAuction                     ·     [36m1632435[39m  ·    [31m1632471[39m  ·    1632452  ·        [90m5.4 %[39m  ·          [32m[90m-[32m[39m  │
+·-----------------------------------|--------------|-------------|-------------|---------------|-------------·
+
+[92m [0m[32m 38 passing[0m[90m (2s)[0m
+[31m  1 failing[0m
+
+[0m  1) Dutch Auction contract
+       Error due to not testing Clearing Price properly:
+
+      [31mAssertionError: expected 5000 to equal 7600. The numerical values of the given "bigint" and "number" inputs were compared, and they differed.[0m
+      [32m+ expected[0m [31m- actual[0m
+
+      [31m-5000[0m
+      [32m+7600[0m
+      [0m[90m
+      at Context.<anonymous> (test/DutchAuction.ts:563:48)
+      at processTicksAndRejections (node:internal/process/task_queues:95:5)
+[0m
+
+
+[1m[7m%[27m[1m[0m                                                                                                                                             [0m[27m[24m[Jmarvenlee@Zongs-MacBook-Pro CZ4153-BlockchainTechnology % [K[?2004hnnpn  sscs  eexit[?2004l
+
+Script done on Tue Oct 31 05:18:56 2023

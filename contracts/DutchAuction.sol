@@ -19,7 +19,7 @@ contract DutchAuction {
     enum Stages {
         AuctionConstructed,
         AuctionStarted,
-        RevealClearingPrice,
+        // RevealClearingPrice, TODO Optimization 1.
         AuctionEnded
     }
 
@@ -54,11 +54,11 @@ contract DutchAuction {
         _;
     }
 
-    modifier auctionStart(){
-        if (stage == Stages.AuctionConstructed) 
-            revert FunctionInvalidAtThisStage();
-        _;
-    }
+    // modifier auctionStart(){
+    //     if (stage == Stages.AuctionConstructed) 
+    //         revert FunctionInvalidAtThisStage();
+    //     _;
+    // }
 
     function _burnUnusedToken() internal{
         // _updateTokenAmount();
@@ -79,12 +79,12 @@ contract DutchAuction {
     }
     
     function _nextStage() internal {
-        stage = Stages(uint(stage) + 1);
-        if (stage == Stages.RevealClearingPrice){
+        if (stage == Stages.AuctionStarted){
             _revealClearingPrice(); 
-            _nextStage();
             _burnUnusedToken();
         }
+        stage = Stages(uint(stage) + 1);
+        
     }
 
     // Perform timed transitions. Be sure to mention
@@ -126,8 +126,8 @@ contract DutchAuction {
         expiresAt = block.timestamp + duration;
         _nextStage();
     }   
-
-    function getPrice() public auctionStart view returns (uint256) {
+    // Small optimizaation TODO, do we need acutionStart here? previously function getPrice() public auctionStart view returns (uint256)  
+    function getPrice() public view returns (uint256) {
         // WORK AROUND TODO DELETE WHEN Floating point issue is solved
         if (block.timestamp >= expiresAt)
             return reservePrice;
@@ -137,19 +137,18 @@ contract DutchAuction {
         else
             return startingPrice - discountRate * (block.timestamp - startAt);
     }
-
-    function getTokenLeft() external auctionStart view returns (uint256) {
+    // Small optimizaation TODO, do we need acutionStart here? 
+    function getTokenLeft() external view returns (uint256) {
         return _calculateTokenLeft();
     }
-
-    function getPosition() external auctionStart view returns (uint256) {
+    // Small optimizaation TODO, do we need acutionStart here?
+    function getPosition() external view returns (uint256) {
         return buyersPosition[msg.sender];
     }
     
     function _calculateTokenLeft() view internal returns (uint256){
         uint256 currentPrice = getPrice();
         int256 tempTokenLeft = int(tokenAmount);
-        
         for (uint256 i = 0; i < buyers.length; i++) 
             tempTokenLeft -= int(buyersPosition[buyers[i]] / currentPrice);
         

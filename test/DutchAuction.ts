@@ -81,9 +81,9 @@ describe("Dutch Auction contract", function () {
             const tokenAddress = await axelToken.getAddress();
             const auction = await ethers.deployContract("DutchAuction", [startingPrice, reservePrice, tokenAddress, duration], owner);
             await auction.waitForDeployment();
-            await expect(auction.connect(addr1).getPrice()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(addr1).getTokenLeft()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(addr1).getPosition()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            //await expect(auction.connect(addr1).getPrice()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            //await expect(auction.connect(addr1).getTokenLeft()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            //await expect(auction.connect(addr1).getPosition()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(addr1).placeBid({value : ethers.parseUnits("0.5", "ether")})).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(addr1).withdrawTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(owner).withdrawBid()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
@@ -548,7 +548,7 @@ describe("Dutch Auction contract", function () {
     // TODO Auction ended on Time
     // TODO Auction ended earlier (not triggered by placeBid)
 
-    it("Error due to not testing Clearing Price properly", async function () {
+    it("Error due to not testing Clearing Price properly", async function () { // TODO Put a check on clearing price as well
         const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
 
         const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration);
@@ -576,3 +576,15 @@ describe("Dutch Auction contract", function () {
     // });
   
 });
+
+/*
+Final Check
+- Check all tests cover
+    - ethers balances check
+    - token balances check
+    - clearing price
+    - token check
+    - function check at stage
+    - timedtransition check
+
+*/
