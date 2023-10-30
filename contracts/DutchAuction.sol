@@ -35,6 +35,8 @@ contract DutchAuction {
     address[] private buyers;
 
     mapping(address => uint256) private buyersPosition; //address, value ETH to commit
+    uint256 private lastBidRefund;
+    address private lastBidOwner;
     // mapping(address => uint256) private funds; 
     uint256 public ownerFunds;
     uint256 public immutable startingPrice;
@@ -191,10 +193,14 @@ contract DutchAuction {
         
         uint256 refund = msg.value - bid;
         if (refund > 0) {
+            console.log(refund);
             // funds[buyer] = refund; // TODO Maybe this is ok? because if msg.sender is malicious, it only affect herself.
             //
-            payable(msg.sender).transfer(refund);
+            // payable(msg.sender).transfer(refund);
             nextStage();
+            lastBidOwner = msg.sender;
+            lastBidRefund = refund;
+            // buyersPosition[buyer] += refund;
         }
         _updateTokenAmount();
     }
@@ -213,12 +219,38 @@ contract DutchAuction {
 
         //refund
         uint256 refund = bid - amountPaid;
+        if (msg.sender == lastBidOwner) {
+            refund += lastBidRefund;
+            lastBidRefund = 0;
+        }
+
         if (refund > 0) payable(msg.sender).transfer(refund);
     }
+    
+    // Make it only msg.sender can query its own information (privacy)
+    function getRefund() external view atStage(Stages.AuctionEnded) returns(uint256){
+        uint256 bid = buyersPosition[msg.sender];
+        uint256 tokenBought = bid / clearingPrice;
+        uint256 amountPaid = tokenBought * clearingPrice;
+        uint256 refund = bid - amountPaid;
+        if (msg.sender == lastBidOwner) refund += lastBidRefund;
+        return refund;
+    }
 
+    function getTokens() external view atStage(Stages.AuctionEnded) returns(uint256){
+        uint256 bid = buyersPosition[msg.sender];
+        uint256 tokenBought = bid / clearingPrice;
+        return tokenBought;
+    }
+    
     function withdrawBid() external onlyOwner() timedTransitions() atStage(Stages.AuctionEnded){
-        if (ownerFunds == 0) revert InvalidWithdrawer();
+        if (ownerFunds == 0) return;//revert InvalidWithdrawer(); TODO Think see if withdraw token need or not
+        uint temp = ownerFunds; // (Security) reentry attack
         ownerFunds = 0;
-        payable(owner).transfer(ownerFunds);
+        payable(msg.sender).transfer(temp);
+    }
+
+    function getOwnerRevenue() external view onlyOwner() atStage(Stages.AuctionEnded) returns(uint256){
+        return ownerFunds;
     }
 }
