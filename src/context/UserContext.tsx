@@ -1,13 +1,15 @@
 // UserContext.tsx
-import React, { createContext, useState, ReactNode } from 'react';
-import {datastore} from '../helpers/datastore';
+import React, { createContext, useState, ReactNode } from "react";
+import { datastore } from "../helpers/datastore";
 
-interface User {
+type role = "user" | "seller" | "admin";
+
+export interface User {
   uid: number;
   name: string;
   username: string;
   email: string;
-  role: string;
+  role: role;
 }
 
 interface UserContextProps {
@@ -27,14 +29,14 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const login = (userData: User) => {
     setUser(userData);
-    datastore.set('currUser', userData);
-    datastore.set(userData.username, userData)
-    return true
+    datastore.set("currUser", userData);
+    datastore.set(userData.username, userData);
+    return true;
   };
 
   const logout = () => {
     setUser(null);
-    datastore.remove('currUser');
+    datastore.remove("currUser");
   };
 
   return (
