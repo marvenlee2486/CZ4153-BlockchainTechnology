@@ -34,7 +34,6 @@ function TestPage() {
   };
 
   const handleStartAuction = async (e: any) => {
-    e.preventDefault();
     const startingPrice = e.target[0].value;
     const reservePrice = e.target[1].value;
     const duration = e.target[2].value;
@@ -57,7 +56,10 @@ function TestPage() {
 
   const handleJoinAuction = async (e: any) => {};
 
-  const handlePlaceBid = async (e: any) => {};
+  const handlePlaceBid = async (e: any, idx: number) => {
+    const bid = e.target[0].value;
+    datastore.placeBid(idx, [bid, currUser.username]);
+  };
 
   return (
     <div className="sm:ml-64 mt-14 p-4">
@@ -153,31 +155,72 @@ function TestPage() {
           </div>
         )}
       </div>
-
-      {data.map((value, key) => {
-        const keyName = Object.keys(value)[0];
-        const contents = value[keyName];
-        return (
-          <div
-            key={key}
-            className={`${
-              keyName === "currUser" && "bg-green-200"
-            } font-semibold bg-gray-200`}
-          >
-            <p className="p-2 m-2 overflow-y-auto">
-              {keyName}:{"  "}
-              {Object.keys(contents).map((objKey) => {
-                const objValue = contents[objKey];
-                return (
-                  <span key={objKey}>
-                    {objKey}: {objValue},
-                  </span>
-                );
-              })}
-            </p>
-          </div>
-        );
-      })}
+      <div className=" flex flex-col gap-2 pt-2 overflow-y-auto">
+        {data.map((value, key) => {
+          const keyName = Object.keys(value)[0];
+          const contents = value[keyName];
+          if (keyName === "Auctions") {
+            return contents.map((auction: any, idx: number) => {
+              return (
+                <p key={idx} className={`font-semibold bg-red-300 p-2`}>
+                  AuctionID {idx}: <br />
+                  {Object.keys(auction).map((objKey) => {
+                    const objValue = auction[objKey];
+                    if (objKey === "bids") {
+                      return (
+                        <p key={objKey}>
+                          bids:
+                          {objValue.map((bid: any) => (
+                            <p>
+                              &lt; {bid[0]}, {bid[1]} &gt;
+                            </p>
+                          ))}
+                        </p>
+                      );
+                    }
+                    return (
+                      <span key={objKey}>
+                        {objKey}: {objValue}, {"  "}
+                      </span>
+                    );
+                  })}
+                  <form
+                    onSubmit={(e) => handlePlaceBid(e, idx)}
+                    className="flex items-center justify-start gap-2 pt-2"
+                  >
+                    <input placeholder="Bid amount..." type="numbers"></input>
+                    <button
+                      type="submit"
+                      className="px-12 py-1 text-white bg-blue-400 rounded-lg"
+                    >
+                      placeBid
+                    </button>
+                  </form>
+                </p>
+              );
+            });
+          } else {
+            return (
+              <p
+                key={key}
+                className={`${
+                  keyName === "currUser" && "bg-green-200"
+                } font-semibold bg-gray-200 p-2`}
+              >
+                {keyName}:{"  "}
+                {Object.keys(contents).map((objKey) => {
+                  const objValue = contents[objKey];
+                  return (
+                    <span key={objKey}>
+                      {objKey}: {objValue},
+                    </span>
+                  );
+                })}
+              </p>
+            );
+          }
+        })}
+      </div>
     </div>
   );
 }

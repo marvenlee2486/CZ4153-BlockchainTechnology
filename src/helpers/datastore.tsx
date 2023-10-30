@@ -41,22 +41,14 @@ export const datastore = {
     // Serialize and store updated data
     localStorage.setItem(key, JSON.stringify(updatedData));
   },
-  placeBid: (auctionId: string, bid: [number, string]): boolean => {
+  placeBid: (auctionId: number, bid: [number, string]): boolean => {
     const auctions = datastore.get("Auctions");
     if (!Array.isArray(auctions)) {
       console.log("No auctions found");
       return false;
     }
 
-    const targetIndex = auctions.findIndex(
-      (auction: any) => auction.auctionId === auctionId
-    );
-    if (targetIndex === -1) {
-      console.log("No auction found");
-      return false;
-    }
-
-    auctions[targetIndex].bids.push(bid);
+    auctions[auctionId].bids.push(bid);
     datastore.set("Auctions", auctions);
     return true;
   },
