@@ -18,7 +18,7 @@ describe("Dutch Auction contract", function () {
     }
 
     describe("Dutch Auction Creation Stage", function(){
-        it("Should be able to start auction on construction", async function () {
+        it("Should be able to start auction when owner approve", async function () {
             const {axelToken, owner} = await loadFixture(deployTokenFixture);
             const startingPrice = 100;
             const reservePrice = 50; 
@@ -36,6 +36,47 @@ describe("Dutch Auction contract", function () {
             // expect(auction.reservePrice).to.equal(reservePrice);
             // expect(auction.expiresAt - auction.startAt).to.equal(duration)
             // TODO expect duration to be a float number? discountRate TO DISCUSS
+        });
+
+        it("Only owner can start Auction", async function(){
+            const {axelToken, owner, addr1} = await loadFixture(deployTokenFixture);
+            const startingPrice = 100;
+            const reservePrice = 50; 
+            const duration = 20 * 60;
+            const tokenAddress = await axelToken.getAddress();
+            const auction = await ethers.deployContract("DutchAuction", [startingPrice, reservePrice, tokenAddress, duration], owner);
+            await auction.waitForDeployment();
+            // expect(auction.owner).to.equal(owner.address);
+            await axelToken.connect(owner).approve(await auction.getAddress(), initialAmount);
+            await expect(auction.connect(addr1).startAuction()).to.be.reverted;
+        });
+        
+        it("Should Not be able to start Auction if owner did not approve", async function(){
+            const {axelToken, owner} = await loadFixture(deployTokenFixture);
+            const startingPrice = 100;
+            const reservePrice = 50; 
+            const duration = 20 * 60;
+            const tokenAddress = await axelToken.getAddress();
+            const auction = await ethers.deployContract("DutchAuction", [startingPrice, reservePrice, tokenAddress, duration], owner);
+            await auction.waitForDeployment();
+            await expect(auction.connect(owner).startAuction()).to.be.revertedWithCustomError(axelToken, "ERC20InsufficientAllowance");
+        });
+
+        it("Shoudl Not be able to call any function if owner did not start auction", async function(){
+            const {axelToken, owner, addr1} = await loadFixture(deployTokenFixture);
+            const startingPrice = 100;
+            const reservePrice = 50; 
+            const duration = 20 * 60;
+            const tokenAddress = await axelToken.getAddress();
+            const auction = await ethers.deployContract("DutchAuction", [startingPrice, reservePrice, tokenAddress, duration], owner);
+            await auction.waitForDeployment();
+            await expect(auction.connect(addr1).getPrice()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).getTokenLeft()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).getPosition()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).placeBid({value : ethers.parseUnits("0.5", "ether")})).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).withdrawTokens(addr1.address)).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).transferAllTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            
         });
 
         it("Should revert when startingPrice is not positive", async function () {
