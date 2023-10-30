@@ -16,10 +16,6 @@ import "./ErrorDutchAuction.sol";
 // 2. Mentioned how we handle with the updates.address
 
 contract DutchAuction {
-    event TokenLeft(
-        uint256 tokenleft
-    );
-
     enum Stages {
         AuctionConstructed,
         AuctionStarted,
@@ -65,12 +61,13 @@ contract DutchAuction {
     }
 
     function _burnUnusedToken() internal{
-        _updateTokenAmount();
+        // _updateTokenAmount();
         token.burn(tokenLeft);
     }
 
     function _revealClearingPrice() internal{
         // TODO Delete when fractional issue solved
+        // ERRORRRRRRRRR Clearing Price error ... TODO Think how to resolve ..
         if (block.timestamp >= expiresAt)
             clearingPrice = reservePrice;
         else 
@@ -81,11 +78,11 @@ contract DutchAuction {
         ownerFunds = clearingPrice * (tokenAmount - tokenLeft); 
     }
     
-    function nextStage() internal {
+    function _nextStage() internal {
         stage = Stages(uint(stage) + 1);
         if (stage == Stages.RevealClearingPrice){
             _revealClearingPrice(); 
-            nextStage();
+            _nextStage();
             _burnUnusedToken();
         }
     }
@@ -95,7 +92,7 @@ contract DutchAuction {
     // will not take the new stage into account.
     modifier timedTransitions() {
         if (stage == Stages.AuctionStarted && block.timestamp >= expiresAt)
-            nextStage();
+            _nextStage();
         // The other stages transition by transaction
         _;
     }
@@ -120,19 +117,14 @@ contract DutchAuction {
     modifier onlyOwner() {
         if(msg.sender != owner)
             revert OnlyOwnerCanCallFunction();
-        // require(msg.sender == owner, "Only the owner can call this function");
         _;
     }
 
     function startAuction() public onlyOwner atStage(Stages.AuctionConstructed){
         token.transferFrom(owner, address(this), tokenAmount);
-        // require(token.transferFrom(owner, address(this), tokenAmount), "Token transfer failed");
-        
-    
         startAt = block.timestamp;
         expiresAt = block.timestamp + duration;
-        
-        nextStage();
+        _nextStage();
     }   
 
     function getPrice() public auctionStart view returns (uint256) {
@@ -146,32 +138,30 @@ contract DutchAuction {
             return startingPrice - discountRate * (block.timestamp - startAt);
     }
 
-    function getTokenLeft() external auctionStart returns (uint256) {
-        _updateTokenAmount();
-        emit TokenLeft(tokenLeft);
-        return tokenLeft;
+    function getTokenLeft() external auctionStart view returns (uint256) {
+        return _calculateTokenLeft();
     }
 
     function getPosition() external auctionStart view returns (uint256) {
         return buyersPosition[msg.sender];
     }
-
-    function _updateTokenAmount() internal{
-        // require(auctionStarted, "Auction has not started");
-        
+    
+    function _calculateTokenLeft() view internal returns (uint256){
         uint256 currentPrice = getPrice();
-        
         int256 tempTokenLeft = int(tokenAmount);
         
         for (uint256 i = 0; i < buyers.length; i++) 
             tempTokenLeft -= int(buyersPosition[buyers[i]] / currentPrice);
         
-        if (tempTokenLeft <= 0) {
-            tokenLeft = 0;
-        }
-        else {
-            tokenLeft = uint(tempTokenLeft);
-        }
+        if (tempTokenLeft <= 0) 
+            tempTokenLeft = 0;
+
+        return uint256(tempTokenLeft);
+    }
+    
+    function _updateTokenAmount() internal{
+        // require(auctionStarted, "Auction has not started");
+        tokenLeft = _calculateTokenLeft();
     }
 
     function placeBid() external payable timedTransitions atStage(Stages.AuctionStarted) {
@@ -180,7 +170,12 @@ contract DutchAuction {
         if(msg.value < currentPrice) revert InvalidBidValue();
 
         _updateTokenAmount();
-        
+        // Wah this case damn Axel see
+        if(tokenLeft == 0){
+            // nextStage();
+            // return;
+            // LETS HAVE CASE STUDY FOR THIS....TOMORROW TO MEET
+        }
 
         address buyer = msg.sender;
         if (buyersPosition[buyer] == 0) buyers.push(buyer); //new buyer
@@ -193,21 +188,20 @@ contract DutchAuction {
         
         uint256 refund = msg.value - bid;
         if (refund > 0) {
-            console.log(refund);
+            // console.log(refund);
             // funds[buyer] = refund; // TODO Maybe this is ok? because if msg.sender is malicious, it only affect herself.
             //
             // payable(msg.sender).transfer(refund);
-            nextStage();
+            _nextStage();
             lastBidOwner = msg.sender;
             lastBidRefund = refund;
             // buyersPosition[buyer] += refund;
         }
-        _updateTokenAmount();
+        // _updateTokenAmount(); // CONFIRM WITH AXEL, No need right? No need waste gas test pass la TODO
     }
 
     function withdrawTokens () public timedTransitions() atStage(Stages.AuctionEnded){
         if (buyersPosition[msg.sender] == 0) revert InvalidWithdrawer();
-        //require(buyersPosition[buyer] > 0, "You did not submit a valid bid or you have withdrawn your token");
         
         uint256 bid = buyersPosition[msg.sender];
         uint256 tokenBought = bid / clearingPrice;
@@ -226,7 +220,14 @@ contract DutchAuction {
 
         if (refund > 0) payable(msg.sender).transfer(refund);
     }
-    
+     
+    function withdrawBid() external onlyOwner() timedTransitions() atStage(Stages.AuctionEnded){
+        if (ownerFunds == 0) return;//revert InvalidWithdrawer(); TODO Think see if withdraw token need or not
+        uint temp = ownerFunds; // (Security) reentry attack
+        ownerFunds = 0;
+        payable(msg.sender).transfer(temp);
+    }
+
     // Make it only msg.sender can query its own information (privacy)
     function getRefund() external view atStage(Stages.AuctionEnded) returns(uint256){
         uint256 bid = buyersPosition[msg.sender];
@@ -243,13 +244,6 @@ contract DutchAuction {
         return tokenBought;
     }
     
-    function withdrawBid() external onlyOwner() timedTransitions() atStage(Stages.AuctionEnded){
-        if (ownerFunds == 0) return;//revert InvalidWithdrawer(); TODO Think see if withdraw token need or not
-        uint temp = ownerFunds; // (Security) reentry attack
-        ownerFunds = 0;
-        payable(msg.sender).transfer(temp);
-    }
-
     function getOwnerRevenue() external view onlyOwner() atStage(Stages.AuctionEnded) returns(uint256){
         return ownerFunds;
     }
