@@ -1,19 +1,23 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { datastore } from "../Data/datastore";
-import { User } from "../helpers/UserContext";
 import { ethers } from "ethers";
 import AxelTokenArtifact from "../artifacts/contracts/AxelToken.sol/AxelToken.json";
 import DutchAuctionArtifact from "../artifacts/contracts/DutchAuction.sol/DutchAuction.json";
 import UserContext from "../helpers/UserContext";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 // timer function for auction
 // auctioneer needs to create auction, display approve total_amount_token to confirm
 // and then start auction.
 
 function TestPage() {
   const { user } = useContext(UserContext) ?? {};
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
   const data = datastore.getAllData();
-  const [account, setAccount] = useState("");
+
+  useEffect(() => {}, []);
+
   const requestAccount = async () => {
     if (typeof window?.ethereum === "undefined") {
       alert("Please install MetaMask");
@@ -28,6 +32,16 @@ function TestPage() {
       }
       const provider = new ethers.BrowserProvider(window?.ethereum);
       const signer = await provider.getSigner();
+      const selectedAddress = await signer.getAddress();
+      if (
+        ethers.getAddress(selectedAddress) !== ethers.getAddress(user?.address)
+      ) {
+        console.log(user?.address, selectedAddress);
+        alert(
+          `Wrong Account. Ensure you are logged into account with address: ${user?.address}`
+        );
+        return [];
+      }
       return [provider, signer];
     }
   };
@@ -38,7 +52,7 @@ function TestPage() {
     const eth = e.target[0].value;
   };
 
-  const [axelTokenBalance, setAxelTokenBalance] = useState(0); // [AxelTokenBalance, setAxelTokenBalance
+  const [axelTokenBalance, setAxelTokenBalance] = useState("0"); // [AxelTokenBalance, setAxelTokenBalance
   const [axelTokenAddress, setAxelTokenAddress] = useState("");
   const handleGetAxelTokenBalance = async (e: any) => {
     const [provider, signer] = await requestAccount();
@@ -49,7 +63,7 @@ function TestPage() {
     );
     const balance = await axelToken.balanceOf(signer);
     console.log(balance, typeof balance);
-    setAxelTokenBalance(balance);
+    setAxelTokenBalance(balance.toString() + "AXL");
   };
   const handleMintAxelToken = async (e: any) => {
     e.preventDefault(); // prevent page refresh so can read console.log

@@ -8,7 +8,8 @@ import { hooks, metaMask } from "../helpers/connector";
 import { Status } from "../components/Status";
 import { Chain } from "../components/Chain";
 import { Accounts } from "../components/Accounts";
-import { ethers } from "ethers";
+import { isAccountActive } from "../helpers/connector";
+
 const {
   useChainId,
   useAccounts,
@@ -25,7 +26,9 @@ const LoginPage = () => {
   const isActive = useIsActive();
   const provider = useProvider();
   const ENSNames = useENSNames(provider);
-  const [error, setError] = useState(undefined);
+  const [error, setError] = useState<Error | undefined>();
+
+  console.log(provider);
 
   const navigate = useNavigate();
   const { login } = useContext(UserContext) ?? {}; // login status
@@ -56,18 +59,6 @@ const LoginPage = () => {
 
   const handleLogin = (user: User) => {
     login?.(user);
-  };
-
-  const handleAccountActive = (address: string) => {
-    if (!accounts) return false;
-    function handleCheckSumCompare(address: string, address2: string) {
-      return (
-        ethers.isAddress(address) &&
-        ethers.isAddress(address2) &&
-        ethers.getAddress(address) === ethers.getAddress(address2)
-      );
-    }
-    return accounts?.some((account) => handleCheckSumCompare(account, address));
   };
 
   return (
@@ -118,7 +109,7 @@ const LoginPage = () => {
         </div>
         <h2>Select a User to Login</h2>
         {userStore.map((user) => {
-          const buttonActive = handleAccountActive(user.address);
+          const buttonActive = isAccountActive(user.address, accounts);
           return (
             <button
               className={`${
