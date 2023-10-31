@@ -1,19 +1,16 @@
-import { Outlet, Link, useLoaderData, useNavigate } from "react-router-dom";
-import { datastore } from "../helpers/datastore";
-
-export async function loader() {
-  const storedUser = localStorage.getItem("currUser");
-  if (storedUser) {
-    return JSON.parse(storedUser);
-  }
-}
+import {
+  Outlet,
+  Link,
+  useLoaderData,
+  useNavigate,
+  Navigate,
+} from "react-router-dom";
+import { datastore } from "../Data/datastore";
+import UserContext from "../helpers/UserContext";
+import { useContext } from "react";
 
 const RootLayout = () => {
-  const navigate = useNavigate();
-  if (!localStorage.getItem("currUser")) {
-    navigate("/Login");
-  }
-  const user = useLoaderData();
+  const { user, logout } = useContext(UserContext) ?? {};
   return (
     <>
       <nav className=" fixed top-0 z-50 w-full bg-white border-b border-gray-200">
@@ -57,7 +54,7 @@ const RootLayout = () => {
               <div className="flex items-center ml-3">
                 <div className="flex gap-2">
                   <span className="sm:text-2xl whitespace-nowrap self-center text-xl font-semibold">
-                    {user.name}
+                    {user.username}
                   </span>
                   <button
                     type="button"
@@ -90,13 +87,13 @@ const RootLayout = () => {
                   </div>
                   <ul className="py-1" role="none">
                     <li>
-                      <Link
-                        to={`Login`}
+                      <div
+                        onClick={logout}
                         className="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
                         role="menuitem"
                       >
                         <div>Sign Out</div>
-                      </Link>
+                      </div>
                     </li>
                   </ul>
                 </div>

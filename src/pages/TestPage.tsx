@@ -1,37 +1,31 @@
-import { useState } from "react";
-import { datastore } from "../helpers/datastore";
-import { User } from "../context/UserContext";
-import { Signature, ethers } from "ethers";
+import { useState, useContext } from "react";
+import { datastore } from "../Data/datastore";
+import { User } from "../helpers/UserContext";
+import { ethers } from "ethers";
 import AxelTokenArtifact from "../artifacts/contracts/AxelToken.sol/AxelToken.json";
 import DutchAuctionArtifact from "../artifacts/contracts/DutchAuction.sol/DutchAuction.json";
-import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
-
+import UserContext from "../helpers/UserContext";
+import { useNavigate } from "react-router-dom";
 // timer function for auction
 // auctioneer needs to create auction, display approve total_amount_token to confirm
 // and then start auction.
 
 function TestPage() {
+  const { user } = useContext(UserContext) ?? {};
   const data = datastore.getAllData();
-  const dataObj = data.reduce((acc: any, obj: any) => {
-    const [key, value] = Object.entries(obj)[0];
-    acc[key] = value;
-    return acc;
-  }, {});
-  const currUser = dataObj["currUser"];
-  // const currUser = dataObj.filter((key) => key === "currUser")[0];
-  // const sellers = dataObj.filter((value: any) => value?.role === "seller");
-  // console.log(currUser);
-
-  const hardhat_accounts = [
-    0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266,
-    0x70997970c51812dc3a010c7d01b50e0d17dc79c8,
-  ];
-
+  const [account, setAccount] = useState("");
   const requestAccount = async () => {
     if (typeof window?.ethereum === "undefined") {
       alert("Please install MetaMask");
       return [];
     } else {
+      console.log("Connected to network", window?.ethereum?.networkVersion);
+      if (window?.ethereum?.networkVersion !== "1337") {
+        alert(
+          `Please ensure the following:\n 1.Create and connect to Localhost:8545, chainID 1337\n2. Ensure you are logged into account with address: ${user?.address}`
+        );
+        return [];
+      }
       const provider = new ethers.BrowserProvider(window?.ethereum);
       const signer = await provider.getSigner();
       return [provider, signer];
@@ -89,7 +83,7 @@ function TestPage() {
       reservePrice: reservePrice,
       currPrice: startingPrice,
       duration: duration,
-      seller: currUser.username,
+      seller: user.username,
       bids: [],
     };
     // await sucess..
@@ -104,7 +98,7 @@ function TestPage() {
 
   const handlePlaceBid = async (e: any, idx: number) => {
     const bid = e.target[0].value;
-    datastore.placeBid(idx, [bid, currUser.username]);
+    datastore.placeBid(idx, [bid, user.username]);
   };
 
   return (
@@ -156,7 +150,7 @@ function TestPage() {
           </form>
         </div>
 
-        {currUser?.role === "seller" && (
+        {user?.role === "seller" && (
           <div className="w-full p-2 bg-gray-400">
             <div>Start New Auction</div>
             <form
@@ -250,7 +244,7 @@ function TestPage() {
               <p
                 key={key}
                 className={`${
-                  keyName === "currUser" && "bg-green-200"
+                  keyName === user?.username && "bg-green-200"
                 } font-semibold bg-gray-200 p-2`}
               >
                 {keyName}:{"  "}

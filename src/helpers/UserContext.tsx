@@ -1,15 +1,16 @@
 // UserContext.tsx
 import React, { createContext, useState, ReactNode } from "react";
-import { datastore } from "../helpers/datastore";
-
+import { datastore } from "../Data/datastore";
+import { useNavigate } from "react-router-dom";
+import { useLocalStorage } from "../Data/useLocalStorage";
 type role = "user" | "seller" | "admin";
 
 export interface User {
   uid: number;
-  name: string;
   username: string;
   email: string;
   role: role;
+  address: string;
 }
 
 interface UserContextProps {
@@ -25,18 +26,16 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-
+  const [user, setUser] = useLocalStorage("user", null);
+  const navigate = useNavigate();
   const login = (userData: User) => {
     setUser(userData);
-    datastore.set("currUser", userData);
-    datastore.set(userData.username, userData);
-    return true;
+    navigate(`/test/:${userData.uid}`);
   };
 
   const logout = () => {
     setUser(null);
-    datastore.remove("currUser");
+    navigate("/login", { replace: true });
   };
 
   return (
