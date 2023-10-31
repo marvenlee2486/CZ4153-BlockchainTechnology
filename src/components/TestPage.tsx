@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { datastore } from "../helpers/datastore";
 import { User } from "../context/UserContext";
+import { Signature, ethers } from "ethers";
+import AxelTokenArtifact from "../artifacts/contracts/AxelToken.sol/AxelToken.json";
+import DutchAuctionArtifact from "../artifacts/contracts/DutchAuction.sol/DutchAuction.json";
+import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
+
+// timer function for auction
+// auctioneer needs to create auction, display approve total_amount_token to confirm
+// and then start auction.
 
 function TestPage() {
   const data = datastore.getAllData();
@@ -13,24 +21,62 @@ function TestPage() {
   // const currUser = dataObj.filter((key) => key === "currUser")[0];
   // const sellers = dataObj.filter((value: any) => value?.role === "seller");
   // console.log(currUser);
-  const [ETHbalance, setETHbalance] = useState(0);
-  const handleGetETHBalance = async (e: any) => {
-    // setETHbalance(await ...);
+
+  const hardhat_accounts = [
+    0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266,
+    0x70997970c51812dc3a010c7d01b50e0d17dc79c8,
+  ];
+
+  const requestAccount = async () => {
+    if (typeof window?.ethereum === "undefined") {
+      alert("Please install MetaMask");
+      return [];
+    } else {
+      const provider = new ethers.BrowserProvider(window?.ethereum);
+      const signer = await provider.getSigner();
+      return [provider, signer];
+    }
   };
+
+  const [ETHbalance, setETHbalance] = useState(0);
+  const handleGetETHBalance = async (e: any) => {};
   const handleSetETHBalance = async (e: any) => {
-    e.preventDefault();
     const eth = e.target[0].value;
-    console.log(eth);
   };
 
   const [axelTokenBalance, setAxelTokenBalance] = useState(0); // [AxelTokenBalance, setAxelTokenBalance
+  const [axelTokenAddress, setAxelTokenAddress] = useState("");
   const handleGetAxelTokenBalance = async (e: any) => {
-    // setAxelTokenBalance(await ...);
+    const [provider, signer] = await requestAccount();
+    const axelToken = new ethers.Contract(
+      axelTokenAddress, // from minted token function
+      AxelTokenArtifact.abi,
+      signer
+    );
+    const balance = await axelToken.balanceOf(signer);
+    console.log(balance, typeof balance);
+    setAxelTokenBalance(balance);
   };
   const handleMintAxelToken = async (e: any) => {
-    e.preventDefault();
-    const token = e.target[0].value;
-    console.log(token);
+    e.preventDefault(); // prevent page refresh so can read console.log
+    const tokenValue = e.target[0].value;
+    e.target.reset(); // clear input field
+    console.log(tokenValue);
+    try {
+      const [provider, signer] = await requestAccount();
+      const factory = new ethers.ContractFactory(
+        AxelTokenArtifact.abi,
+        AxelTokenArtifact.bytecode,
+        signer
+      );
+      const contract = await factory.deploy(tokenValue);
+      await contract.waitForDeployment();
+      const address = await contract.getAddress();
+      console.log("axelToken address", address);
+      setAxelTokenAddress(address);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleStartAuction = async (e: any) => {
