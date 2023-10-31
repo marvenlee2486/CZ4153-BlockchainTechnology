@@ -70,7 +70,22 @@ describe("Dutch Auction contract", function () {
             const tokenAddress = await axelToken.getAddress();
             const auction = await ethers.deployContract("DutchAuction", [startingPrice, reservePrice, tokenAddress, duration], owner);
             await auction.waitForDeployment();
-            await expect(auction.connect(owner).startAuction()).to.be.revertedWithCustomError(axelToken, "ERC20InsufficientAllowance");
+            await expect(auction.connect(owner).startAuction()).to.be.revertedWithCustomError(auction, "InvalidAuctionInput");
+        });
+
+        it("token amount is dependable on allowances", async function () {
+            const {axelToken, owner} = await loadFixture(deployTokenFixture);
+            const startingPrice = 100;
+            const reservePrice = 50; 
+            const duration = 20 * 60;
+            const tokenAddress = await axelToken.getAddress();
+            const auction = await ethers.deployContract("DutchAuction", [startingPrice, reservePrice, tokenAddress, duration], owner);
+            await auction.waitForDeployment();
+            await axelToken.connect(owner).approve(await auction.getAddress(), 1);
+            await auction.connect(owner).startAuction();
+            expect(await auction.getTokenLeft()).to.be.equal(1);
+            await axelToken.connect(owner).approve(await auction.getAddress(), 1);
+            expect(await auction.getTokenLeft()).to.be.equal(1);
         });
 
         it("Should Not be able to call any function if owner did not start auction", async function(){
@@ -81,7 +96,7 @@ describe("Dutch Auction contract", function () {
             const tokenAddress = await axelToken.getAddress();
             const auction = await ethers.deployContract("DutchAuction", [startingPrice, reservePrice, tokenAddress, duration], owner);
             await auction.waitForDeployment();
-            //await expect(auction.connect(addr1).getPrice()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).getPrice()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             //await expect(auction.connect(addr1).getTokenLeft()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             //await expect(auction.connect(addr1).getPosition()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(addr1).placeBid({value : ethers.parseUnits("0.5", "ether")})).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
@@ -559,7 +574,8 @@ describe("Dutch Auction contract", function () {
         await auction.connect(addr1).placeBid(option);
         
         await time.increase(defaultDuration); // - 1 here is because placeBid causes 1 additional time.// TODO not strict on 1 
-        
+   
+        console.log(await auction.connect(addr1).withdrawTokens());
         expect(await auction.getPrice()).to.be.equal(expectedClearingPrice);
 
     });

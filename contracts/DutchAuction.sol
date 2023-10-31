@@ -24,7 +24,7 @@ contract DutchAuction {
     }
 
     ERC20Burnable public immutable token;
-    uint256 public immutable tokenAmount;
+    uint256 public tokenAmount;
     uint256 public tokenLeft;
 
     address public immutable owner;
@@ -54,11 +54,11 @@ contract DutchAuction {
         _;
     }
 
-    // modifier auctionStart(){
-    //     if (stage == Stages.AuctionConstructed) 
-    //         revert FunctionInvalidAtThisStage();
-    //     _;
-    // }
+    modifier auctionStart(){
+        if (stage == Stages.AuctionConstructed) 
+            revert FunctionInvalidAtThisStage();
+        _;
+    }
 
     function _burnUnusedToken() internal{
         // _updateTokenAmount();
@@ -99,16 +99,11 @@ contract DutchAuction {
 
     constructor(uint256 _startingPrice, uint256 _reservePrice, address _token, uint256 _duration) {
         if(_startingPrice < _reservePrice || _reservePrice == 0 || _duration == 0 || ERC20Burnable(_token).totalSupply() == 0)
-            revert ConstructorInvalidInput();
+            revert InvalidAuctionInput();
 
         owner = msg.sender;
-
         token = ERC20Burnable(_token);
-        tokenAmount = token.balanceOf(owner);
-        tokenLeft = tokenAmount;
-
         duration = _duration;
-
         startingPrice = _startingPrice;
         reservePrice = _reservePrice;
         discountRate = (startingPrice - reservePrice) / duration;
@@ -121,13 +116,19 @@ contract DutchAuction {
     }
 
     function startAuction() public onlyOwner atStage(Stages.AuctionConstructed){
-        token.transferFrom(owner, address(this), tokenAmount);
+        tokenAmount = token.allowance(owner, address(this));
+        
+        if (tokenAmount == 0)
+            revert InvalidAuctionInput();
+        
+        tokenLeft = tokenAmount;
+        token.transferFrom(owner, address(this), tokenAmount); // This is to lock the token so owner cannot transfer during auction
         startAt = block.timestamp;
         expiresAt = block.timestamp + duration;
         _nextStage();
     }   
-    // Small optimizaation TODO, do we need acutionStart here? previously function getPrice() public auctionStart view returns (uint256)  
-    function getPrice() public view returns (uint256) {
+    
+    function getPrice() auctionStart public view returns (uint256) {
         // WORK AROUND TODO DELETE WHEN Floating point issue is solved
         if (block.timestamp >= expiresAt)
             return reservePrice;
@@ -137,11 +138,11 @@ contract DutchAuction {
         else
             return startingPrice - discountRate * (block.timestamp - startAt);
     }
-    // Small optimizaation TODO, do we need acutionStart here? 
+
     function getTokenLeft() external view returns (uint256) {
         return _calculateTokenLeft();
     }
-    // Small optimizaation TODO, do we need acutionStart here?
+
     function getPosition() external view returns (uint256) {
         return buyersPosition[msg.sender];
     }
@@ -222,9 +223,9 @@ contract DutchAuction {
      
     function withdrawBid() external onlyOwner() timedTransitions() atStage(Stages.AuctionEnded){
         if (ownerFunds == 0) return;//revert InvalidWithdrawer(); TODO Think see if withdraw token need or not
-        uint temp = ownerFunds; // (Security) reentry attack
+        uint withdrawAmount = ownerFunds; // (Security) reentry attack
         ownerFunds = 0;
-        payable(msg.sender).transfer(temp);
+        payable(msg.sender).transfer(withdrawAmount);
     }
 
     // Make it only msg.sender can query its own information (privacy)

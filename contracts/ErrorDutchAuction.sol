@@ -4,7 +4,7 @@ error FunctionInvalidAtThisStage();
 
 error OnlyOwnerCanCallFunction();
 
-error ConstructorInvalidInput();
+error InvalidAuctionInput();
 
 error InvalidBidValue();
 
