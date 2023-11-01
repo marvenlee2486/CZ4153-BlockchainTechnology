@@ -205,7 +205,7 @@ describe("Dutch Auction contract", function () {
         it("Should be able to show correct amount of tokenLeft at any point of time", async function(){
             const {auction, addr1, addr2, startAt} = await loadFixture(deployAuctionFixture); 
             
-            const discountRate =  Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration);
+            const discountRate =  (defaultStartingPrice - defaultReservePrice) / defaultDuration;
 
             // Case 1: Token Left should not change if no one bid
             await time.increaseTo(startAt + 1);
@@ -277,7 +277,7 @@ describe("Dutch Auction contract", function () {
         it("Should revert if bidding amount reached triggered by time increase", async function () {
             const {auction, owner, addr1, startAt} = await loadFixture(deployAuctionFixture); 
 
-            const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration);
+            const discountRate = (defaultStartingPrice - defaultReservePrice) / defaultDuration;
             const expectedClearingPrice = defaultStartingPrice - discountRate * ((defaultDuration) / 2);
 
             const option = {value: ethers.parseUnits(String(expectedClearingPrice * initialAmount), "wei")};
@@ -351,7 +351,7 @@ describe("Dutch Auction contract", function () {
         it("token get should be show correctly at different stage (middle price)", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture);
             await time.increase(10 * 60);
-            const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration); // TODO
+            const discountRate = (defaultStartingPrice - defaultReservePrice) / defaultDuration; // TODO
             await expect(await auction.getPrice()).to.be.equal(defaultStartingPrice -  discountRate * 10 * 60);
         });
 

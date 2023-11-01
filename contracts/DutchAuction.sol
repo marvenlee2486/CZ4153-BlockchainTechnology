@@ -45,7 +45,7 @@ contract DutchAuction {
     uint256 public expiresAt;
     uint256 public immutable duration;
 
-    uint256 public constant DECIMAL_PLACE = 10;
+    uint256 public constant DECIMAL_PLACE = 10**10;
     
     Stages public stage = Stages.AuctionConstructed;
     uint256 revenue = 0;
@@ -109,7 +109,7 @@ contract DutchAuction {
         duration = _duration;
         startingPrice = _startingPrice;
         reservePrice = _reservePrice;
-        discountRate = (startingPrice - reservePrice) / duration * DECIMAL_PLACE;
+        discountRate = (startingPrice * DECIMAL_PLACE - reservePrice * DECIMAL_PLACE) / duration;
     }
 
     modifier onlyOwner() {
@@ -133,9 +133,17 @@ contract DutchAuction {
     
     function getPrice() auctionStart public view returns (uint256) {
         // WORK AROUND TODO DELETE WHEN Floating point issue is solved
-        uint256 currentPrice = (startingPrice * DECIMAL_PLACE - discountRate * (block.timestamp - startAt)) / DECIMAL_PLACE;
+        uint256 curTime = block.timestamp;
+        uint256 currentPrice = (startingPrice * DECIMAL_PLACE - discountRate * (curTime - startAt)) / DECIMAL_PLACE;
+        currentPrice = Math.max(currentPrice, reservePrice);
+        // if (curTime == expiresAt){
+        //     console.log(curTime, expiresAt);
+        //     console.log(currentPrice, reservePrice);
+        //     console.log(DECIMAL_PLACE, discountRate);
+        // }   
+        
         if (block.timestamp >= expiresAt){
-            return (revenue / currentPrice >= tokenAmount) ? revenue / tokenAmount : reservePrice;
+            return (revenue / currentPrice >= tokenAmount) ? revenue / tokenAmount : currentPrice;
         }
         else
             return currentPrice;
