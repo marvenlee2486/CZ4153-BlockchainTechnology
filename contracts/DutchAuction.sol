@@ -125,7 +125,25 @@ contract DutchAuction {
         uint256 curTime = block.timestamp;
         uint256 currentPrice = (startingPrice * DECIMAL_PLACE - discountRate * (curTime - startAt)) / DECIMAL_PLACE;
         currentPrice = Math.max(currentPrice, reservePrice);
-        return (revenue / currentPrice > tokenAmount) ? revenue / tokenAmount : currentPrice;
+        
+        if (!_isTokenLeftValid(currentPrice)){
+            //binary search 
+            uint256 low = currentPrice + 1;
+            uint256 high = revenue / tokenAmount;
+
+            currentPrice = high;
+            while (low <= high){
+                uint256 mid = (low + high) / 2;
+                if (_isTokenLeftValid(mid)){
+                    currentPrice = mid;
+                    low = mid + 1;
+                }
+                else high = mid-1;
+            }  
+            console.log("binary", currentPrice);
+        }
+        else{console.log("non-binary", currentPrice);}
+        return currentPrice;
     }
 
     function getTokenLeft() external view returns (uint256) {
@@ -135,17 +153,21 @@ contract DutchAuction {
     function getPosition() external view returns (uint256) {
         return buyersPosition[msg.sender];
     }
+
+    function _isTokenLeftValid(uint256 price) view internal returns (bool){
+        int256 tempTokenLeft = int(tokenAmount);
+        for (uint256 i = 0; i < buyers.length; i++) 
+            tempTokenLeft -= int(buyersPosition[buyers[i]] / price);
+        return tempTokenLeft >= 0;
+    }
     
     function _calculateTokenLeft() view internal returns (uint256){
         uint256 currentPrice = getPrice();
         int256 tempTokenLeft = int(tokenAmount);
         for (uint256 i = 0; i < buyers.length; i++) 
             tempTokenLeft -= int(buyersPosition[buyers[i]] / currentPrice);
-        
-        if (tempTokenLeft <= 0) 
-            tempTokenLeft = 0;
 
-        return uint256(tempTokenLeft);
+        return tempTokenLeft >= 0 ? uint256(tempTokenLeft) : 0;
     }
     
     function _updateTokenLeft() internal{
