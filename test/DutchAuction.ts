@@ -563,7 +563,7 @@ describe("Dutch Auction contract", function () {
     // TODO Auction ended on Time
     // TODO Auction ended earlier (not triggered by placeBid)
 
-    it("Error due to not testing Clearing Price properly", async function () { // TODO Put a check on clearing price as well
+    it("Auction ended when no user place bid(Solved)", async function () { // TODO Put a check on clearing price as well
         const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
 
         const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration);
@@ -576,6 +576,59 @@ describe("Dutch Auction contract", function () {
         await time.increase(defaultDuration); // - 1 here is because placeBid causes 1 additional time.// TODO not strict on 1 
    
         console.log(await auction.connect(addr1).withdrawTokens());
+        expect(await auction.getPrice()).to.be.equal(expectedClearingPrice);
+
+    });
+
+    it("Error due to not testing Clearing Price properly", async function () { // TODO Put a check on clearing price as well
+        const {auction, addr1, addr2} = await loadFixture(deployAuctionFixture); 
+
+        const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration);
+        const expectedClearingPrice = defaultStartingPrice - discountRate * ((defaultDuration) / 2);
+
+        const bid1 = expectedClearingPrice * (initialAmount / 2) - (expectedClearingPrice / 2);
+        const bid2 = expectedClearingPrice * (initialAmount / 2) + (expectedClearingPrice / 2); 
+        const option = {value: ethers.parseUnits(String(bid1), "wei")};
+        const option2 = {value: ethers.parseUnits(String(bid2), "wei")};
+        
+        console.log(bid1, bid2)
+        // BSTA
+        var lo = defaultReservePrice;
+        var hi = defaultStartingPrice;
+        while(lo < hi){
+            var mid = Math.ceil((lo + hi) / 2);
+
+            const tokenSold = Math.floor(bid1 / mid) + Math.floor(bid2 / mid); 
+            if (tokenSold <= initialAmount)
+                hi = mid;
+            else
+                lo = mid + 1;
+        }
+        const newExpectedPrice = lo; 
+        console.log(newExpectedPrice);
+
+        await auction.connect(addr1).placeBid(option);
+        await auction.connect(addr2).placeBid(option2);
+        await time.increase(defaultDuration); // - 1 here is because placeBid causes 1 additional time.// TODO not strict on 1 
+   
+        console.log(await auction.connect(addr1).withdrawTokens());
+        expect(await auction.getPrice()).to.be.equal(newExpectedPrice);
+
+    });
+
+    it("Auction ended within duration but wrong clearing price", async function () { // TODO Put a check on clearing price as well
+        const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
+
+        const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration);
+        const expectedClearingPrice = defaultStartingPrice - discountRate * ((defaultDuration) / 2);
+
+        const option = {value: ethers.parseUnits(String(expectedClearingPrice * initialAmount), "wei")};
+        
+        await auction.connect(addr1).placeBid(option);
+        
+        await time.increase(defaultDuration * 3 / 4); // - 1 here is because placeBid causes 1 additional time.// TODO not strict on 1 
+   
+        // await auction.connect(addr1).withdrawTokens()); - This causes error too
         expect(await auction.getPrice()).to.be.equal(expectedClearingPrice);
 
     });

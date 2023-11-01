@@ -239,4 +239,8 @@ contract DutchAuction {
     function getOwnerRevenue() external view onlyOwner() atStage(Stages.AuctionEnded) returns(uint256){
         return ownerFunds;
     }
+
+    // function endAuction() public onlyOwner() atStage(Stages.AuctionStarted){
+
+    // }
 }
