@@ -566,16 +566,16 @@ describe("Dutch Auction contract", function () {
     it("Auction ended when no user place bid(Solved)", async function () { // TODO Put a check on clearing price as well
         const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
 
-        const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration);
+        const discountRate = (defaultStartingPrice - defaultReservePrice) / defaultDuration;
         const expectedClearingPrice = defaultStartingPrice - discountRate * ((defaultDuration) / 2);
-
+        console.log(expectedClearingPrice)
         const option = {value: ethers.parseUnits(String(expectedClearingPrice * initialAmount), "wei")};
         
         await auction.connect(addr1).placeBid(option);
         
         await time.increase(defaultDuration); // - 1 here is because placeBid causes 1 additional time.// TODO not strict on 1 
    
-        console.log(await auction.connect(addr1).withdrawTokens());
+        await auction.connect(addr1).withdrawTokens();
         expect(await auction.getPrice()).to.be.equal(expectedClearingPrice);
 
     });

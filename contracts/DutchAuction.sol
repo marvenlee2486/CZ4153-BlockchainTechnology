@@ -123,26 +123,28 @@ contract DutchAuction {
     
     function getPrice() auctionStart public view returns (uint256) {
         uint256 curTime = block.timestamp;
+        // TODO curTime might cause currentPrice to drop below zero. need to do check on stage and 
+        if (stage == Stages.AuctionEnded){
+            return clearingPrice;
+        }
         uint256 currentPrice = (startingPrice * DECIMAL_PLACE - discountRate * (curTime - startAt)) / DECIMAL_PLACE;
         currentPrice = Math.max(currentPrice, reservePrice);
         
         if (!_isTokenLeftValid(currentPrice)){
             //binary search 
             uint256 low = currentPrice + 1;
-            uint256 high = revenue / tokenAmount;
-
-            currentPrice = high;
-            while (low <= high){
+            uint256 high = revenue / tokenAmount + 1;
+            
+            // currentPrice = high;
+            while (low < high){
                 uint256 mid = (low + high) / 2;
-                if (_isTokenLeftValid(mid)){
-                    currentPrice = mid;
-                    low = mid + 1;
-                }
-                else high = mid-1;
+                console.log(low, mid, high);
+                if (_isTokenLeftValid(mid)) high = mid;
+                else low = mid + 1;
             }  
+            currentPrice = low - 1;
             console.log("binary", currentPrice);
         }
-        else{console.log("non-binary", currentPrice);}
         return currentPrice;
     }
 
@@ -155,10 +157,11 @@ contract DutchAuction {
     }
 
     function _isTokenLeftValid(uint256 price) view internal returns (bool){
-        int256 tempTokenLeft = int(tokenAmount);
+        uint256 tokenSold = 0;
         for (uint256 i = 0; i < buyers.length; i++) 
-            tempTokenLeft -= int(buyersPosition[buyers[i]] / price);
-        return tempTokenLeft >= 0;
+            tokenSold += uint(buyersPosition[buyers[i]] / price);
+        console.log(tokenSold);
+        return (tokenSold < tokenAmount);
     }
     
     function _calculateTokenLeft() view internal returns (uint256){
