@@ -69,18 +69,8 @@ contract DutchAuction {
     }
 
     function _revealClearingPrice() internal{
-        // TODO Delete when fractional issue solved
-        // Clearing Price error ... TODO Think how to resolve ..
-        if (block.timestamp >= expiresAt){
-            uint256 currentPrice = getPrice();
-            clearingPrice = (revenue / currentPrice >= tokenAmount) ? revenue / tokenAmount : reservePrice;
-        }
-            
-        else{
-            clearingPrice = getPrice();
-        }
-            
         _updateTokenLeft(); 
+        clearingPrice = getPrice();
         ownerFunds = clearingPrice * (tokenAmount - tokenLeft); 
     }
     
