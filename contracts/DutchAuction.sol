@@ -132,21 +132,10 @@ contract DutchAuction {
     }   
     
     function getPrice() auctionStart public view returns (uint256) {
-        // WORK AROUND TODO DELETE WHEN Floating point issue is solved
         uint256 curTime = block.timestamp;
         uint256 currentPrice = (startingPrice * DECIMAL_PLACE - discountRate * (curTime - startAt)) / DECIMAL_PLACE;
         currentPrice = Math.max(currentPrice, reservePrice);
-        // if (curTime == expiresAt){
-        //     console.log(curTime, expiresAt);
-        //     console.log(currentPrice, reservePrice);
-        //     console.log(DECIMAL_PLACE, discountRate);
-        // }   
-        
-        if (block.timestamp >= expiresAt){
-            return (revenue / currentPrice >= tokenAmount) ? revenue / tokenAmount : currentPrice;
-        }
-        else
-            return currentPrice;
+        return (revenue / currentPrice > tokenAmount) ? revenue / tokenAmount : currentPrice;
     }
 
     function getTokenLeft() external view returns (uint256) {
