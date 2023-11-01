@@ -33,15 +33,20 @@ contract DutchAuction {
     mapping(address => uint256) private buyersPosition; //address, value ETH to commit
     uint256 private lastBidRefund;
     address private lastBidOwner;
-    // mapping(address => uint256) private funds; 
+    
     uint256 public ownerFunds;
+
     uint256 public immutable startingPrice;
     uint256 public immutable reservePrice; 
     uint256 public immutable discountRate;
+
     uint256 public clearingPrice;
+
     uint256 public startAt;
     uint256 public expiresAt;
     uint256 public immutable duration;
+
+    uint256 public constant DECIMAL_PLACE = 10;
     
     Stages public stage = Stages.AuctionConstructed;
     uint256 revenue = 0;
@@ -61,20 +66,17 @@ contract DutchAuction {
     }
 
     function _burnUnusedToken() internal{
-        // _updateTokenAmount();
         token.burn(tokenLeft);
     }
 
     function _revealClearingPrice() internal{
         // TODO Delete when fractional issue solved
-        // ERRORRRRRRRRR Clearing Price error ... TODO Think how to resolve ..
+        // Clearing Price error ... TODO Think how to resolve ..
         if (block.timestamp >= expiresAt)
             clearingPrice = reservePrice;
         else 
             clearingPrice = getPrice();
         _updateTokenAmount(); 
-        // console.log(clearingPrice);
-        // funds[owner] = clearingPrice * (tokenAmount - tokenLeft);
         ownerFunds = clearingPrice * (tokenAmount - tokenLeft); 
     }
     
@@ -87,13 +89,10 @@ contract DutchAuction {
         
     }
 
-    // Perform timed transitions. Be sure to mention
-    // this modifier first, otherwise the guards
-    // will not take the new stage into account.
+    // Perform timed transitions. 
     modifier timedTransitions() {
         if (stage == Stages.AuctionStarted && block.timestamp >= expiresAt)
             _nextStage();
-        // The other stages transition by transaction
         _;
     }
 
@@ -106,7 +105,7 @@ contract DutchAuction {
         duration = _duration;
         startingPrice = _startingPrice;
         reservePrice = _reservePrice;
-        discountRate = (startingPrice - reservePrice) / duration;
+        discountRate = (startingPrice - reservePrice) / duration * DECIMAL_PLACE;
     }
 
     modifier onlyOwner() {
@@ -132,11 +131,10 @@ contract DutchAuction {
         // WORK AROUND TODO DELETE WHEN Floating point issue is solved
         if (block.timestamp >= expiresAt)
             return reservePrice;
-        //
         if (stage == Stages.AuctionEnded)
             return clearingPrice;
         else
-            return startingPrice - discountRate * (block.timestamp - startAt);
+            return (startingPrice * DECIMAL_PLACE - discountRate * (block.timestamp - startAt)) / DECIMAL_PLACE;
     }
 
     function getTokenLeft() external view returns (uint256) {
@@ -160,7 +158,6 @@ contract DutchAuction {
     }
     
     function _updateTokenAmount() internal{
-        // require(auctionStarted, "Auction has not started");
         tokenLeft = _calculateTokenLeft();
     }
 
@@ -179,25 +176,16 @@ contract DutchAuction {
 
         address buyer = msg.sender;
         if (buyersPosition[buyer] == 0) buyers.push(buyer); //new buyer
-        // console.log(tokenLeft);
-        // console.log(currentPrice);
-        // console.log(msg.value);
         uint256 bid = Math.min(tokenLeft * currentPrice, msg.value);
         buyersPosition[buyer] += bid;
         revenue += bid;
         
         uint256 refund = msg.value - bid;
         if (refund > 0) {
-            // console.log(refund);
-            // funds[buyer] = refund; // TODO Maybe this is ok? because if msg.sender is malicious, it only affect herself.
-            //
-            // payable(msg.sender).transfer(refund);
             _nextStage();
             lastBidOwner = msg.sender;
             lastBidRefund = refund;
-            // buyersPosition[buyer] += refund;
         }
-        // _updateTokenAmount(); // CONFIRM WITH AXEL, No need right? No need waste gas test pass la TODO
     }
 
     function withdrawTokens () public timedTransitions() atStage(Stages.AuctionEnded){
