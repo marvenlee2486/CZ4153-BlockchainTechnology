@@ -39,7 +39,6 @@ contract DutchAuction {
     uint256 public immutable startingPrice;
     uint256 public immutable reservePrice; 
     uint256 public immutable discountRate;
-
     uint256 public clearingPrice;
 
     uint256 public startAt;
@@ -72,11 +71,16 @@ contract DutchAuction {
     function _revealClearingPrice() internal{
         // TODO Delete when fractional issue solved
         // Clearing Price error ... TODO Think how to resolve ..
-        if (block.timestamp >= expiresAt)
-            clearingPrice = reservePrice;
-        else 
+        if (block.timestamp >= expiresAt){
+            uint256 currentPrice = getPrice();
+            clearingPrice = (revenue / currentPrice >= tokenAmount) ? revenue / tokenAmount : reservePrice;
+        }
+            
+        else{
             clearingPrice = getPrice();
-        _updateTokenAmount(); 
+        }
+            
+        _updateTokenLeft(); 
         ownerFunds = clearingPrice * (tokenAmount - tokenLeft); 
     }
     
@@ -129,12 +133,12 @@ contract DutchAuction {
     
     function getPrice() auctionStart public view returns (uint256) {
         // WORK AROUND TODO DELETE WHEN Floating point issue is solved
-        if (block.timestamp >= expiresAt)
-            return reservePrice;
-        if (stage == Stages.AuctionEnded)
-            return clearingPrice;
+        uint256 currentPrice = (startingPrice * DECIMAL_PLACE - discountRate * (block.timestamp - startAt)) / DECIMAL_PLACE;
+        if (block.timestamp >= expiresAt){
+            return (revenue / currentPrice >= tokenAmount) ? revenue / tokenAmount : reservePrice;
+        }
         else
-            return (startingPrice * DECIMAL_PLACE - discountRate * (block.timestamp - startAt)) / DECIMAL_PLACE;
+            return currentPrice;
     }
 
     function getTokenLeft() external view returns (uint256) {
@@ -157,7 +161,7 @@ contract DutchAuction {
         return uint256(tempTokenLeft);
     }
     
-    function _updateTokenAmount() internal{
+    function _updateTokenLeft() internal{
         tokenLeft = _calculateTokenLeft();
     }
 
@@ -166,7 +170,7 @@ contract DutchAuction {
         uint256 currentPrice = getPrice();
         if(msg.value < currentPrice) revert InvalidBidValue();
 
-        _updateTokenAmount();
+        _updateTokenLeft();
         // Wah this case damn Axel see
         if(tokenLeft == 0){
             // nextStage();
