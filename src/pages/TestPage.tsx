@@ -1,8 +1,10 @@
 import { useState, useContext, useEffect } from "react";
 import { datastore } from "../Data/datastore";
 import { ethers } from "ethers";
+
 import AxelTokenArtifact from "../artifacts/contracts/AxelToken.sol/AxelToken.json";
 import DutchAuctionArtifact from "../artifacts/contracts/DutchAuction.sol/DutchAuction.json";
+
 import UserContext from "../helpers/UserContext";
 import { Navigate } from "react-router-dom";
 // timer function for auction
@@ -52,24 +54,20 @@ function TestPage() {
 
 	const handleGetAxelTokenBalance = async () => {
 		const [signer] = await requestAccount();
-		console.log("test");
-		console.log(datastore.get("tokenAddress"));
-		const axelToken = new ethers.Contract(
+		const token = new ethers.Contract(
 			datastore.get("tokenAddress"), 
 			AxelTokenArtifact.abi,
 			signer
 		);
-		const balance = await axelToken.balanceOf(signer);
-		const balance_str = balance.toString() + " AXL";
-		datastore.set("tokenBalance", balance_str);
-		setTokenBalance(balance_str);
+		const balance = await token.balanceOf(signer);
+		datastore.set("tokenBalance", balance.toString());
+		setTokenBalance(balance.toString());
 	};
 
 	const handleMintAxelToken = async (e: any) => {
 		e.preventDefault(); // prevent page refresh so can read console.log
 		const tokenValue = e.target[0].value;
 		e.target.reset(); // clear input field
-		console.log("token value = ", tokenValue);
 		try {
 			const [signer] = await requestAccount();
 			const factory = new ethers.ContractFactory(
@@ -77,11 +75,9 @@ function TestPage() {
 				AxelTokenArtifact.bytecode,
 				signer
 			);
-			const contract = await factory.deploy(tokenValue);
-			await contract.waitForDeployment();
-			const address = await contract.getAddress();
-			console.log("axelToken address", address);
-			datastore.set("tokenAddress", address);
+			const token = await factory.deploy(tokenValue);
+			await token.waitForDeployment();
+			datastore.set("tokenAddress", await token.getAddress());
 			handleGetAxelTokenBalance();
 		} 
 		catch (error) {
@@ -90,35 +86,71 @@ function TestPage() {
 	};
 
 	const handleStartAuction = async (e: any) => {
-		e.preventDefault(); // prevent page refresh so can read console.log
+		e.preventDefault(); 
 
 		const startingPrice = e.target[0].value;
 		const reservePrice = e.target[1].value;
-		const duration = e.target[2].value;
+		const duration = e.target[2].value * 60;
 
-		e.target.reset(); // clear input field
-		console.log(startingPrice, reservePrice, duration);
-		const auction = {
-			startingPrice: startingPrice,
-			reservePrice: reservePrice,
-			currPrice: startingPrice,
-			duration: duration,
-			seller: user.username,
-			bids: [],
-		};
-		// await sucess..
-		datastore.appendAuction("Auctions", auction);
+		e.target.reset(); 
+
+		try{
+			const [signer] = await requestAccount();
+
+			//deploy constructor
+			const factory = new ethers.ContractFactory(
+				DutchAuctionArtifact.abi,
+				DutchAuctionArtifact.bytecode,
+				signer
+			);
+
+			const token = new ethers.Contract(
+				datastore.get("tokenAddress"), 
+				AxelTokenArtifact.abi,
+				signer
+			);
+
+			const auction = await factory.deploy(startingPrice, reservePrice, token.getAddress(), duration);
+			await auction.waitForDeployment();
+			datastore.set("auctionAddress", auction.getAddress()); 
+
+			//approve token
+			await token.approve(auction.getAddress(), tokenBalance);
+
+			//start auction
+			const deployedAuction = new ethers.Contract(
+				await auction.getAddress(), 
+				DutchAuctionArtifact.abi,
+				signer
+			);
+
+			console.log("auction deployed and started");
+			await deployedAuction.startAuction();
+		}
+		catch(error){
+			console.log(error);
+		}
 	};
 
-	const handleTransferToken = async (e: any) => {};
+	const handleTransferToken = async (e: any) => {
+
+	};
 
 	const handleTransferAllTokens = async (e: any) => {};
 
-	const handleJoinAuction = async (e: any) => {};
-
-	const handlePlaceBid = async (e: any, idx: number) => {
+	const handlePlaceBid = async (e: any) => {
+		e.preventDefault(); 
 		const bid = e.target[0].value;
-		datastore.placeBid(idx, [bid, user.username]);
+		e.target.reset(); 
+
+		const [signer] = await requestAccount();
+		const auction = new ethers.Contract(
+			datastore.get("auctionAddress"), 
+			DutchAuctionArtifact.abi,
+			signer
+		);
+
+		await auction.placeBid(bid);
 	};
 
 	return (
@@ -126,7 +158,7 @@ function TestPage() {
 		<div className="flex flex-col items-center justify-start w-full gap-2">
 
 			<div className="w-full p-2 bg-gray-200">
-			<div>Axel Token Balance: {tokenBalance}</div>
+			<div>Axel Token Balance: {tokenBalance} AXL</div>
 			<form
 				onSubmit={handleMintAxelToken}
 				className="flex items-center justify-start gap-2"
