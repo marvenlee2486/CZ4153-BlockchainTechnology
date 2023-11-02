@@ -583,7 +583,7 @@ describe("Dutch Auction contract", function () {
     it("Auction ended but wrong clearing price due to floor function", async function () { // TODO Put a check on clearing price as well
         const {auction, addr1, addr2} = await loadFixture(deployAuctionFixture); 
 
-        const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration);
+        const discountRate = (defaultStartingPrice - defaultReservePrice) / defaultDuration;
         const expectedClearingPrice = defaultStartingPrice - discountRate * ((defaultDuration) / 2);
 
         const bid1 = expectedClearingPrice * (initialAmount / 2) - (expectedClearingPrice / 2);
