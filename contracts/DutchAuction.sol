@@ -119,16 +119,16 @@ contract DutchAuction {
         _nextStage();
     }   
     
-    // TODO curTime might cause currentPrice to drop below zero. need to do check on stage and 
     function getPrice() auctionStart public view returns (uint256) {
         uint256 curTime = block.timestamp;
 
         if (stage == Stages.AuctionEnded){
             return clearingPrice;
         }
-        
-        uint256 currentPrice = (startingPrice * DECIMAL_PLACE - discountRate * (curTime - startAt)) / DECIMAL_PLACE;
-        currentPrice = Math.max(currentPrice, reservePrice);
+
+        uint256 currentPrice = (curTime > expiresAt) ? 
+            reservePrice : 
+            (startingPrice * DECIMAL_PLACE - discountRate * (curTime - startAt)) / DECIMAL_PLACE;
         
         if (!_isTokenLeftValid(currentPrice)){
             //binary search 
