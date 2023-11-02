@@ -180,7 +180,7 @@ contract DutchAuction {
         _updateTokenLeft();
 
         address buyer = msg.sender;
-        if (buyersPosition[buyer] == 0) buyers.push(buyer); //new buyer
+        if (buyersPosition[buyer] == 0 && tokenLeft > 0) buyers.push(buyer); //new buyer
         uint256 bid = Math.min(tokenLeft * currentPrice, msg.value);
         buyersPosition[buyer] += bid;
         revenue += bid;
