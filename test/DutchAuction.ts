@@ -101,7 +101,7 @@ describe("Dutch Auction contract", function () {
             //await expect(auction.connect(addr1).getPosition()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(addr1).placeBid({value : ethers.parseUnits("0.5", "ether")})).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(addr1).withdrawTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(owner).withdrawBid()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).withdrawOwnerFunds()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(owner).getRefund()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(owner).getTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(owner).getOwnerRevenue()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage"); 
@@ -315,7 +315,7 @@ describe("Dutch Auction contract", function () {
 
             await expect(auction.connect(owner).startAuction()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(addr1).withdrawTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(owner).withdrawBid()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).withdrawOwnerFunds()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(owner).getRefund()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(owner).getTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
             await expect(auction.connect(owner).getOwnerRevenue()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
@@ -328,7 +328,7 @@ describe("Dutch Auction contract", function () {
         it("token leftover should be burned (all tokens burned)", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture);
             await time.increase(20 * 60);
-            await auction.connect(owner).withdrawBid(); 
+            await auction.connect(owner).withdrawOwnerFunds(); 
             await expect(await axelToken.totalSupply()).to.be.equal(0);
         });
 
@@ -503,7 +503,7 @@ describe("Dutch Auction contract", function () {
             
             expect(await auction.connect(owner).getOwnerRevenue()).to.be.equal(expectedOwnerRevenue);
            
-            await checkBalanceTransaction(owner, auction.connect(owner).withdrawBid(), expectedOwnerRevenue);
+            await checkBalanceTransaction(owner, auction.connect(owner).withdrawOwnerFunds(), expectedOwnerRevenue);
    
             // Check balance of auction after owner withdraw
             expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(initialAuctionBalances - BigInt(expectedOwnerRevenue));
@@ -512,7 +512,7 @@ describe("Dutch Auction contract", function () {
         it("Non Owner Should not able to withdraw owner funds and check owner funds", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
            
-            await expect(auction.connect(addr1).withdrawBid()).to.be.revertedWithCustomError(auction, "OnlyOwnerCanCallFunction");
+            await expect(auction.connect(addr1).withdrawOwnerFunds()).to.be.revertedWithCustomError(auction, "OnlyOwnerCanCallFunction");
             await expect(auction.connect(addr1).getOwnerRevenue()).to.be.revertedWithCustomError(auction, "OnlyOwnerCanCallFunction");
             // CAN DELETE ACUTALLY TODO
             expect(await axelToken.balanceOf(addr1)).to.be.equal(0);
@@ -527,7 +527,7 @@ describe("Dutch Auction contract", function () {
             const expectedInitialAuctionBalances =  addr1_payingPrice + addr2_payingPrice + addr3_payingPrice;
             expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(expectedInitialAuctionBalances);
 
-            await auction.connect(owner).withdrawBid();
+            await auction.connect(owner).withdrawOwnerFunds();
 
             // Check balance of auction after owner withdraw
             const expectedAuctionBalancesAfterOwnerWithdraw =  expectedInitialAuctionBalances - (addr1_token + addr2_token + addr3_token) * clearingPrice;
@@ -544,12 +544,12 @@ describe("Dutch Auction contract", function () {
         it("Should not be able to withdraw again", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
              
-            await auction.connect(owner).withdrawBid();
+            await auction.connect(owner).withdrawOwnerFunds();
             await auction.connect(addr1).withdrawTokens();
             await auction.connect(addr2).withdrawTokens();
             await auction.connect(addr3).withdrawTokens();
 
-            await checkBalanceTransaction(owner, auction.connect(owner).withdrawBid(), 0);
+            await checkBalanceTransaction(owner, auction.connect(owner).withdrawOwnerFunds(), 0);
             await expect(auction.connect(addr1).withdrawTokens()).to.be.revertedWithCustomError(auction, "InvalidWithdrawer");
             await expect(auction.connect(addr2).withdrawTokens()).to.be.revertedWithCustomError(auction, "InvalidWithdrawer");
             await expect(auction.connect(addr3).withdrawTokens()).to.be.revertedWithCustomError(auction, "InvalidWithdrawer");

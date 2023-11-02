@@ -214,7 +214,7 @@ contract DutchAuction {
         if (refund > 0) payable(msg.sender).transfer(refund);
     }
      
-    function withdrawBid() external onlyOwner() timedTransitions() atStage(Stages.AuctionEnded){
+    function withdrawOwnerFunds() external onlyOwner() timedTransitions() atStage(Stages.AuctionEnded){
         if (ownerFunds == 0) return;//revert InvalidWithdrawer(); TODO Think see if withdraw token need or not
         uint withdrawAmount = ownerFunds; // (Security) reentry attack
         ownerFunds = 0;
