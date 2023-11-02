@@ -78,7 +78,7 @@ contract DutchAuction {
         if (stage == Stages.AuctionStarted){
             // Reveal Clearing Price
             _updateTokenLeft(); 
-            clearingPrice = getPrice();
+            clearingPrice = _calculateCorrectPrice();
             ownerFunds = clearingPrice * (tokenAmount - tokenLeft); 
 
             // burn unused token
@@ -118,12 +118,7 @@ contract DutchAuction {
     }
     
     // To be called externally and during revealing price stage only
-    function getPrice() auctionStart public view returns (uint256) {
-
-        if (stage == Stages.AuctionEnded){
-            return clearingPrice;
-        }
-
+    function _calculateCorrectPrice() private view returns (uint256){
         // Doing this to avoid calling getPrice during auctionStart due to long idle and causes math error.
         uint256 currentPrice;
         if (block.timestamp >= expiresAt) currentPrice = reservePrice;
@@ -143,6 +138,13 @@ contract DutchAuction {
             currentPrice = low - 1;
         }
         return currentPrice;
+    }
+
+    function getPrice() auctionStart external view returns (uint256) {
+        if (stage == Stages.AuctionEnded){
+            return clearingPrice;
+        }
+        return _calculateCorrectPrice();
     }
 
     // To be called externally and also by updateTokenleft only
