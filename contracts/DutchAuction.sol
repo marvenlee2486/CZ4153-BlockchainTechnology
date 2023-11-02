@@ -7,7 +7,6 @@ import "hardhat/console.sol";
 import "./ErrorDutchAuction.sol";
 // TODO REFACTOR
 // 1. REFACTOR the update logic as its cost a lot of gas if everytime it is revoked (considered caching it)
-// 2. REFACTOR the require to be revert with Custom error (require will return error(string) that actually cost more)
 // 4. Add proper documentation -  https://docs.soliditylang.org/en/develop/natspec-format.html (unfortunately it is part of the grading tho haha)
 // 5. REFACTOR to Safe Math
 // TODO do we actually need duration as parameter? I know it is better but the documentation said that 20 mins
@@ -62,30 +61,31 @@ contract DutchAuction {
         _;
     }
 
-    function _burnUnusedToken() internal{
-        token.burn(tokenLeft);
-    }
-
-    function _revealClearingPrice() internal{
-        _updateTokenLeft(); 
-        clearingPrice = getPrice();
-        ownerFunds = clearingPrice * (tokenAmount - tokenLeft); 
-    }
-    
-    function _nextStage() internal {
-        if (stage == Stages.AuctionStarted){
-            _revealClearingPrice(); 
-            _burnUnusedToken();
-        }
-        stage = Stages(uint(stage) + 1);
-        
-    }
-
     // Perform timed transitions. 
     modifier timedTransitions() {
         if (stage == Stages.AuctionStarted && block.timestamp >= expiresAt)
             _nextStage();
         _;
+    }
+
+    modifier onlyOwner() {
+        if(msg.sender != owner)
+            revert OnlyOwnerCanCallFunction();
+        _;
+    }
+
+    function _nextStage() internal {
+        if (stage == Stages.AuctionStarted){
+            // Reveal Clearing Price
+            _updateTokenLeft(); 
+            clearingPrice = getPrice();
+            ownerFunds = clearingPrice * (tokenAmount - tokenLeft); 
+
+            // burn unused token
+            token.burn(tokenLeft);
+        }
+        stage = Stages(uint(stage) + 1);
+        
     }
 
     constructor(uint256 _startingPrice, uint256 _reservePrice, address _token, uint256 _duration) {
@@ -100,12 +100,6 @@ contract DutchAuction {
         discountRate = (startingPrice * DECIMAL_PLACE - reservePrice * DECIMAL_PLACE) / duration;
     }
 
-    modifier onlyOwner() {
-        if(msg.sender != owner)
-            revert OnlyOwnerCanCallFunction();
-        _;
-    }
-
     function startAuction() public onlyOwner atStage(Stages.AuctionConstructed){
         tokenAmount = token.allowance(owner, address(this));
         
@@ -117,27 +111,33 @@ contract DutchAuction {
         startAt = block.timestamp;
         expiresAt = block.timestamp + duration;
         _nextStage();
-    }   
+    }
     
+    function _curPrice() atStage(Stages.AuctionStarted) private view returns (uint256){
+        return (startingPrice * DECIMAL_PLACE - discountRate * (block.timestamp - startAt)) / DECIMAL_PLACE;
+    }
+    
+    // To be called externally and during revealing price stage only
     function getPrice() auctionStart public view returns (uint256) {
-        uint256 curTime = block.timestamp;
 
         if (stage == Stages.AuctionEnded){
             return clearingPrice;
         }
 
-        uint256 currentPrice = (curTime > expiresAt) ? 
-            reservePrice : 
-            (startingPrice * DECIMAL_PLACE - discountRate * (curTime - startAt)) / DECIMAL_PLACE;
+        // Doing this to avoid calling getPrice during auctionStart due to long idle and causes math error.
+        uint256 currentPrice;
+        if (block.timestamp >= expiresAt) currentPrice = reservePrice;
+        else currentPrice = (startingPrice * DECIMAL_PLACE - discountRate * (block.timestamp - startAt)) / DECIMAL_PLACE;
         
-        if (!_isTokenLeftValid(currentPrice)){
+        if (_calculateTokenSold(currentPrice) >= tokenAmount){
             //binary search 
             uint256 low = currentPrice + 1;
-            uint256 high = revenue / tokenAmount + 1;
-            
+            uint256 high = (address(this).balance - lastBidRefund) / tokenAmount + 1;
+
             while (low < high){
                 uint256 mid = (low + high) / 2;
-                if (_isTokenLeftValid(mid)) high = mid;
+                // console.log(low, mid, high);
+                if (_calculateTokenSold(mid) < tokenAmount) high = mid;
                 else low = mid + 1;
             }  
             currentPrice = low - 1;
@@ -145,61 +145,60 @@ contract DutchAuction {
         return currentPrice;
     }
 
-    function getTokenLeft() external view returns (uint256) {
-        return _calculateTokenLeft();
+    // To be called externally and also by updateTokenleft only
+    function getTokenLeft() public view returns (uint256) {
+        uint256 tokenSold = _calculateTokenSold( _curPrice());
+        if(tokenSold > tokenAmount){
+            // Consider revert to catch the error TODO
+            return 0;
+        }
+        return tokenAmount - tokenSold;
     }
 
     function getPosition() external view returns (uint256) {
         return buyersPosition[msg.sender];
     }
 
-    function _isTokenLeftValid(uint256 price) view internal returns (bool){
+    
+    function _calculateTokenSold(uint256 price) view internal returns (uint256){
         uint256 tokenSold = 0;
         for (uint256 i = 0; i < buyers.length; i++) 
             tokenSold += uint(buyersPosition[buyers[i]] / price);
-        return (tokenSold < tokenAmount);
+        // console.log(tokenSold);
+        return tokenSold;
     }
     
-    function _calculateTokenLeft() view internal returns (uint256){
-        uint256 currentPrice = getPrice();
-        int256 tempTokenLeft = int(tokenAmount);
-        for (uint256 i = 0; i < buyers.length; i++) 
-            tempTokenLeft -= int(buyersPosition[buyers[i]] / currentPrice);
-
-        return tempTokenLeft >= 0 ? uint256(tempTokenLeft) : 0;
-    }
-    
+    // Make sure to call it during auction start only
     function _updateTokenLeft() internal{
-        tokenLeft = _calculateTokenLeft();
+        if(tokenLeft == 0) return; // optimization .. no need to update again if token left is already zero
+        tokenLeft = getTokenLeft();
     }
 
     function placeBid() external payable timedTransitions atStage(Stages.AuctionStarted) {
-        uint256 currentPrice = getPrice();
+        uint256 currentPrice = _curPrice();
         if(msg.value < currentPrice) revert InvalidBidValue();
 
         _updateTokenLeft();
-
         address buyer = msg.sender;
         if (buyersPosition[buyer] == 0 && tokenLeft > 0) buyers.push(buyer); //new buyer
         uint256 bid = Math.min(tokenLeft * currentPrice, msg.value);
         buyersPosition[buyer] += bid;
-        revenue += bid;
         
         uint256 refund = msg.value - bid;
         if (refund > 0) {
+            lastBidRefund = refund;
             _nextStage();
             lastBidOwner = msg.sender;
-            lastBidRefund = refund;
         }
     }
 
     function withdrawTokens () public timedTransitions() atStage(Stages.AuctionEnded){
         if (buyersPosition[msg.sender] == 0) revert InvalidWithdrawer();
-        
+        // console.log(buyersPosition[msg.sender]);
         uint256 bid = buyersPosition[msg.sender];
         uint256 tokenBought = bid / clearingPrice;
         uint256 amountPaid = tokenBought * clearingPrice;
-
+        // console.log(tokenBought);
         //clear records and transfer token to buyer
         buyersPosition[msg.sender] = 0;
         token.transfer(msg.sender, tokenBought);
@@ -247,7 +246,9 @@ contract DutchAuction {
         return "Unknown Stage";
     }
 
-    // function endAuction() public onlyOwner() atStage(Stages.AuctionStarted){
-
-    // }
+    function endAuction() public onlyOwner() timedTransitions() atStage(Stages.AuctionStarted){
+        _updateTokenLeft();
+        if(tokenLeft == 0)
+            _nextStage();
+    }
 }

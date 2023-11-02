@@ -568,7 +568,7 @@ describe("Dutch Auction contract", function () {
 
         const discountRate = (defaultStartingPrice - defaultReservePrice) / defaultDuration;
         const expectedClearingPrice = defaultStartingPrice - discountRate * ((defaultDuration) / 2);
-        console.log(expectedClearingPrice)
+        // console.log(expectedClearingPrice)
         const option = {value: ethers.parseUnits(String(expectedClearingPrice * initialAmount), "wei")};
         
         await auction.connect(addr1).placeBid(option);
@@ -591,7 +591,7 @@ describe("Dutch Auction contract", function () {
         const option = {value: ethers.parseUnits(String(bid1), "wei")};
         const option2 = {value: ethers.parseUnits(String(bid2), "wei")};
         
-        console.log(bid1, bid2)
+        // console.log(bid1, bid2)
         // BSTA
         var lo = defaultReservePrice;
         var hi = defaultStartingPrice;
@@ -605,13 +605,13 @@ describe("Dutch Auction contract", function () {
                 lo = mid + 1;
         }
         const newExpectedPrice = lo; 
-        console.log(newExpectedPrice);
+        // console.log(newExpectedPrice);
 
         await auction.connect(addr1).placeBid(option);
         await auction.connect(addr2).placeBid(option2);
         await time.increase(defaultDuration); // - 1 here is because placeBid causes 1 additional time.// TODO not strict on 1 
    
-        console.log(await auction.connect(addr1).withdrawTokens());
+        // console.log(await auction.connect(addr1).withdrawTokens());
         expect(await auction.getPrice()).to.be.equal(newExpectedPrice);
 
     });
