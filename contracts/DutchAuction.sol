@@ -10,6 +10,7 @@ import "./ErrorDutchAuction.sol";
 // 2. REFACTOR the require to be revert with Custom error (require will return error(string) that actually cost more)
 // 4. Add proper documentation -  https://docs.soliditylang.org/en/develop/natspec-format.html (unfortunately it is part of the grading tho haha)
 // 5. REFACTOR to Safe Math
+// TODO do we actually need duration as parameter? I know it is better but the documentation said that 20 mins
 
 // For presentation purpose
 // 1. Mentioned that the discount rate is calculated based on duration ... (Bs on this)
@@ -19,7 +20,6 @@ contract DutchAuction {
     enum Stages {
         AuctionConstructed,
         AuctionStarted,
-        // RevealClearingPrice, TODO Optimization 1.
         AuctionEnded
     }
 
@@ -50,8 +50,6 @@ contract DutchAuction {
     Stages public stage = Stages.AuctionConstructed;
     uint256 revenue = 0;
     
-    // TODO add token amount, I think it would be best for user to choose how many token instead of all token is bid
-    // TODO do we actually need duration as parameter? I know it is better but the documentation said that 20 mins
     modifier atStage(Stages stage_) {
         if (stage != stage_)
             revert FunctionInvalidAtThisStage();
@@ -121,12 +119,14 @@ contract DutchAuction {
         _nextStage();
     }   
     
+    // TODO curTime might cause currentPrice to drop below zero. need to do check on stage and 
     function getPrice() auctionStart public view returns (uint256) {
         uint256 curTime = block.timestamp;
-        // TODO curTime might cause currentPrice to drop below zero. need to do check on stage and 
+
         if (stage == Stages.AuctionEnded){
             return clearingPrice;
         }
+        
         uint256 currentPrice = (startingPrice * DECIMAL_PLACE - discountRate * (curTime - startAt)) / DECIMAL_PLACE;
         currentPrice = Math.max(currentPrice, reservePrice);
         
@@ -135,15 +135,12 @@ contract DutchAuction {
             uint256 low = currentPrice + 1;
             uint256 high = revenue / tokenAmount + 1;
             
-            // currentPrice = high;
             while (low < high){
                 uint256 mid = (low + high) / 2;
-                console.log(low, mid, high);
                 if (_isTokenLeftValid(mid)) high = mid;
                 else low = mid + 1;
             }  
             currentPrice = low - 1;
-            console.log("binary", currentPrice);
         }
         return currentPrice;
     }
@@ -160,7 +157,6 @@ contract DutchAuction {
         uint256 tokenSold = 0;
         for (uint256 i = 0; i < buyers.length; i++) 
             tokenSold += uint(buyersPosition[buyers[i]] / price);
-        console.log(tokenSold);
         return (tokenSold < tokenAmount);
     }
     
@@ -178,17 +174,10 @@ contract DutchAuction {
     }
 
     function placeBid() external payable timedTransitions atStage(Stages.AuctionStarted) {
-        
         uint256 currentPrice = getPrice();
         if(msg.value < currentPrice) revert InvalidBidValue();
 
         _updateTokenLeft();
-        // Wah this case damn Axel see
-        if(tokenLeft == 0){
-            // nextStage();
-            // return;
-            // LETS HAVE CASE STUDY FOR THIS....TOMORROW TO MEET
-        }
 
         address buyer = msg.sender;
         if (buyersPosition[buyer] == 0) buyers.push(buyer); //new buyer
