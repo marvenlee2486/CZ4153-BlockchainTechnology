@@ -153,6 +153,60 @@ function TestPage() {
 		await auction.placeBid(bid);
 	};
 
+	const handleGetPrice = async () => {
+		const auction = new ethers.Contract(
+			datastore.get("auctionAddress"), 
+			DutchAuctionArtifact.abi
+		);
+		datastore.set("price", await auction.getPrice()); 
+	}
+
+	const handleGetTokenLeft = async ()=> {
+		const auction = new ethers.Contract(
+			datastore.get("auctionAddress"), 
+			DutchAuctionArtifact.abi
+		);
+		datastore.set("tokenLeft", await auction.getTokenLeft()); 
+	}
+
+	const handleGetPosition = async () => {
+		const [signer] = await requestAccount();
+		const auction = new ethers.Contract(
+			datastore.get("auctionAddress"), 
+			DutchAuctionArtifact.abi,
+			signer
+		);
+		datastore.set("position" + user.address, await auction.getPosition()); 
+	}
+
+	const handleGetAuctionStage = async () => {
+		const auction = new ethers.Contract(
+			datastore.get("auctionAddress"), 
+			DutchAuctionArtifact.abi
+		);
+		datastore.set("stage", await auction.getStage()); 
+	}
+	
+	const handleWithdrawTokens = async () => {
+		const [signer] = await requestAccount();
+		const auction = new ethers.Contract(
+			datastore.get("auctionAddress"), 
+			DutchAuctionArtifact.abi,
+			signer
+		);
+		await auction.withdrawTokens();
+	}
+
+	const handleWithdrawRevenues = async () => {
+		const [signer] = await requestAccount();
+		const auction = new ethers.Contract(
+			datastore.get("auctionAddress"), 
+			DutchAuctionArtifact.abi,
+			signer
+		);
+		await auction.withdrawOwnerFunds();
+	}
+
 	return (
 		<div className="sm:ml-64 mt-14 p-4">
 		<div className="flex flex-col items-center justify-start w-full gap-2">
