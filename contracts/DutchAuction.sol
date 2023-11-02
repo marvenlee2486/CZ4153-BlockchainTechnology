@@ -241,6 +241,12 @@ contract DutchAuction {
         return ownerFunds;
     }
 
+    function getStage() external view returns(string memory){
+        if (stage == Stages.AuctionStarted) return "Started";
+        else if (stage == Stages.AuctionEnded) return "Ended";
+        return "Unknown Stage";
+    }
+
     // function endAuction() public onlyOwner() atStage(Stages.AuctionStarted){
 
     // }
