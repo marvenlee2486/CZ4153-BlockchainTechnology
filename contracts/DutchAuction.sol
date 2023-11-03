@@ -116,7 +116,6 @@ contract DutchAuction {
     function _curPrice() atStage(Stages.AuctionStarted) private view returns (uint256){
         return (startingPrice * DECIMAL_PLACE - discountRate * (block.timestamp - startAt)) / DECIMAL_PLACE;
     }
-    
     // To be called externally and during revealing price stage only
     function _calculateCorrectPrice() private view returns (uint256){
         // Doing this to avoid calling getPrice during auctionStart due to long idle and causes math error.
@@ -147,17 +146,13 @@ contract DutchAuction {
         return _calculateCorrectPrice();
     }
 
-    // To be called externally and also by updateTokenleft only
-    function getTokenLeft() public view returns (uint256) {
-        uint256 tokenSold = _calculateTokenSold( _curPrice());
-        if(tokenSold > tokenAmount){
-            // Consider revert to catch the error TODO
-            return 0;
-        }
-        return tokenAmount - tokenSold;
+    function getTokenLeft() auctionStart external view returns (uint256) {
+        if (stage == Stages.AuctionEnded)
+            return tokenLeft;
+        return tokenAmount - Math.min(_calculateTokenSold(_curPrice()), tokenAmount);
     }
 
-    function getPosition() external view returns (uint256) {
+    function getPosition() auctionStart external view returns (uint256) {
         return buyersPosition[msg.sender];
     }
 
@@ -173,7 +168,7 @@ contract DutchAuction {
     // Make sure to call it during auction start only
     function _updateTokenLeft() internal{
         if(tokenLeft == 0) return; // optimization .. no need to update again if token left is already zero
-        tokenLeft = getTokenLeft();
+        tokenLeft = tokenAmount - Math.min(_calculateTokenSold(_curPrice()), tokenAmount);
     }
 
     function placeBid() external payable timedTransitions atStage(Stages.AuctionStarted) {
@@ -245,12 +240,12 @@ contract DutchAuction {
     function getStage() external view returns(string memory){
         if (stage == Stages.AuctionStarted) return "Started";
         else if (stage == Stages.AuctionEnded) return "Ended";
-        return "Unknown Stage";
+        return "Not Yet Started";
     }
 
-    function endAuction() public onlyOwner() timedTransitions() atStage(Stages.AuctionStarted){
+    function endAuction() public onlyOwner() atStage(Stages.AuctionStarted){
         _updateTokenLeft();
-        if(tokenLeft == 0)
+        if(tokenLeft == 0 || block.timestamp >= expiresAt)
             _nextStage();
     }
 }

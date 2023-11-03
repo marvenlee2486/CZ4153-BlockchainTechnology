@@ -1,7 +1,7 @@
 // https://hardhat.org/hardhat-runner/plugins/nomicfoundation-hardhat-ethers
 // https://docs.ethers.org/v6/single-page/#api_contract__BaseContract-waitForDeployment
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers , provider} = require("hardhat");
 const { loadFixture, time } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const assert = require('assert');
 
@@ -38,7 +38,9 @@ describe("Dutch Auction contract", function () {
             await auction.waitForDeployment();
             // expect(auction.owner).to.equal(owner.address);
             await axelToken.connect(owner).approve(await auction.getAddress(), initialAmount);
+            expect(await auction.getStage()).to.be.equal("Not Yet Started")
             await auction.connect(owner).startAuction();
+            expect(await auction.getStage()).to.be.equal("Started")
             //expect(await auction.getTokenLeft()).to.emit(auction, "TokenLeft").withArgs(await axelToken.totalSupply());
             expect(await auction.getTokenLeft()).to.be.equal(await axelToken.totalSupply());
             expect(await auction.getPrice()).to.equal(startingPrice);
@@ -86,25 +88,6 @@ describe("Dutch Auction contract", function () {
             expect(await auction.getTokenLeft()).to.be.equal(1);
             await axelToken.connect(owner).approve(await auction.getAddress(), 1);
             expect(await auction.getTokenLeft()).to.be.equal(1);
-        });
-
-        it("Should Not be able to call any function if owner did not start auction", async function(){
-            const {axelToken, owner, addr1} = await loadFixture(deployTokenFixture);
-            const startingPrice = 100;
-            const reservePrice = 50; 
-            const duration = 20 * 60;
-            const tokenAddress = await axelToken.getAddress();
-            const auction = await ethers.deployContract("DutchAuction", [startingPrice, reservePrice, tokenAddress, duration], owner);
-            await auction.waitForDeployment();
-            await expect(auction.connect(addr1).getPrice()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            //await expect(auction.connect(addr1).getTokenLeft()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            //await expect(auction.connect(addr1).getPosition()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(addr1).placeBid({value : ethers.parseUnits("0.5", "ether")})).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(addr1).withdrawTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(owner).withdrawOwnerFunds()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(owner).getRefund()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(owner).getTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(owner).getOwnerRevenue()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage"); 
         });
 
         it("Should revert when startingPrice is not positive", async function () {
@@ -172,7 +155,7 @@ describe("Dutch Auction contract", function () {
         await auction.waitForDeployment(); 
         await axelToken.connect(owner).approve(await auction.getAddress(), initialAmount);
         await auction.connect(owner).startAuction();
-        const startAt = await time.latest();
+        const startAt = await time.latest() - 1;
         return {axelToken, auction, owner, addr1, addr2, addr3, startAt};
     }
 
@@ -208,7 +191,7 @@ describe("Dutch Auction contract", function () {
             const discountRate =  (defaultStartingPrice - defaultReservePrice) / defaultDuration;
 
             // Case 1: Token Left should not change if no one bid
-            await time.increaseTo(startAt + 1);
+            // await time.increaseTo(startAt + 2);
             expect(await auction.getTokenLeft()).to.be.equal(initialAmount);
             
             // Case 2: Token Left should decrease to correct amount if someone placeBid, This case is design such that defaultStartingPrice is placed and buy 5 token only..
@@ -220,7 +203,7 @@ describe("Dutch Auction contract", function () {
             expect(await auction.getTokenLeft()).to.be.equal(initialAmount - 15);
 
             // Case 4: No additional Bid given, but amount of token drop, check the boundary conidition
-            const expectTokenAmountDecreaseMoment = Math.ceil((defaultStartingPrice)/ (discountRate * 11)) + startAt
+            const expectTokenAmountDecreaseMoment = Math.ceil((defaultStartingPrice)/ (discountRate * 11)) + startAt + 1
 
             await time.increaseTo(expectTokenAmountDecreaseMoment - 1);
             expect(await auction.getTokenLeft()).to.be.equal(initialAmount - 15);
@@ -239,8 +222,13 @@ describe("Dutch Auction contract", function () {
         });
         
         // it("Should revert if balance insuficient", async function () {
-        //     const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
-        //     const option = { value: ethers.parseUnits(String(await ethers.provider.getBalance(addr1.address)),"wei") };
+        //     const {auction, owner, addr1} = await loadFixture(deployAuctionFixture);
+            
+        //     await addr1.sendTransaction({
+        //         to: owner.address,
+        //         value: ethers.parseUnits(String(await ethers.provider.getBalance(addr1.address) - BigInt(99)), "wei"), // Sends exactly 1.0 ether
+        //     });
+        //     const option = {value: ethers.parseUnits("100", "wei")};
         //     await expect(auction.connect(addr1).placeBid(option)).to.be.revertedWith("InvalidInputError");
         // })
 
@@ -284,7 +272,7 @@ describe("Dutch Auction contract", function () {
             
             await auction.connect(addr1).placeBid(option);
             
-            await time.increaseTo(startAt + defaultDuration / 2 - 1); // - 1 here is because placeBid causes 1 additional time.// TODO not strict on 1 
+            await time.increaseTo(startAt + defaultDuration / 2);
     
             // Since the bidding amount reached, so should not be able to place any more bid
             // await expect(auction.connect(addr1).placeBid(option)).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
@@ -301,25 +289,10 @@ describe("Dutch Auction contract", function () {
             const initialAmount = await ethers.provider.getBalance(auction.getAddress());
 
             await expect(auction.connect(addr1).placeBid(option)).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage"); 
-            
+            // expect(await auction.getStage()).to.be.equal("Started");
             // Expect the ether of the account is not changed for auction account because the placeBid is reverted
             expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(initialAmount);
            
-            // TODO Get the state function
-        })
-
-        // Only can give ethers. TODO   
-            
-        it("Should revert if try to called function non-callable at this stage", async function(){
-            const {auction, owner, addr1} = await loadFixture(deployAuctionFixture);
-
-            await expect(auction.connect(owner).startAuction()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(addr1).withdrawTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(owner).withdrawOwnerFunds()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(owner).getRefund()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(owner).getTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(owner).getOwnerRevenue()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            
         })
     });
 
@@ -374,22 +347,58 @@ describe("Dutch Auction contract", function () {
             // await expect(axelToken.balanceOf(addr2.address)).to.be.equal(100);
         });
 
-        it("Should Not be able to call certain function if auction end", async function(){
-            const {auction, owner, addr1} = await loadFixture(afterBiddingFixture);
-            
-            await expect(auction.connect(owner).startAuction()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
-            await expect(auction.connect(addr1).placeBid({value : ethers.parseUnits("0.5", "ether")})).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+        it("non owner should not be able to call auction ended", async function(){
+            const {auction, owner, addr1} = await loadFixture(deployAuctionFixture);
+            await expect(auction.connect(addr1).endAuction()).to.be.revertedWithCustomError(auction, "OnlyOwnerCanCallFunction");
         });
+
+        it("Auction should ended if time exceed duration", async function(){
+            const {auction, owner, addr1, startAt} = await loadFixture(deployAuctionFixture);
+            await auction.connect(owner).endAuction();
+            expect(await auction.getStage()).to.be.equal("Started");
+            expect(await auction.getTokenLeft()).to.be.equal(100);
+            
+            await time.increaseTo(startAt + defaultDuration - 1);
+            await auction.connect(owner).endAuction();
+            expect(await auction.getStage()).to.be.equal("Started");
+            expect(await auction.getTokenLeft()).to.be.equal(100);
+
+            await auction.connect(owner).endAuction(); 
+            expect(await auction.getStage()).to.be.equal("Ended");
+            expect(await auction.getTokenLeft()).to.be.equal(100);
+        });
+
+        it("Auction should ended if no tokenLeft", async function(){
+            const {auction, owner, addr1, startAt} = await loadFixture(deployAuctionFixture);
+            await auction.connect(owner).endAuction();
+            const expectedClearingPrice = (defaultStartingPrice + defaultReservePrice) / 2
+            await auction.connect(addr1).placeBid({value: ethers.parseUnits(String(expectedClearingPrice * initialAmount), "wei")});
+            expect(await auction.getStage()).to.be.equal("Started");
+            expect(await auction.getTokenLeft()).to.be.equal(initialAmount - expectedClearingPrice * initialAmount / defaultStartingPrice);
+            
+            await time.increaseTo(startAt + defaultDuration / 2 - 1);
+            await auction.connect(owner).endAuction();
+            expect(await auction.getStage()).to.be.equal("Started");
+            expect(await auction.getTokenLeft()).to.be.equal(1);
+
+            await auction.connect(owner).endAuction(); 
+            expect(await auction.getStage()).to.be.equal("Ended");
+            expect(await auction.getTokenLeft()).to.be.equal(0);
+            expect(await auction.getPrice()).to.be.equal(expectedClearingPrice);
+        });
+        
+
     });
 
-    async function afterBiddingFixture() {
+    // Auction Ended due to an user bid the last amount of tokens
+    async function bidEndedFixture() {
         // This will consider of 3 different address where
         // addr1 - ethers bid is divisible by the final price
         // addr2 - ethers bid is not divisible by the final price
         // addr3 - ethers bid ends the bidding with extra amounts
         const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture);
         // console.log(await ethers.provider.getBalance(addr3.address));
-        const middlePrice = 7600//(defaultReservePrice + defaultStartingPrice) / 2;
+        const middlePrice = (defaultReservePrice + defaultStartingPrice) / 2;
         const halfTotalSupply = (initialAmount / 2) * middlePrice;
 
         const addr1_payingPrice = halfTotalSupply; 
@@ -405,14 +414,14 @@ describe("Dutch Auction contract", function () {
         const addr2_token: number = 1;
         const addr3_token: number = initialAmount - addr1_token - addr2_token;
         return {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice};
-    }
+    } 
 
     describe("Dutch Auction Distributing Stage (Bidding ended earlier)", function(){
         it("Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount", async function () {
             
             const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture);
             //console.log(await ethers.provider.getBalance(addr3.address));
-            const middlePrice = 7600//(defaultReservePrice + defaultStartingPrice) / 2;
+            const middlePrice = (defaultReservePrice + defaultStartingPrice) / 2;
             const halfTotalSupply = (initialAmount / 2) * middlePrice;
             await auction.connect(addr1).placeBid({value: ethers.parseUnits(String(halfTotalSupply),"wei")});
             await time.increase(defaultDuration / 2);
@@ -444,7 +453,7 @@ describe("Dutch Auction contract", function () {
         });
 
         it("Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1", async function () {
-            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
+            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(bidEndedFixture);
             // Calculate Expected Refund
             const expectedRefund =  BigInt(addr1_payingPrice - addr1_token * clearingPrice);
             
@@ -470,7 +479,7 @@ describe("Dutch Auction contract", function () {
         });
 
         it("Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2", async function () {
-            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
+            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(bidEndedFixture);
             // Calculate Expected Refund
             const expectedRefund =  BigInt(addr2_payingPrice - addr2_token * clearingPrice);
             // Check Internal State of addr2
@@ -495,7 +504,7 @@ describe("Dutch Auction contract", function () {
         });
        
         it("Should be able for owner to withdraw bid (revenue)", async function () {
-            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
+            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(bidEndedFixture);
             
             // Check Balance of auction 
             const initialAuctionBalances = await ethers.provider.getBalance(auction.getAddress());
@@ -510,7 +519,7 @@ describe("Dutch Auction contract", function () {
         });
 
         it("Non Owner Should not able to withdraw owner funds and check owner funds", async function () {
-            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
+            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(bidEndedFixture);
            
             await expect(auction.connect(addr1).withdrawOwnerFunds()).to.be.revertedWithCustomError(auction, "OnlyOwnerCanCallFunction");
             await expect(auction.connect(addr1).getOwnerRevenue()).to.be.revertedWithCustomError(auction, "OnlyOwnerCanCallFunction");
@@ -521,7 +530,7 @@ describe("Dutch Auction contract", function () {
         });
 
         it("After all owner and bidders withdraw tokens and funds, auction POV should contains nothing", async function () {
-            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
+            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(bidEndedFixture);
             
             // Check Balance of auction 
             const expectedInitialAuctionBalances =  addr1_payingPrice + addr2_payingPrice + addr3_payingPrice;
@@ -542,7 +551,7 @@ describe("Dutch Auction contract", function () {
         });
         
         it("Should not be able to withdraw again", async function () {
-            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(afterBiddingFixture);
+            const {axelToken, auction, owner, addr1, addr2, addr3, clearingPrice, addr1_token, addr2_token, addr3_token, addr1_payingPrice, addr2_payingPrice, addr3_payingPrice} = await loadFixture(bidEndedFixture);
              
             await auction.connect(owner).withdrawOwnerFunds();
             await auction.connect(addr1).withdrawTokens();
@@ -556,94 +565,160 @@ describe("Dutch Auction contract", function () {
         });
 
         it("Should not be able to withdraw if I did not bid", async function () {
-            const {axelToken, auction, owner} = await loadFixture(afterBiddingFixture);
+            const {axelToken, auction, owner} = await loadFixture(bidEndedFixture);
             await expect(auction.connect(owner).withdrawTokens()).to.be.revertedWithCustomError(auction, "InvalidWithdrawer");
         });
     });
-    // TODO Auction ended on Time
-    // TODO Auction ended earlier (not triggered by placeBid)
 
-    it("Auction ended when no user place bid(Solved)", async function () { // TODO Put a check on clearing price as well
-        const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
+    describe("Dutch Auction Distributing Stage (Bidding ended earlier due to no token left)", function(){
+        it("Auction ended earlier when no user place bid", async function () { // TODO Put a check on clearing price as well
+            const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
+    
+            const discountRate = (defaultStartingPrice - defaultReservePrice) / defaultDuration;
+            const expectedClearingPrice = defaultStartingPrice - discountRate * ((defaultDuration) / 2);
+            // console.log(expectedClearingPrice)
+            const option = {value: ethers.parseUnits(String(expectedClearingPrice * initialAmount), "wei")};
+            
+            await auction.connect(addr1).placeBid(option);
+            
+            await time.increase(defaultDuration);
+            
+            await auction.connect(addr1).withdrawTokens();
+            expect(await auction.getPrice()).to.be.equal(expectedClearingPrice);
+    
+        });
 
-        const discountRate = (defaultStartingPrice - defaultReservePrice) / defaultDuration;
-        const expectedClearingPrice = defaultStartingPrice - discountRate * ((defaultDuration) / 2);
-        // console.log(expectedClearingPrice)
-        const option = {value: ethers.parseUnits(String(expectedClearingPrice * initialAmount), "wei")};
-        
-        await auction.connect(addr1).placeBid(option);
-        
-        await time.increase(defaultDuration); // - 1 here is because placeBid causes 1 additional time.// TODO not strict on 1 
-   
-        await auction.connect(addr1).withdrawTokens();
-        expect(await auction.getPrice()).to.be.equal(expectedClearingPrice);
 
+        it("Auction ended earlier with upper bound clearing price due to floor function", async function () { // TODO Put a check on clearing price as well
+            const {auction, addr1, addr2} = await loadFixture(deployAuctionFixture); 
+
+            const discountRate = (defaultStartingPrice - defaultReservePrice) / defaultDuration;
+            const expectedClearingPrice = defaultStartingPrice - discountRate * ((defaultDuration) / 2);
+
+            const bid1 = expectedClearingPrice * (initialAmount / 2) - (expectedClearingPrice / 2);
+            const bid2 = expectedClearingPrice * (initialAmount / 2) + (expectedClearingPrice / 2); 
+            const option = {value: ethers.parseUnits(String(bid1), "wei")};
+            const option2 = {value: ethers.parseUnits(String(bid2), "wei")};
+            
+            // console.log(bid1, bid2)
+            // BSTA
+            var lo = defaultReservePrice;
+            var hi = defaultStartingPrice;
+            while(lo < hi){
+                var mid = Math.ceil((lo + hi) / 2);
+
+                const tokenSold = Math.floor(bid1 / mid) + Math.floor(bid2 / mid); 
+                if (tokenSold <= initialAmount)
+                    hi = mid;
+                else
+                    lo = mid + 1;
+            }
+            const newExpectedPrice = lo; 
+            // console.log(newExpectedPrice);
+
+            await auction.connect(addr1).placeBid(option);
+            await auction.connect(addr2).placeBid(option2);
+            await time.increase(defaultDuration); // - 1 here is because placeBid causes 1 additional time.// TODO not strict on 1 
+    
+            // console.log(await auction.connect(addr1).withdrawTokens());
+            expect(await auction.getPrice()).to.be.equal(newExpectedPrice);
+
+        });
+
+        it("Auction ended but query clearing price within duration", async function () { // TODO Put a check on clearing price as well
+            const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
+
+            const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration);
+            const expectedClearingPrice = defaultStartingPrice - discountRate * ((defaultDuration) / 2);
+
+            const option = {value: ethers.parseUnits(String(expectedClearingPrice * initialAmount), "wei")};
+            
+            await auction.connect(addr1).placeBid(option);
+            
+            await time.increase(defaultDuration * 3 / 4); // - 1 here is because placeBid causes 1 additional time.// TODO not strict on 1 
+    
+            // await auction.connect(addr1).withdrawTokens()); - This causes error too
+            expect(await auction.getPrice()).to.be.equal(expectedClearingPrice);
+
+        });
     });
 
-    it("Auction ended but wrong clearing price due to floor function", async function () { // TODO Put a check on clearing price as well
-        const {auction, addr1, addr2} = await loadFixture(deployAuctionFixture); 
+    describe("Dutch Auction Distributing Stage (Auction Ended on time)", function(){
+        it("Auction ended on time with no token left", async function () { // TODO Put a check on clearing price as well
+            const {axelToken, auction, owner, addr3, startAt} = await loadFixture(deployAuctionFixture);
+            
 
-        const discountRate = (defaultStartingPrice - defaultReservePrice) / defaultDuration;
-        const expectedClearingPrice = defaultStartingPrice - discountRate * ((defaultDuration) / 2);
+            await auction.connect(addr3).placeBid({value: ethers.parseUnits(String(defaultReservePrice * initialAmount), "wei")});
+            await time.increaseTo(startAt + defaultDuration - 2);
+            await auction.connect(owner).endAuction(); // Should not be able to end auction
+            expect( await auction.getStage()).to.be.equal("Started")
 
-        const bid1 = expectedClearingPrice * (initialAmount / 2) - (expectedClearingPrice / 2);
-        const bid2 = expectedClearingPrice * (initialAmount / 2) + (expectedClearingPrice / 2); 
-        const option = {value: ethers.parseUnits(String(bid1), "wei")};
-        const option2 = {value: ethers.parseUnits(String(bid2), "wei")};
-        
-        // console.log(bid1, bid2)
-        // BSTA
-        var lo = defaultReservePrice;
-        var hi = defaultStartingPrice;
-        while(lo < hi){
-            var mid = Math.ceil((lo + hi) / 2);
+            await time.increase(1);
+            await auction.connect(owner).endAuction();
+            expect(await auction.getStage()).to.be.equal("Ended")
+            expect(await auction.getPrice()).to.be.equal(defaultReservePrice);
+            expect(await auction.connect(addr3).getTokens()).to.be.equal(initialAmount); 
+        });
 
-            const tokenSold = Math.floor(bid1 / mid) + Math.floor(bid2 / mid); 
-            if (tokenSold <= initialAmount)
-                hi = mid;
-            else
-                lo = mid + 1;
-        }
-        const newExpectedPrice = lo; 
-        // console.log(newExpectedPrice);
+        it("Auction ended earlier with token left", async function () { // TODO Put a check on clearing price as well
+            const {axelToken, auction, owner, addr3, startAt} = await loadFixture(deployAuctionFixture);
+            
+            await auction.connect(addr3).placeBid({value: ethers.parseUnits(String(defaultReservePrice * (initialAmount - 2)), "wei")});
+            await time.increaseTo(startAt + defaultDuration - 1);
+            await auction.connect(owner).endAuction(); // Should not be able to end auction
+            expect(await auction.getStage()).to.be.equal("Started")
 
-        await auction.connect(addr1).placeBid(option);
-        await auction.connect(addr2).placeBid(option2);
-        await time.increase(defaultDuration); // - 1 here is because placeBid causes 1 additional time.// TODO not strict on 1 
-   
-        // console.log(await auction.connect(addr1).withdrawTokens());
-        expect(await auction.getPrice()).to.be.equal(newExpectedPrice);
-
+            await time.increase(1);
+            await auction.connect(owner).endAuction();
+            expect(await auction.getStage()).to.be.equal("Ended")
+            expect(await auction.getPrice()).to.be.equal(defaultReservePrice);
+            expect(await auction.connect(addr3).getTokens()).to.be.equal(initialAmount - 2); 
+        });
     });
 
-    it("Auction ended within duration but wrong clearing price", async function () { // TODO Put a check on clearing price as well
-        const {auction, owner, addr1} = await loadFixture(deployAuctionFixture); 
+    describe("Invalid Function called Check at different Stage", function(){
+        it("Invalid Function called at Auction Constructed Stage", async function(){
+            const {axelToken, owner, addr1} = await loadFixture(deployTokenFixture);
+            const startingPrice = 100;
+            const reservePrice = 50; 
+            const duration = 20 * 60;
+            const tokenAddress = await axelToken.getAddress();
+            const auction = await ethers.deployContract("DutchAuction", [startingPrice, reservePrice, tokenAddress, duration], owner);
+            await auction.waitForDeployment();
+            
+            await expect(auction.connect(addr1).getPrice()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).getTokenLeft()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).getPosition()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).placeBid({value : ethers.parseUnits("0.5", "ether")})).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).withdrawTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).withdrawOwnerFunds()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).getRefund()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).getTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).getOwnerRevenue()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage"); 
+            await expect(auction.connect(owner).endAuction()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+        });
 
-        const discountRate = Math.floor((defaultStartingPrice - defaultReservePrice) / defaultDuration);
-        const expectedClearingPrice = defaultStartingPrice - discountRate * ((defaultDuration) / 2);
+        it("Invalid Function called at Auction Started Stage", async function(){
+            const {auction, owner, addr1} = await loadFixture(deployAuctionFixture);
 
-        const option = {value: ethers.parseUnits(String(expectedClearingPrice * initialAmount), "wei")};
-        
-        await auction.connect(addr1).placeBid(option);
-        
-        await time.increase(defaultDuration * 3 / 4); // - 1 here is because placeBid causes 1 additional time.// TODO not strict on 1 
-   
-        // await auction.connect(addr1).withdrawTokens()); - This causes error too
-        expect(await auction.getPrice()).to.be.equal(expectedClearingPrice);
+            await expect(auction.connect(owner).startAuction()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).withdrawTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).withdrawOwnerFunds()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).getRefund()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).getTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).getOwnerRevenue()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            
+        })
+
+        it("Invalid Function called at Auction Ended Stage", async function(){
+            const {auction, owner, addr1} = await loadFixture(bidEndedFixture);
+            
+            await expect(auction.connect(owner).startAuction()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr1).placeBid({value : ethers.parseUnits("0.5", "ether")})).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).endAuction()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+        });
 
     });
-    // async function deployAuctionFixture() {
-    //   const [owner, addr1, addr2, addr3] = await ethers.getSigners();
-    //   const auction = await ethers.deployContract("AxelToken", [initialAmount]);
-    //   await auction.waitForDeployment();
-    //   return { auction, addr1, addr2, addr3};
-    // }
-  
-    // it("Should assign the total supply of tokens to the owner initially", async function () {
-    //   const { auction, owner } = await loadFixture(deployAuctionFixture);
-      
-    // });
-  
 });
 
 /*
@@ -655,5 +730,4 @@ Final Check
     - token check
     - function check at stage
     - timedtransition check
-
 */
