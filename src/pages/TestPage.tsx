@@ -299,6 +299,11 @@ function TestPage() {
 							<label className="font-medium w-40">ETH Committed:</label>
 							<span className="ml-2 w-60">[Total ETH committed]</span>
 						</div>
+
+						<div className="flex items-center">
+							<label className="font-medium w-40">Personal ETH Committed:</label>
+							<span className="ml-2 w-60">[Personal ETH committed]</span>
+						</div>
 					</div>
 
 						<input
@@ -319,6 +324,20 @@ function TestPage() {
 							>
 								Refresh Data
 							</button>
+							<button
+								type="submit"
+								className="px-12 py-1 text-white bg-blue-400 rounded-lg"
+							>
+								Withdraw tokens
+							</button>
+							{user?.role === "seller" && (
+							<button
+								type="submit"
+								className="px-12 py-1 text-white bg-blue-400 rounded-lg"
+							>
+								Distribute tokens to all winners
+							</button>
+							)}
 						</div>
 
 					</form>
