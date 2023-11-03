@@ -130,7 +130,6 @@ contract DutchAuction {
 
             while (low < high){
                 uint256 mid = (low + high) / 2;
-                // console.log(low, mid, high);
                 if (_calculateTokenSold(mid) < tokenAmount) high = mid;
                 else low = mid + 1;
             }  
@@ -161,7 +160,6 @@ contract DutchAuction {
         uint256 tokenSold = 0;
         for (uint256 i = 0; i < buyers.length; i++) 
             tokenSold += uint(buyersPosition[buyers[i]] / price);
-        // console.log(tokenSold);
         return tokenSold;
     }
     
@@ -191,11 +189,11 @@ contract DutchAuction {
 
     function withdrawTokens () public timedTransitions() atStage(Stages.AuctionEnded){
         if (buyersPosition[msg.sender] == 0) revert InvalidWithdrawer();
-        // console.log(buyersPosition[msg.sender]);
+        
         uint256 bid = buyersPosition[msg.sender];
         uint256 tokenBought = bid / clearingPrice;
         uint256 amountPaid = tokenBought * clearingPrice;
-        // console.log(tokenBought);
+        
         //clear records and transfer token to buyer
         buyersPosition[msg.sender] = 0;
         token.transfer(msg.sender, tokenBought);
