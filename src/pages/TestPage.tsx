@@ -112,7 +112,7 @@ function TestPage() {
 
 			const auction = await factory.deploy(startingPrice, reservePrice, token.getAddress(), duration);
 			await auction.waitForDeployment();
-			datastore.set("auctionAddress", auction.getAddress()); 
+			datastore.set("auctionAddress", (await auction.getAddress()).toString()); 
 
 			//approve token
 			await token.approve(auction.getAddress(), tokenBalance);
@@ -124,8 +124,8 @@ function TestPage() {
 				signer
 			);
 
-			console.log("auction deployed and started");
 			await deployedAuction.startAuction();
+			console.log("auction deployed and started");
 		}
 		catch(error){
 			console.log(error);
