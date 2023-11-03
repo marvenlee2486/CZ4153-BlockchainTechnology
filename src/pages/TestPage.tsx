@@ -209,136 +209,121 @@ function TestPage() {
 
 	return (
 		<div className="sm:ml-64 mt-14 p-4">
-		<div className="flex flex-col items-center justify-start w-full gap-2">
-
-			<div className="w-full p-2 bg-gray-200">
-			<div>Axel Token Balance: {tokenBalance} AXL</div>
-			<form
-				onSubmit={handleMintAxelToken}
-				className="flex items-center justify-start gap-2"
-			>
-				<input placeholder="Token Amount" type="numbers"></input>
-				<button
-				type="submit"
-				className="px-12 py-1 text-white bg-blue-400 rounded-lg"
-				>
-				Mint Token
-				</button>
-				<button
-				type="button"
-				className="px-12 py-1 text-white bg-blue-400 rounded-lg"
-				onClick={handleGetAxelTokenBalance}
-				>
-				Refresh Balance
-				</button>
-			</form>
-			</div>
-
-			{user?.role === "seller" && (
-			<div className="w-full p-2 bg-gray-400">
-				<div>Start New Auction</div>
+			<div className="flex flex-col items-center justify-start w-full gap-2">
+				<div className="w-full p-2 bg-gray-200">
+				<div>Axel Token Balance: {tokenBalance} AXL</div>
 				<form
-				onSubmit={handleStartAuction}
-				className="flex items-center justify-start gap-2"
+					onSubmit={handleMintAxelToken}
+					className="flex items-center justify-start gap-2"
 				>
-				<input
-					className="w-28"
-					placeholder="Starting Price"
-					type="numbers"
-				></input>
-				<input
-					className="w-28"
-					placeholder="Reserve Price"
-					type="numbers"
-				></input>
-				<input
-					className="w-30"
-					placeholder="Duration (Minutes)"
-					type="numbers"
-				></input>
-				<button
+					<input placeholder="Token Amount" type="numbers"></input>
+					<button
 					type="submit"
 					className="px-12 py-1 text-white bg-blue-400 rounded-lg"
-				>
-					startAuction
-				</button>
-				<button
+					>
+					Mint Token
+					</button>
+					<button
 					type="button"
 					className="px-12 py-1 text-white bg-blue-400 rounded-lg"
-					onClick={handleTransferAllTokens}
-				>
-					transferAllTokens
-				</button>
-				</form>
-			</div>
-			)}
-		</div>
-		<div className=" flex flex-col gap-2 pt-2 overflow-y-auto">
-			{data.map((value, key) => {
-			const keyName = Object.keys(value)[0];
-			const contents = value[keyName];
-			if (keyName === "Auctions") {
-				return contents.map((auction: any, idx: number) => {
-				return (
-					<p key={idx} className={`font-semibold bg-red-300 p-2`}>
-					AuctionID {idx}: <br />
-					{Object.keys(auction).map((objKey) => {
-						const objValue = auction[objKey];
-						if (objKey === "bids") {
-						return (
-							<p key={objKey}>
-							bids:
-							{objValue.map((bid: any) => (
-								<p>
-								&lt; {bid[0]}, {bid[1]} &gt;
-								</p>
-							))}
-							</p>
-						);
-						}
-						return (
-						<span key={objKey}>
-							{objKey}: {objValue}, {"  "}
-						</span>
-						);
-					})}
-					<form
-						onSubmit={(e) => handlePlaceBid(e, idx)}
-						className="flex items-center justify-start gap-2 pt-2"
+					onClick={handleGetAxelTokenBalance}
 					>
-						<input placeholder="Bid amount..." type="numbers"></input>
-						<button
+					Refresh Balance
+					</button>
+				</form>
+				</div>
+
+				{user?.role === "seller" && (
+				<div className="w-full p-2 bg-gray-400">
+					<div>Start New Auction</div>
+					<form
+					onSubmit={handleStartAuction}
+					className="flex items-center justify-start gap-2"
+					>
+					<input
+						className="w-28"
+						placeholder="Starting Price"
+						type="numbers"
+					></input>
+					<input
+						className="w-28"
+						placeholder="Reserve Price"
+						type="numbers"
+					></input>
+					<input
+						className="w-30"
+						placeholder="Duration (Minutes)"
+						type="numbers"
+					></input>
+					<button
 						type="submit"
 						className="px-12 py-1 text-white bg-blue-400 rounded-lg"
-						>
-						placeBid
-						</button>
+					>
+						Start Auction
+					</button>
 					</form>
-					</p>
-				);
-				});
-			} else {
-				return (
-				<p
-					key={key}
-					className={`${
-					keyName === user?.username && "bg-green-200"
-					} font-semibold bg-gray-200 p-2`}
-				>
-					{keyName}:{"  "}
-					{Object.keys(contents).map((objKey) => {
-					const objValue = contents[objKey];
-					return (
-						<span key={objKey}>
-						{objKey}: {objValue},
-						</span>
-					);
-					})}
-				</p>
-				);
-			}
-			})}
-		</div>
+				</div>
+				)}
+				
+				<div className="w-full p-2 bg-gray-400">
+					<div className="text-lg font-bold mb-4">Auction</div>
+
+					<form onSubmit={handleStartAuction} className="flex flex-col items-start gap-2">
+
+					<div className="flex items-center w-full mb-4">
+						<div className="flex items-center mr-4">
+							<label className="font-medium w-40">Auction Address:</label>
+							<span className="ml-2 w-60">[Your Address Here]</span>
+						</div>
+
+						<div className="flex items-center">
+							<label className="font-medium w-40">Auction Status:</label>
+							<span className="ml-2 w-60">[Ongoing/Finished]</span>
+						</div>
+					</div>
+
+					<div className="flex items-center w-full mb-4">
+						<div className="flex items-center mr-4">
+							<label className="font-medium w-40">Current Price:</label>
+							<span className="ml-2 w-60">[Current price AXL]</span>
+						</div>
+
+						<div className="flex items-center">
+							<label className="font-medium w-40">Token Left:</label>
+							<span className="ml-2 w-60">[Amount of token left]</span>
+						</div>
+					</div>
+
+					<div className="flex items-center w-full mb-4">
+						<div className="flex items-center mr-4">
+							<label className="font-medium w-40">ETH Committed:</label>
+							<span className="ml-2 w-60">[Total ETH committed]</span>
+						</div>
+					</div>
+
+						<input
+							className="w-28 mb-2"
+							placeholder="Bid Price"
+							type="number"
+						></input>
+						<div className="flex items-center gap-4">
+							<button
+								type="submit"
+								className="px-12 py-1 text-white bg-blue-400 rounded-lg"
+							>
+								Place Bid
+							</button>
+							<button
+								type="submit"
+								className="px-12 py-1 text-white bg-blue-400 rounded-lg"
+							>
+								Refresh Data
+							</button>
+						</div>
+
+					</form>
+				</div>
+			</div>
 		</div>
 	);
 }
