@@ -27,7 +27,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Routes>
             <Route path="/test" element={<ErrorPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/" element={<ProtectedLayout />}>
+            <Route path="" element={<ProtectedLayout />}>
               <Route path="" element={<RootLayout />}>
                 <Route path="dashboard/:uid" element={<Dashboard />} />
                 <Route path="test/:uid" element={<TestPage />} />

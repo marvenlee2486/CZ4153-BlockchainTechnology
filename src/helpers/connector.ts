@@ -5,7 +5,6 @@ import { ethers } from 'ethers'
 export const [metaMask, hooks] = initializeConnector<MetaMask>((actions) => new MetaMask({ actions }))
 
 export const isAccountActive = (address: string|undefined, accounts: string[]|undefined): boolean => {
-    console.log("isAccountActive", address, accounts)
     if (!accounts || !address) return false;
     function handleCheckSumCompare(address: string, address2: string) {
       return (

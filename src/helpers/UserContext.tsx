@@ -3,6 +3,8 @@ import React, { createContext, useState, ReactNode } from "react";
 import { datastore } from "../Data/datastore";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "../Data/useLocalStorage";
+import { useContext } from "react";
+
 type role = "user" | "seller" | "admin";
 
 export interface User {
@@ -14,12 +16,26 @@ export interface User {
 }
 
 interface UserContextProps {
-  user: User | null;
+  user: User;
   login: (userData: User) => void;
   logout: () => void;
+  isAuthenticated: () => boolean;
 }
 
-const UserContext = createContext<UserContextProps | null>(null);
+const defaultUser: User = {
+  uid: -1,
+  username: "",
+  email: "",
+  role: "user",
+  address: "",
+};
+
+const UserContext = createContext<UserContextProps>({
+  user: defaultUser,
+  login: () => {},
+  logout: () => {},
+  isAuthenticated: () => false,
+});
 
 interface UserProviderProps {
   children: ReactNode;
@@ -38,11 +54,28 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     navigate("/login", { replace: true });
   };
 
+  const isAuthenticated = () => {
+    return user !== null && user.uid !== -1;
+  };
+
+  const contextValue = {
+    user: user || defaultUser,
+    login,
+    logout,
+    isAuthenticated,
+  };
+
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
   );
+};
+
+export const useUserContext = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUserContext must be used within a UserProvider");
+  }
+  return context;
 };
 
 export default UserContext;

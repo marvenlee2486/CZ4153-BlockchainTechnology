@@ -1,6 +1,6 @@
 // LoginPage.tsx
-import { useContext, useState } from "react";
-import UserContext from "../helpers/UserContext"; // Adjust the import path if necessary
+import { useEffect, useState } from "react";
+import UserContext, { useUserContext } from "../helpers/UserContext";
 import { User } from "../helpers/UserContext";
 import { useNavigate } from "react-router-dom";
 import { datastore } from "../Data/datastore";
@@ -9,6 +9,7 @@ import { Status } from "../components/Status";
 import { Chain } from "../components/Chain";
 import { Accounts } from "../components/Accounts";
 import { isAccountActive } from "../helpers/connector";
+import { ToastContainer, toast, Flip } from "react-toastify";
 
 const {
   useChainId,
@@ -27,11 +28,7 @@ const LoginPage = () => {
   const provider = useProvider();
   const ENSNames = useENSNames(provider);
   const [error, setError] = useState<Error | undefined>();
-
-  console.log(provider);
-
-  const navigate = useNavigate();
-  const { login } = useContext(UserContext) ?? {}; // login status
+  const { login } = useUserContext();
 
   const userStore: User[] = [
     {
@@ -57,15 +54,67 @@ const LoginPage = () => {
     },
   ];
 
+  useEffect(() => {
+    if (!isActive) {
+      metaMask.connectEagerly().catch(setError);
+    }
+  }, []);
+
+  const alert = (message: string) => {
+    toast.error(message, {
+      position: "top-center",
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: false,
+      progress: undefined,
+      theme: "light",
+      transition: Flip,
+    });
+  };
+
   const handleLogin = (user: User) => {
-    login?.(user);
+    try {
+      if (!isActive || chainId !== 1337) {
+        alert(
+          "Please connect to http://localhost:8545 with MetaMask with ChainId: 1337!"
+        );
+        return;
+      }
+      login?.(user);
+      userStore.forEach((user) => datastore.set(user.username, user));
+    } catch (error) {
+      setError(error instanceof Error ? error : new Error(String(error)));
+    }
+  };
+
+  const handleConnect = async () => {
+    try {
+      await metaMask.activate();
+    } catch (e) {
+      console.error("Error connecting with MetaMask", e);
+      setError(e instanceof Error ? e : new Error("An unknown error occurred"));
+    }
+  };
+
+  const handleDisconnect = async () => {
+    try {
+      if (metaMask?.deactivate) {
+        await metaMask.deactivate();
+      } else {
+        metaMask.resetState();
+      }
+    } catch (e) {
+      console.error("Error disconnecting MetaMask", e);
+      setError(e instanceof Error ? e : new Error("An unknown error occurred"));
+    }
   };
 
   return (
     <div className="flex items-center justify-center w-full h-screen bg-gray-200">
       <div className="w-[70%] xl flex flex-col items-center justify-center h-[50%] gap-1 p-5 bg-white rounded-sm">
         <div className="flex justify-around">
-          <div className="flex flex-col items-center justify-center w-full h-full gap-1 p-5 rounded-sm">
+          <div className="flex flex-col items-center justify-center w-full h-full gap-2 p-5 rounded-sm">
             <Status
               isActivating={isActivating}
               isActive={isActive}
@@ -73,6 +122,11 @@ const LoginPage = () => {
             />
             <div className="w-auto h-10 text-black">
               <Chain chainId={chainId} />
+              {chainId !== 1337 && isActive && (
+                <p className=" text-red-600">
+                  Please connect to http://localhost:8545!
+                </p>
+              )}
             </div>
 
             {isActivating ? (
@@ -80,22 +134,14 @@ const LoginPage = () => {
             ) : isActive ? (
               <button
                 className="px-3 py-1 text-white bg-red-500 rounded-md"
-                onClick={() => {
-                  if (metaMask?.deactivate) {
-                    void metaMask.deactivate();
-                  } else {
-                    void metaMask.resetState();
-                  }
-                }}
+                onClick={handleDisconnect}
               >
                 Disconnect
               </button>
             ) : (
               <button
                 className="px-3 py-1 text-white bg-green-500 rounded-md"
-                onClick={() => {
-                  void metaMask.activate();
-                }}
+                onClick={handleConnect}
               >
                 Connect
               </button>
@@ -119,7 +165,6 @@ const LoginPage = () => {
               disabled={!buttonActive}
               onClick={() => {
                 handleLogin(user);
-                userStore.forEach((user) => datastore.set(user.username, user));
               }}
             >
               {user.username}
@@ -127,6 +172,7 @@ const LoginPage = () => {
           );
         })}
       </div>
+      <ToastContainer />
     </div>
   );
 };
