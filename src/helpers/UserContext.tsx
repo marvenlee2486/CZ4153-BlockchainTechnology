@@ -19,6 +19,7 @@ interface UserContextProps {
   user: User;
   login: (userData: User) => void;
   logout: () => void;
+  logoutAndClear: () => void;
   isAuthenticated: () => boolean;
 }
 
@@ -34,6 +35,7 @@ const UserContext = createContext<UserContextProps>({
   user: defaultUser,
   login: () => {},
   logout: () => {},
+  logoutAndClear: () => {},
   isAuthenticated: () => false,
 });
 
@@ -54,6 +56,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     navigate("/login", { replace: true });
   };
 
+  const logoutAndClear = () => {
+    datastore.clear();
+    navigate("/login", { replace: true });
+  };
+
   const isAuthenticated = () => {
     return user !== null && user.uid !== -1;
   };
@@ -62,6 +69,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     user: user || defaultUser,
     login,
     logout,
+    logoutAndClear,
     isAuthenticated,
   };
 

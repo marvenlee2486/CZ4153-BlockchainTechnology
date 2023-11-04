@@ -49,7 +49,6 @@ function TestPage() {
     } else {
       const provider = new ethers.BrowserProvider(window?.ethereum);
       const network = (await provider.getNetwork()).chainId.toString();
-      console.log("Connected to network", network);
       if (network !== "1337") {
         alert(
           `Please ensure the following:\n 1.Create and connect to Localhost:8545, chainID 1337\n2. Ensure you are logged into account with address: ${user.address}`
@@ -123,10 +122,10 @@ function TestPage() {
   const handleStartAuction = async (e: any) => {
     e.preventDefault();
     const tokenAddress = datastore.getTokenAddress(user.uid);
-    const startingPrice = e.target[0].value;
-    const reservePrice = e.target[1].value;
+    const startingPrice = parseInt(e.target[0].value);
+    const reservePrice = parseInt(e.target[1].value);
     const duration = e.target[2].value * 60;
-    const tokenOffering = e.target[3].value;
+    const tokenOffering = parseInt(e.target[3].value);
     if (!tokenAddress) {
       alert("Token balance 0. Please mint tokens first!");
       return;
@@ -187,118 +186,20 @@ function TestPage() {
       await deployedAuction.startAuction();
       const timestamp = Date.now();
       notify("Auction started!");
+      const deployedAuctionAddress = await deployedAuction.getAddress();
 
       datastore.appendAuction(
-        auctionAddress,
+        deployedAuctionAddress,
         user.uid,
         startingPrice,
         reservePrice,
         duration,
         timestamp
       );
+      location.reload(); //refresh
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const handlePlaceBid = async (e: any, auctionAddress: string) => {
-    e.preventDefault();
-    const bidAmount = e.target[0].value;
-    e.target.reset();
-
-    const [signer] = await requestAccount();
-    const auction = new ethers.Contract(
-      auctionAddress,
-      DutchAuctionArtifact.abi,
-      signer
-    );
-    await auction.placeBid(bidAmount);
-    datastore.appendBid(auctionAddress, user.uid, bidAmount);
-  };
-
-  const initialPrice = datastore.get("price") || null;
-  const [price, setPrice] = useState(initialPrice);
-  const handleGetPrice = async () => {
-    const [signer] = await requestAccount();
-    const auction = new ethers.Contract(
-      datastore.get("auctionAddress"),
-      DutchAuctionArtifact.abi,
-      signer
-    );
-    const currentPrice = (await auction.getPrice()).toString();
-    datastore.set("price", currentPrice);
-    setPrice(currentPrice);
-  };
-
-  const initialTokenLeft = datastore.get("tokenLeft") || null;
-  const [tokenLeft, setTokenLeft] = useState(initialTokenLeft);
-
-  const handleGetTokenLeft = async () => {
-    const [signer] = await requestAccount();
-    const auction = new ethers.Contract(
-      datastore.get("auctionAddress"),
-      DutchAuctionArtifact.abi,
-      signer
-    );
-    const currentTokenLeft = (await auction.getTokenLeft()).toString();
-    datastore.set("tokenLeft", currentTokenLeft);
-    setTokenLeft(currentTokenLeft);
-  };
-
-  const initalPosition = datastore.get("position" + user.address) || null;
-  const [position, setPosition] = useState(initalPosition);
-  const handleGetPosition = async () => {
-    const [signer] = await requestAccount();
-    const auction = new ethers.Contract(
-      datastore.get("auctionAddress"),
-      DutchAuctionArtifact.abi,
-      signer
-    );
-    const currentPosition = (await auction.getPosition()).toString();
-    datastore.set("position" + user.address, currentPosition);
-    setPosition(currentPosition);
-  };
-
-  const initalStage = datastore.get("stage") || null;
-  const [stage, setStage] = useState(initalStage);
-
-  const handleGetAuctionStage = async () => {
-    const [signer] = await requestAccount();
-    const auction = new ethers.Contract(
-      datastore.get("auctionAddress"),
-      DutchAuctionArtifact.abi,
-      signer
-    );
-    const currentStage = await auction.getStage();
-    datastore.set("stage", currentStage.toString());
-    setStage(currentStage.toString());
-  };
-
-  const handleWithdrawTokens = async () => {
-    const [signer] = await requestAccount();
-    const auction = new ethers.Contract(
-      datastore.get("auctionAddress"),
-      DutchAuctionArtifact.abi,
-      signer
-    );
-    await auction.withdrawTokens();
-  };
-
-  const handleWithdrawRevenues = async () => {
-    const [signer] = await requestAccount();
-    const auction = new ethers.Contract(
-      datastore.get("auctionAddress"),
-      DutchAuctionArtifact.abi,
-      signer
-    );
-    await auction.withdrawOwnerFunds();
-  };
-
-  const handleRefreshAuctionData = async () => {
-    await handleGetPrice();
-    await handleGetAuctionStage();
-    await handleGetTokenLeft();
-    await handleGetPosition();
   };
 
   const renderAuctions = () => {

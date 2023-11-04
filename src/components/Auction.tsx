@@ -3,6 +3,8 @@ import { ethers } from "ethers";
 import DutchAuctionArtifact from "../artifacts/contracts/DutchAuction.sol/DutchAuction.json";
 import { useUserContext } from "../helpers/UserContext";
 import { useEffect, useState } from "react";
+import { ToastContainer, toast, Flip } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface AuctionProps {
   auctionAddress: string;
@@ -10,12 +12,52 @@ interface AuctionProps {
 const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
   const { user } = useUserContext();
   const auction = datastore.getAuction(auctionAddress);
+  const isOwner = auction.ownerUid === user.uid;
+  const [auctionData, setAuctionData] = useState(auction);
+  const [auctionEndedData, setAuctionEndedData] = useState({
+    currentPrice: null,
+    currentTokenLeft: null,
+    currentPosition: null,
+    currentStage: null,
+  });
+
+  let { currentPrice, currentTokenLeft, currentPosition, currentStage } =
+    auctionData;
 
   useEffect(() => {
     if (auction) {
-      handleRefreshAuctionData();
+      handleGetAuctionData();
     }
   }, []);
+
+  const notify = (message: string) =>
+    toast(message, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: false,
+      progress: undefined,
+      theme: "light",
+      transition: Flip,
+    });
+  const alert = (message: string) => {
+    toast.error(message, {
+      position: "top-center",
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: false,
+      progress: undefined,
+      theme: "light",
+      transition: Flip,
+    });
+  };
+
+  const handleTimerEnding = () => {
+    handleGetAuctionData();
+  };
 
   const requestAccount = async () => {
     if (typeof window?.ethereum === "undefined") {
@@ -56,12 +98,13 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
       DutchAuctionArtifact.abi,
       signer
     );
-    await auction.placeBid(bidAmount);
+    await handleGetAuctionData();
+    notify("Please confirm, place bid at: " + { currentPrice } + " WEI");
+    await auction.placeBid();
     datastore.appendBid(auctionAddress, user.uid, bidAmount);
   };
 
-  const [currPrice, setCurrPrice] = useState(0);
-  const handleGetPrice = async () => {
+  const handleGetAuctionData = async () => {
     const [signer] = await requestAccount();
     const auction = new ethers.Contract(
       auctionAddress,
@@ -69,44 +112,28 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
       signer
     );
     const currentPrice = (await auction.getPrice()).toString();
-    setCurrPrice(currentPrice);
-  };
-
-  const [tokenLeft, setTokenLeft] = useState(0);
-  const handleGetTokenLeft = async () => {
-    const [signer] = await requestAccount();
-    const auction = new ethers.Contract(
-      auctionAddress,
-      DutchAuctionArtifact.abi,
-      signer
-    );
     const currentTokenLeft = (await auction.getTokenLeft()).toString();
-    setTokenLeft(currentTokenLeft);
-  };
-
-  const [position, setPosition] = useState(0);
-  const handleGetPosition = async () => {
-    const [signer] = await requestAccount();
-    const auction = new ethers.Contract(
-      auctionAddress,
-      DutchAuctionArtifact.abi,
-      signer
-    );
     const currentPosition = (await auction.getPosition()).toString();
-    setPosition(currentPosition);
+    const currentStage = await auction.getStage();
+    // const auctionTimeEnd = await auction.getExpiresAt().toString()
+    setAuctionData({
+      currentPrice,
+      currentTokenLeft,
+      currentPosition,
+      currentStage,
+      // auctionTimeEnd
+    });
   };
 
-  const [stage, setStage] = useState(0);
-  const handleGetAuctionStage = async () => {
-    const [signer] = await requestAccount();
-    const auction = new ethers.Contract(
-      auctionAddress,
-      DutchAuctionArtifact.abi,
-      signer
-    );
-    const currentStage = await auction.getStage();
-    setStage(currentStage.toString());
-  };
+  // const handleGetAuctionEndedData = async (e: any) => {
+  //   const [signer] = await requestAccount();
+  //   const auction = new ethers.Contract(
+  //     auctionAddress,
+  //     DutchAuctionArtifact.abi,
+  //     signer
+  //   );
+  //   const
+  // };
 
   const handleWithdrawTokens = async () => {
     const [signer] = await requestAccount();
@@ -118,7 +145,10 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
     await auction.withdrawTokens();
   };
 
+  // OWNER FUNCTIONS....................................................................................................
+
   const handleWithdrawRevenues = async () => {
+    if (!isOwner) return;
     const [signer] = await requestAccount();
     const auction = new ethers.Contract(
       datastore.get("auctionAddress"),
@@ -128,12 +158,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
     await auction.withdrawOwnerFunds();
   };
 
-  const handleRefreshAuctionData = async () => {
-    await handleGetPrice();
-    await handleGetAuctionStage();
-    await handleGetTokenLeft();
-    await handleGetPosition();
-  };
+  const renderOwnedAuction = () => {};
 
   return (
     <div className="w-full p-2 bg-gray-400" key={auctionAddress}>
@@ -146,19 +171,19 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
 
         <div className="flex items-center">
           <label className="w-40 font-medium">Auction Status:</label>
-          <span className="w-60 ml-2">{stage}</span>
+          <span className="w-60 ml-2">{currentStage}</span>
         </div>
       </div>
 
       <div className="flex items-center w-full mb-4">
         <div className="flex items-center mr-4">
           <label className="w-40 font-medium">Current Price:</label>
-          <span className="w-60 ml-2">{currPrice} WEI</span>
+          <span className="w-60 ml-2">{currentPrice} WEI</span>
         </div>
 
         <div className="flex items-center">
           <label className="w-40 font-medium">Token Left:</label>
-          <span className="w-60 ml-2">{tokenLeft} AXL</span>
+          <span className="w-60 ml-2">{currentTokenLeft} AXL</span>
         </div>
       </div>
       <div className="flex items-center w-full mb-4">
@@ -169,7 +194,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
 
         <div className="flex items-center">
           <label className="w-40 font-medium">Ethereum Committed:</label>
-          <span className="w-60 ml-2">{position} WEI</span>
+          <span className="w-60 ml-2">{currentPosition} WEI</span>
         </div>
       </div>
 
@@ -196,7 +221,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
         <button
           type="submit"
           className="px-12 py-1 text-white bg-blue-400 rounded-lg"
-          onClick={handleRefreshAuctionData}
+          onClick={handleGetAuctionData}
         >
           Refresh Data
         </button>
@@ -217,6 +242,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
           </button>
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 };
