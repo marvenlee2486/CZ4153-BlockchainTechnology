@@ -124,7 +124,8 @@ function TestPage() {
     const tokenAddress = datastore.getTokenAddress(user.uid);
     const startingPrice = parseInt(e.target[0].value);
     const reservePrice = parseInt(e.target[1].value);
-    const duration = e.target[2].value * 60;
+    const durationSeconds = parseInt(e.target[2].value) * 60;
+    console.log(durationSeconds);
     const tokenOffering = parseInt(e.target[3].value);
     if (!tokenAddress) {
       alert("Token balance 0. Please mint tokens first!");
@@ -165,7 +166,7 @@ function TestPage() {
         startingPrice,
         reservePrice,
         tokenContractAddress,
-        duration
+        durationSeconds
       );
       //deploy auction (metamask)
       await auction.waitForDeployment();
@@ -185,6 +186,7 @@ function TestPage() {
       //start auction (metamask)
       await deployedAuction.startAuction();
       const timestamp = Date.now();
+      console.log(timestamp);
       notify("Auction started!");
       const deployedAuctionAddress = await deployedAuction.getAddress();
 
@@ -193,8 +195,8 @@ function TestPage() {
         user.uid,
         startingPrice,
         reservePrice,
-        duration,
-        timestamp
+        timestamp,
+        durationSeconds
       );
       location.reload(); //refresh
     } catch (error) {

@@ -5,6 +5,7 @@ import { useUserContext } from "../helpers/UserContext";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Countdown from "./Countdown";
 
 interface AuctionProps {
   auctionAddress: string;
@@ -55,7 +56,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
     });
   };
 
-  const handleTimerEnding = () => {
+  const countdownCallback = () => {
     handleGetAuctionData();
   };
 
@@ -89,9 +90,6 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
 
   const handlePlaceBid = async (e: any) => {
     e.preventDefault();
-    const bidAmount = e.target[0].value;
-    e.target.reset();
-
     const [signer] = await requestAccount();
     const auction = new ethers.Contract(
       auctionAddress,
@@ -101,7 +99,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
     await handleGetAuctionData();
     notify("Please confirm, place bid at: " + { currentPrice } + " WEI");
     await auction.placeBid();
-    datastore.appendBid(auctionAddress, user.uid, bidAmount);
+    datastore.appendBid(auctionAddress, user.uid, currentPrice);
   };
 
   const handleGetAuctionData = async () => {
@@ -111,10 +109,11 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
       DutchAuctionArtifact.abi,
       signer
     );
+    const currentStage = await auction.getStage();
+    console.log(auctionAddress, currentStage);
     const currentPrice = (await auction.getPrice()).toString();
     const currentTokenLeft = (await auction.getTokenLeft()).toString();
     const currentPosition = (await auction.getPosition()).toString();
-    const currentStage = await auction.getStage();
     // const auctionTimeEnd = await auction.getExpiresAt().toString()
     setAuctionData({
       currentPrice,
@@ -196,25 +195,17 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
           <label className="w-40 font-medium">Ethereum Committed:</label>
           <span className="w-60 ml-2">{currentPosition} WEI</span>
         </div>
+        <Countdown
+          endTime={auction.endTime}
+          countdownCallback={countdownCallback}
+        />
       </div>
-
-      <form
-        onSubmit={handlePlaceBid}
-        className="flex flex-col items-start gap-2"
-        id="placeBid"
-      >
-        <input
-          className="w-28 mb-2"
-          placeholder="Bid Price"
-          type="number"
-        ></input>
-      </form>
 
       <div className="flex items-center gap-4">
         <button
-          type="submit"
+          type="button"
           className="px-12 py-1 text-white bg-green-400 rounded-lg"
-          form="placeBid"
+          onClick={handlePlaceBid}
         >
           Place Bid
         </button>
