@@ -88,7 +88,7 @@ contract DutchAuction {
     /**
      * @dev Perform timed transitions after auction ended */
     modifier timedTransitions() {
-        // _updateTokenLeft();
+        _updateTokenLeft();
         if ( stage == Stages.AuctionStarted && (block.timestamp >= expiresAt || tokenLeft == 0))
             _nextStage();
         _;
