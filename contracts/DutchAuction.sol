@@ -413,9 +413,17 @@ contract DutchAuction {
 
     /**
      * @notice For owner to end auction to update the internal state externally
+     TODO: to be deprecated
      */
     function endAuction() external onlyOwner atStage(Stages.AuctionStarted) {
         _updateTokenLeft();
         if (tokenLeft == 0 || block.timestamp >= expiresAt) _nextStage();
+    }
+
+    /**
+     * @notice To query the expiresAt of the contract
+     */
+    function getStage() external view returns (uint256) {
+        return expiresAt;
     }
 }
