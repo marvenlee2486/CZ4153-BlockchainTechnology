@@ -155,7 +155,8 @@ describe("Dutch Auction contract", function () {
         await auction.waitForDeployment(); 
         await axelToken.connect(owner).approve(await auction.getAddress(), initialAmount);
         await auction.connect(owner).startAuction();
-        const startAt = await time.latest() - 1;
+        const startAt = await time.latest();
+        expect(await auction.getExpiresAt()).to.be.equal(startAt + defaultDuration);
         return {axelToken, auction, owner, addr1, addr2, addr3, startAt};
     }
 
@@ -203,7 +204,7 @@ describe("Dutch Auction contract", function () {
             expect(await auction.getTokenLeft()).to.be.equal(initialAmount - 15);
 
             // Case 4: No additional Bid given, but amount of token drop, check the boundary conidition
-            const expectTokenAmountDecreaseMoment = Math.ceil((defaultStartingPrice)/ (discountRate * 11)) + startAt + 1
+            const expectTokenAmountDecreaseMoment = Math.ceil((defaultStartingPrice)/ (discountRate * 11)) + startAt
 
             await time.increaseTo(expectTokenAmountDecreaseMoment - 1);
             expect(await auction.getTokenLeft()).to.be.equal(initialAmount - 15);
@@ -297,10 +298,105 @@ describe("Dutch Auction contract", function () {
             expect(await auction.getStage()).to.be.equal("Ended");
            
         })
+
     });
 
     
     describe("Dutch Auction Ending Stage", function(){
+        describe("Auction End by 'WithdrawTokens' Function", function(){
+            it("Auction should show end when no tokenLeft", async function(){
+                const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture); 
+                const expectedClearingPrice = (defaultReservePrice + defaultStartingPrice) / 2;
+                const value = expectedClearingPrice * initialAmount;
+                await auction.connect(addr1).placeBid({value: ethers.parseUnits(String(value),"wei")});
+                await time.increase(defaultDuration / 2)
+                expect(await auction.getStage()).to.be.equal("Ended");
+                expect(await auction.connect(addr1).withdrawTokens()).to.emit(auction, "auctionEndEvent");
+                expect(await auction.getStage()).to.be.equal("Ended");
+                expect(await axelToken.balanceOf(addr1)).to.be.equal(initialAmount);
+            });
+
+            it("Auction should show end when time expires", async function(){
+                const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture); 
+                await auction.connect(addr1).placeBid({value: ethers.parseUnits(String(defaultStartingPrice),"wei")});
+                await time.increase(defaultDuration)
+                expect(await auction.getStage()).to.be.equal("Ended");
+                expect(await auction.connect(addr1).withdrawTokens()).to.emit(auction, "auctionEndEvent");
+                expect(await auction.getStage()).to.be.equal("Ended");
+                expect(await axelToken.balanceOf(addr1)).to.be.equal(2);
+            });
+        })
+
+        describe("Auction End by 'WithdrawOwnerFunds' function", function(){
+            it("Auction should show end when no tokenLeft", async function(){
+                const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture); 
+                const expectedClearingPrice = (defaultReservePrice + defaultStartingPrice) / 2;
+                const value = expectedClearingPrice * initialAmount;
+                await auction.connect(addr1).placeBid({value: ethers.parseUnits(String(value),"wei")});
+                await time.increase(defaultDuration / 2)
+                expect(await auction.getStage()).to.be.equal("Ended");
+                expect(await auction.connect(owner).getOwnerRevenue()).to.be.equal(value);
+                expect(await auction.connect(owner).withdrawOwnerFunds()).to.emit(auction, "auctionEndEvent");
+                expect(await auction.getStage()).to.be.equal("Ended");
+                expect(await auction.connect(owner).getOwnerRevenue()).to.be.equal(0);
+            });
+
+            it("Auction should show end when time expires", async function(){
+                const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture); 
+                await auction.connect(addr1).placeBid({value: ethers.parseUnits(String(defaultStartingPrice),"wei")});
+                await time.increase(defaultDuration)
+                expect(await auction.getStage()).to.be.equal("Ended");
+                expect(await auction.connect(owner).getOwnerRevenue()).to.be.equal(defaultStartingPrice);
+                expect(await auction.connect(owner).withdrawOwnerFunds()).to.emit(auction, "auctionEndEvent");
+                expect(await auction.connect(owner).getOwnerRevenue()).to.be.equal(0);
+                expect(await auction.getStage()).to.be.equal("Ended");
+            });
+        })
+
+        describe("Auction End by 'PlaceBid' Function", function(){
+            it("Auction should show end when no tokenLeft", async function(){
+                const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture); 
+                const expectedClearingPrice = (defaultReservePrice + defaultStartingPrice) / 2;
+                const value = expectedClearingPrice * initialAmount;
+                await auction.connect(addr1).placeBid({value: ethers.parseUnits(String(value),"wei")});
+                await time.increase(defaultDuration / 2)
+                expect(await auction.getStage()).to.be.equal("Ended");
+                expect(await auction.connect(owner).getRefund()).to.be.equal(0);
+                expect(await auction.connect(addr1).getPosition()).to.be.equal(value);
+                expect(await auction.connect(addr1).getTokens()).to.be.equal(initialAmount);
+                
+                expect(await auction.connect(owner).placeBid({value: ethers.parseUnits(String(value),"wei")})).to.emit(auction, "auctionEndEvent");
+                
+                expect(await auction.getStage()).to.be.equal("Ended");
+                expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(2 * value)
+                expect(await auction.connect(owner).getRefund()).to.be.equal(value);
+                expect(await auction.connect(addr1).getPosition()).to.be.equal(value);
+                expect(await auction.connect(addr1).getTokens()).to.be.equal(initialAmount);
+                
+            });
+
+            it("Auction should show end when time expires", async function(){
+                const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture); 
+                const option = {value: ethers.parseUnits(String(defaultStartingPrice),"wei")}
+                await auction.connect(addr1).placeBid(option);
+                await time.increase(defaultDuration)
+
+                expect(await auction.getStage()).to.be.equal("Ended");
+                expect(await auction.connect(addr1).getRefund()).to.be.equal(0);
+                expect(await auction.connect(addr1).getPosition()).to.be.equal(defaultStartingPrice);
+                expect(await auction.connect(addr1).getTokens()).to.be.equal(2);
+
+                expect(await auction.connect(addr1).placeBid(option)).to.emit(auction, "auctionEndEvent");
+
+                expect(await auction.getStage()).to.be.equal("Ended");
+                expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(2 * defaultStartingPrice)
+                expect(await auction.connect(addr1).getRefund()).to.be.equal(defaultStartingPrice);
+                expect(await auction.connect(addr1).getPosition()).to.be.equal(defaultStartingPrice);
+                expect(await auction.connect(addr1).getTokens()).to.be.equal(2);
+                
+            });
+        })
+
         it("token leftover should be burned (all tokens burned)", async function () {
             const {axelToken, auction, owner, addr1, addr2, addr3} = await loadFixture(deployAuctionFixture);
             await time.increase(20 * 60);
@@ -361,7 +457,7 @@ describe("Dutch Auction contract", function () {
             expect(await auction.getStage()).to.be.equal("Started");
             expect(await auction.getTokenLeft()).to.be.equal(100);
             
-            await time.increaseTo(startAt + defaultDuration - 1);
+            await time.increaseTo(startAt + defaultDuration - 2); // additional one is because await endAuction woudl increase timne by 1
             await auction.connect(owner).endAuction();
             expect(await auction.getStage()).to.be.equal("Started");
             expect(await auction.getTokenLeft()).to.be.equal(100);
@@ -379,7 +475,7 @@ describe("Dutch Auction contract", function () {
             expect(await auction.getStage()).to.be.equal("Started");
             expect(await auction.getTokenLeft()).to.be.equal(initialAmount - expectedClearingPrice * initialAmount / defaultStartingPrice);
             
-            await time.increaseTo(startAt + defaultDuration / 2 - 1);
+            await time.increaseTo(startAt + defaultDuration / 2 - 2);
             await auction.connect(owner).endAuction();
             expect(await auction.getStage()).to.be.equal("Started");
             expect(await auction.getTokenLeft()).to.be.equal(1);
@@ -667,12 +763,12 @@ describe("Dutch Auction contract", function () {
             const {axelToken, auction, owner, addr3, startAt} = await loadFixture(deployAuctionFixture);
             
             await auction.connect(addr3).placeBid({value: ethers.parseUnits(String(defaultReservePrice * (initialAmount - 2)), "wei")});
-            await time.increaseTo(startAt + defaultDuration - 1);
+            await time.increaseTo(startAt + defaultDuration - 2);
             await auction.connect(owner).endAuction(); // Should not be able to end auction
             expect(await auction.getStage()).to.be.equal("Started")
 
             await time.increase(1);
-            await auction.connect(owner).endAuction();
+            expect(await auction.connect(owner).endAuction()).to.emit(auction, "auctionEndEvent");
             expect(await auction.getStage()).to.be.equal("Ended")
             expect(await auction.getPrice()).to.be.equal(defaultReservePrice);
             expect(await auction.connect(addr3).getTokens()).to.be.equal(initialAmount - 2); 

@@ -1,0 +1,5084 @@
+{
+ "contracts/AxelToken.sol": {
+  "16": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should assign the total supply of tokens to the owner initially",
+    "file": "test/Token.ts"
+   }
+  ]
+ },
+ "contracts/DutchAuction.sol": {
+  "78": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount not enought",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw if I did not bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "79": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount not enought",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw if I did not bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "85": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (original price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (middle price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (reserved price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "86": [
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "87": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (original price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (middle price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (reserved price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "93": [
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw if I did not bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "94": [
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw if I did not bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "95": [
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "96": [
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw if I did not bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "102": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Only owner can start Auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "non owner should not be able to call auction ended",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Non Owner Should not able to withdraw owner funds and check owner funds",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "103": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "112": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "114": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "115": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "116": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "119": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "121": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "123": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "139": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Only owner can start Auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when startingPrice is not positive",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when Duration is not positive",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when reservePrice is higher than startingPrice",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is no tokens left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "146": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Only owner can start Auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "147": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Only owner can start Auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "148": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Only owner can start Auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "149": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Only owner can start Auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "150": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Only owner can start Auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "151": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Only owner can start Auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "163": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "165": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should Not be able to start Auction if owner did not approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "167": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "168": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert when there is not enought tokens left to start auction",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "169": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "170": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "171": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "185": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (original price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (middle price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (reserved price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "186": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (original price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (middle price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (reserved price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "188": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (original price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (middle price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "195": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (original price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (middle price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (reserved price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "197": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "198": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "202": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "203": [
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "204": [
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "207": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "209": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (original price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (middle price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (reserved price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "226": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount not enought",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "238": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (original price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (middle price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (reserved price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "239": [
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "241": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (original price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (middle price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (reserved price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "249": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "250": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "260": [
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "273": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (original price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (middle price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (reserved price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "274": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (original price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (middle price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (reserved price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "275": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "276": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token amount is dependable on allowances",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (original price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (middle price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token get should be show correctly at different stage (reserved price)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "283": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw if I did not bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "284": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "300": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount not enought",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "301": [
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "302": [
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "303": [
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "304": [
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "307": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount not enought",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "308": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount not enought",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "310": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "311": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "312": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "313": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "314": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "316": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "318": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to bid if bid new amount again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to show correct amount of tokenLeft at any point of time",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with upper bound clearing price due to floor function",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended but query clearing price within duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "319": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "320": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "321": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by User place too much",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Ended Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "335": [
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw if I did not bid",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "337": [
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "338": [
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "339": [
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "342": [
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "343": [
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "346": [
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "347": [
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "348": [
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "349": [
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "352": [
+   {
+    "title": "token leftover should be burned (partial burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier when no user place bid",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "364": [
+   {
+    "title": "token leftover should be burned (all tokens burned)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "365": [
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "366": [
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "367": [
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should not be able to withdraw again",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "380": [
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "381": [
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "382": [
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "383": [
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "384": [
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "385": [
+   {
+    "title": "Should revert if bidding amount reached triggered by time increase",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "398": [
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "399": [
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "400": [
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "415": [
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "416": [
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should be able for owner to withdraw bid (revenue)",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "420": [
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "421": [
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "422": [
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "423": [
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "426": [
+   {
+    "title": "Invalid Function called at Auction Constructed Stage",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "435": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "438": [
+   {
+    "title": "Should revert if current timestamp exceed the duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should show end when time expires",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "439": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "440": [
+   {
+    "title": "Should be able to start auction when owner approve",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "448": [
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "449": [
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "450": [
+   {
+    "title": "Auction should ended if time exceed duration",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction should ended if no tokenLeft",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended on time with no token left",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Auction ended earlier with token left",
+    "file": "test/DutchAuction.ts"
+   }
+  ],
+  "457": [
+   {
+    "title": "Should be able to bid if amount sufficient",
+    "file": "test/DutchAuction.ts"
+   },
+   {
+    "title": "Invalid Function called at Auction Started Stage",
+    "file": "test/DutchAuction.ts"
+   }
+  ]
+ }
+}

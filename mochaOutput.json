@@ -1,0 +1,756 @@
+{
+ "stats": {
+  "suites": 12,
+  "tests": 53,
+  "passes": 53,
+  "pending": 0,
+  "failures": 0
+ },
+ "tests": [
+  {
+   "title": "Should be able to start auction when owner approve",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should be able to start auction when owner approve",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Only owner can start Auction",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Only owner can start Auction",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should Not be able to start Auction if owner did not approve",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should Not be able to start Auction if owner did not approve",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "token amount is dependable on allowances",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage token amount is dependable on allowances",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert when startingPrice is not positive",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should revert when startingPrice is not positive",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert when Duration is not positive",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should revert when Duration is not positive",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert when reservePrice is higher than startingPrice",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should revert when reservePrice is higher than startingPrice",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert when there is no tokens left",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should revert when there is no tokens left",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert when there is not enought tokens left to start auction",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should revert when there is not enought tokens left to start auction",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to bid if amount sufficient",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should be able to bid if amount sufficient",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to bid if bid new amount again",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should be able to bid if bid new amount again",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to show correct amount of tokenLeft at any point of time",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should be able to show correct amount of tokenLeft at any point of time",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert if bidding amount not enought",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should revert if bidding amount not enought",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert if bidding amount reached triggered by User place too much",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should revert if bidding amount reached triggered by User place too much",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert if bidding amount reached triggered by time increase",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should revert if bidding amount reached triggered by time increase",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert if current timestamp exceed the duration",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should revert if current timestamp exceed the duration",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "token leftover should be burned (all tokens burned)",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage token leftover should be burned (all tokens burned)",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "token leftover should be burned (partial burned)",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage token leftover should be burned (partial burned)",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "token get should be show correctly at different stage (original price)",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage token get should be show correctly at different stage (original price)",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "token get should be show correctly at different stage (middle price)",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage token get should be show correctly at different stage (middle price)",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "token get should be show correctly at different stage (reserved price)",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage token get should be show correctly at different stage (reserved price)",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Attack 1",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Attack 1",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "non owner should not be able to call auction ended",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage non owner should not be able to call auction ended",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should ended if time exceed duration",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction should ended if time exceed duration",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should ended if no tokenLeft",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction should ended if no tokenLeft",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should show end when no tokenLeft",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction End by 'WithdrawTokens' Function Auction should show end when no tokenLeft",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should show end when time expires",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction End by 'WithdrawTokens' Function Auction should show end when time expires",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should show end when no tokenLeft",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction End by 'WithdrawOwnerFunds' function Auction should show end when no tokenLeft",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should show end when time expires",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction End by 'WithdrawOwnerFunds' function Auction should show end when time expires",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should show end when no tokenLeft",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction End by 'PlaceBid' Function Auction should show end when no tokenLeft",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should show end when time expires",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction End by 'PlaceBid' Function Auction should show end when time expires",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able for owner to withdraw bid (revenue)",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Should be able for owner to withdraw bid (revenue)",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Non Owner Should not able to withdraw owner funds and check owner funds",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Non Owner Should not able to withdraw owner funds and check owner funds",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should not be able to withdraw again",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Should not be able to withdraw again",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should not be able to withdraw if I did not bid",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Should not be able to withdraw if I did not bid",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction ended earlier when no user place bid",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier due to no token left) Auction ended earlier when no user place bid",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction ended earlier with upper bound clearing price due to floor function",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier due to no token left) Auction ended earlier with upper bound clearing price due to floor function",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction ended but query clearing price within duration",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier due to no token left) Auction ended but query clearing price within duration",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction ended on time with no token left",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Auction Ended on time) Auction ended on time with no token left",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction ended earlier with token left",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Auction Ended on time) Auction ended earlier with token left",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Invalid Function called at Auction Constructed Stage",
+   "fullTitle": "Dutch Auction contract Invalid Function called Check at different Stage Invalid Function called at Auction Constructed Stage",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Invalid Function called at Auction Started Stage",
+   "fullTitle": "Dutch Auction contract Invalid Function called Check at different Stage Invalid Function called at Auction Started Stage",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Invalid Function called at Auction Ended Stage",
+   "fullTitle": "Dutch Auction contract Invalid Function called Check at different Stage Invalid Function called at Auction Ended Stage",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should assign the total supply of tokens to the owner initially",
+   "fullTitle": "Token contract Should assign the total supply of tokens to the owner initially",
+   "file": "test/Token.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to approve by owner ('approve' method) and transfer to buyer",
+   "fullTitle": "Token contract Should be able to approve by owner ('approve' method) and transfer to buyer",
+   "file": "test/Token.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to transfer the tokens from owner 'transfer' methods",
+   "fullTitle": "Token contract Should be able to transfer the tokens from owner 'transfer' methods",
+   "file": "test/Token.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to burn the tokens ('burn' and 'burn from' methods)",
+   "fullTitle": "Token contract Should be able to burn the tokens ('burn' and 'burn from' methods)",
+   "file": "test/Token.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should not be able to transfer the tokens if not approved",
+   "fullTitle": "Token contract Should not be able to transfer the tokens if not approved",
+   "file": "test/Token.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should not be able to transfer the tokens if amount not enough",
+   "fullTitle": "Token contract Should not be able to transfer the tokens if amount not enough",
+   "file": "test/Token.ts",
+   "currentRetry": 0,
+   "err": {}
+  }
+ ],
+ "failures": [],
+ "passes": [
+  {
+   "title": "Should be able to start auction when owner approve",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should be able to start auction when owner approve",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Only owner can start Auction",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Only owner can start Auction",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should Not be able to start Auction if owner did not approve",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should Not be able to start Auction if owner did not approve",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "token amount is dependable on allowances",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage token amount is dependable on allowances",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert when startingPrice is not positive",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should revert when startingPrice is not positive",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert when Duration is not positive",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should revert when Duration is not positive",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert when reservePrice is higher than startingPrice",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should revert when reservePrice is higher than startingPrice",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert when there is no tokens left",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should revert when there is no tokens left",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert when there is not enought tokens left to start auction",
+   "fullTitle": "Dutch Auction contract Dutch Auction Creation Stage Should revert when there is not enought tokens left to start auction",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to bid if amount sufficient",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should be able to bid if amount sufficient",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to bid if bid new amount again",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should be able to bid if bid new amount again",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to show correct amount of tokenLeft at any point of time",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should be able to show correct amount of tokenLeft at any point of time",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert if bidding amount not enought",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should revert if bidding amount not enought",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert if bidding amount reached triggered by User place too much",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should revert if bidding amount reached triggered by User place too much",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert if bidding amount reached triggered by time increase",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should revert if bidding amount reached triggered by time increase",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should revert if current timestamp exceed the duration",
+   "fullTitle": "Dutch Auction contract Dutch Auction Biding Stage Should revert if current timestamp exceed the duration",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "token leftover should be burned (all tokens burned)",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage token leftover should be burned (all tokens burned)",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "token leftover should be burned (partial burned)",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage token leftover should be burned (partial burned)",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "token get should be show correctly at different stage (original price)",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage token get should be show correctly at different stage (original price)",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "token get should be show correctly at different stage (middle price)",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage token get should be show correctly at different stage (middle price)",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "token get should be show correctly at different stage (reserved price)",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage token get should be show correctly at different stage (reserved price)",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Attack 1",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Attack 1",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "non owner should not be able to call auction ended",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage non owner should not be able to call auction ended",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should ended if time exceed duration",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction should ended if time exceed duration",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should ended if no tokenLeft",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction should ended if no tokenLeft",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should show end when no tokenLeft",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction End by 'WithdrawTokens' Function Auction should show end when no tokenLeft",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should show end when time expires",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction End by 'WithdrawTokens' Function Auction should show end when time expires",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should show end when no tokenLeft",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction End by 'WithdrawOwnerFunds' function Auction should show end when no tokenLeft",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should show end when time expires",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction End by 'WithdrawOwnerFunds' function Auction should show end when time expires",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should show end when no tokenLeft",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction End by 'PlaceBid' Function Auction should show end when no tokenLeft",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction should show end when time expires",
+   "fullTitle": "Dutch Auction contract Dutch Auction Ending Stage Auction End by 'PlaceBid' Function Auction should show end when time expires",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Should be able show correct token amount without user input refund into internal funds storage if last bidder give extra amount",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr1",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Should be able to withdraw the token if wins some token (and check if the refund amount is correct) addr2",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able for owner to withdraw bid (revenue)",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Should be able for owner to withdraw bid (revenue)",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Non Owner Should not able to withdraw owner funds and check owner funds",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Non Owner Should not able to withdraw owner funds and check owner funds",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) After all owner and bidders withdraw tokens and funds, auction POV should contains nothing",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should not be able to withdraw again",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Should not be able to withdraw again",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should not be able to withdraw if I did not bid",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier) Should not be able to withdraw if I did not bid",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction ended earlier when no user place bid",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier due to no token left) Auction ended earlier when no user place bid",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction ended earlier with upper bound clearing price due to floor function",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier due to no token left) Auction ended earlier with upper bound clearing price due to floor function",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction ended but query clearing price within duration",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Bidding ended earlier due to no token left) Auction ended but query clearing price within duration",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction ended on time with no token left",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Auction Ended on time) Auction ended on time with no token left",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Auction ended earlier with token left",
+   "fullTitle": "Dutch Auction contract Dutch Auction Distributing Stage (Auction Ended on time) Auction ended earlier with token left",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Invalid Function called at Auction Constructed Stage",
+   "fullTitle": "Dutch Auction contract Invalid Function called Check at different Stage Invalid Function called at Auction Constructed Stage",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Invalid Function called at Auction Started Stage",
+   "fullTitle": "Dutch Auction contract Invalid Function called Check at different Stage Invalid Function called at Auction Started Stage",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Invalid Function called at Auction Ended Stage",
+   "fullTitle": "Dutch Auction contract Invalid Function called Check at different Stage Invalid Function called at Auction Ended Stage",
+   "file": "test/DutchAuction.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should assign the total supply of tokens to the owner initially",
+   "fullTitle": "Token contract Should assign the total supply of tokens to the owner initially",
+   "file": "test/Token.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to approve by owner ('approve' method) and transfer to buyer",
+   "fullTitle": "Token contract Should be able to approve by owner ('approve' method) and transfer to buyer",
+   "file": "test/Token.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to transfer the tokens from owner 'transfer' methods",
+   "fullTitle": "Token contract Should be able to transfer the tokens from owner 'transfer' methods",
+   "file": "test/Token.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should be able to burn the tokens ('burn' and 'burn from' methods)",
+   "fullTitle": "Token contract Should be able to burn the tokens ('burn' and 'burn from' methods)",
+   "file": "test/Token.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should not be able to transfer the tokens if not approved",
+   "fullTitle": "Token contract Should not be able to transfer the tokens if not approved",
+   "file": "test/Token.ts",
+   "currentRetry": 0,
+   "err": {}
+  },
+  {
+   "title": "Should not be able to transfer the tokens if amount not enough",
+   "fullTitle": "Token contract Should not be able to transfer the tokens if amount not enough",
+   "file": "test/Token.ts",
+   "currentRetry": 0,
+   "err": {}
+  }
+ ]
+}

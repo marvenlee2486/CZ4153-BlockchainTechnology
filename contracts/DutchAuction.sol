@@ -40,6 +40,8 @@ contract DutchAuction {
         AuctionStarted,
         AuctionEnded
     }
+    
+    event auctionEndEvent();
 
     ERC20Burnable private immutable token;
     uint256 private tokenAmount;
@@ -115,6 +117,8 @@ contract DutchAuction {
 
             // burn unused token
             token.burn(tokenLeft);
+
+            emit auctionEndEvent();
         }
         stage = Stages(uint(stage) + 1);
     }
@@ -216,7 +220,7 @@ contract DutchAuction {
     function _curPrice()
         private
         view
-        atStage(Stages.AuctionStarted)
+        // atStage(Stages.AuctionStarted) 
         returns (uint256)
     {
         return
@@ -293,7 +297,7 @@ contract DutchAuction {
         atStage(Stages.AuctionStarted) 
     {
         // This is to avoid revert the changes of _nextStage();
-        if(block.timestamp > expiresAt){
+        if(block.timestamp >= expiresAt){
             lastBidRefund = msg.value;
             _nextStage();
             lastBidOwner = msg.sender;
@@ -317,7 +321,7 @@ contract DutchAuction {
             lastBidOwner = msg.sender;
         }
     }
-
+    
     /**
      * @notice This is for bid winner to withdraw tokens and refund.
      *
@@ -362,6 +366,19 @@ contract DutchAuction {
         ownerFunds = 0;
         payable(msg.sender).transfer(withdrawAmount);
     }
+    /**
+     * @notice This function can be called externally to get the clearing Price, but calling it when auction haven,t ended will revert error
+     * @dev This function also act as atStage(Stages.AuctionEnded) modified for all the view function. 
+     * As when user called the view function during auction ended, internal state of stages may have not changed yet and this function act as an expensive (if not called by view) but yet strict for consistent from user point of view
+     */
+    function getClearingPrice() public view returns(uint256){
+        if(stage == Stages.AuctionEnded) return clearingPrice;
+        else if(stage == Stages.AuctionStarted && (block.timestamp >= expiresAt ||
+                                                    tokenAmount - Math.min(_calculateTokenSold(_curPrice()), tokenAmount) == 0)){
+            return _calculateCorrectPrice();
+        }
+        else revert FunctionInvalidAtThisStage();
+    }
 
     /**
      * @notice For user to know what is the amoount of refund get
@@ -370,12 +387,13 @@ contract DutchAuction {
     function getRefund()
         external
         view
-        atStage(Stages.AuctionEnded)
+        // atStage(Stages.AuctionEnded)
         returns (uint256)
     {
+        uint256 _clearingPrice = getClearingPrice();
         uint256 bid = buyersPosition[msg.sender];
-        uint256 tokenBought = bid / clearingPrice;
-        uint256 amountPaid = tokenBought * clearingPrice;
+        uint256 tokenBought = bid / _clearingPrice;
+        uint256 amountPaid = tokenBought * _clearingPrice;
         uint256 refund = bid - amountPaid;
         if (msg.sender == lastBidOwner) refund += lastBidRefund;
         return refund;
@@ -388,11 +406,13 @@ contract DutchAuction {
     function getTokens()
         external
         view
-        atStage(Stages.AuctionEnded)
+        // atStage(Stages.AuctionEnded)
         returns (uint256)
     {
+        uint256 _clearingPrice = getClearingPrice();
         uint256 bid = buyersPosition[msg.sender];
-        uint256 tokenBought = bid / clearingPrice;
+        uint256 tokenBought = bid / _clearingPrice;
+        // console.log(bid, _clearingPrice);
         return tokenBought;
     }
 
@@ -404,10 +424,15 @@ contract DutchAuction {
         external
         view
         onlyOwner
-        atStage(Stages.AuctionEnded)
+        //atStage(Stages.AuctionEnded)
         returns (uint256)
     {
-        return ownerFunds;
+        if (stage == Stages.AuctionEnded)
+            return ownerFunds;
+
+        uint256 _clearingPrice = getClearingPrice();
+        uint256 _ownerFunds = _clearingPrice * _calculateTokenSold(_clearingPrice);              
+        return _ownerFunds;
     }
 
     /**
@@ -418,7 +443,7 @@ contract DutchAuction {
 
         if (stage == Stages.AuctionEnded || 
             (stage == Stages.AuctionStarted && (block.timestamp >= expiresAt ||
-                                                    tokenAmount - Math.min(_calculateTokenSold(_curPrice()), tokenAmount) == 0))) 
+                                                    tokenAmount - Math.min(_calculateTokenSold(_curPrice()), tokenAmount) == 0)))
             return "Ended";
         if (stage == Stages.AuctionStarted) return "Started";
         return "Not Yet Started";
@@ -430,6 +455,7 @@ contract DutchAuction {
      */
     function endAuction() external onlyOwner atStage(Stages.AuctionStarted) {
         _updateTokenLeft();
+        console.log(tokenLeft);
         if (tokenLeft == 0 || block.timestamp >= expiresAt) _nextStage();
     }
 
