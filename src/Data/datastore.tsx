@@ -1,6 +1,6 @@
 // "tokens": Map of user IDs ('uid') to minted blockchain token addresses.
 // "tokenBalance": Map of minted token address to token balance.
-// "auctions": Map of auctionAddress to {ownerUid, startingPrice, reservePrice, list of {bidderUid, bidAmount}]}
+// "auctions": Map of auctionAddress to {ownerUid, startingPrice, reservePrice, status, timestamp, endTime}
 export const datastore = {
   get: (key: string): any => {
     const value = localStorage.getItem(key);
