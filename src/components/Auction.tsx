@@ -90,15 +90,24 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
 
   const handlePlaceBid = async (e: any) => {
     e.preventDefault();
+    const bid = parseInt(e.target[0].value);
     const [signer] = await requestAccount();
+    await handleGetAuctionData();
+    notify("Please confirm, place bid at: " + currentPrice.toString() + " WEI");
     const auction = new ethers.Contract(
       auctionAddress,
       DutchAuctionArtifact.abi,
       signer
     );
-    await handleGetAuctionData();
-    notify("Please confirm, place bid at: " + { currentPrice } + " WEI");
-    await auction.placeBid();
+    if (isNaN(bid)) {
+      alert("Please enter a valid number");
+      return;
+    }
+    if (bid < currentPrice) {
+      alert("Bid must be greater than current price");
+      return;
+    }
+    await auction.placeBid({ value: currentPrice });
     datastore.appendBid(auctionAddress, user.uid, currentPrice);
   };
 
@@ -110,7 +119,6 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
       signer
     );
     const currentStage = await auction.getStage();
-    console.log(auctionAddress, currentStage);
     const currentPrice = (await auction.getPrice()).toString();
     const currentTokenLeft = (await auction.getTokenLeft()).toString();
     const currentPosition = (await auction.getPosition()).toString();
@@ -200,12 +208,20 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
           countdownCallback={countdownCallback}
         />
       </div>
+      <div className="flex items-center w-full mb-4">
+        <div>
+          <form id={auctionAddress} onSubmit={handlePlaceBid}>
+            <label className="w-40 mr-5 font-medium">Place Bid:</label>
+            <input placeholder="(wei)" type="number" min={1} required></input>
+          </form>
+        </div>
+      </div>
 
       <div className="flex items-center gap-4">
         <button
-          type="button"
+          type="submit"
           className="px-12 py-1 text-white bg-green-400 rounded-lg"
-          onClick={handlePlaceBid}
+          form={auctionAddress}
         >
           Place Bid
         </button>

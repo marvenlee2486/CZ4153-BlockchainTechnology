@@ -125,7 +125,6 @@ function TestPage() {
     const startingPrice = parseInt(e.target[0].value);
     const reservePrice = parseInt(e.target[1].value);
     const durationSeconds = parseInt(e.target[2].value) * 60;
-    console.log(durationSeconds);
     const tokenOffering = parseInt(e.target[3].value);
     if (!tokenAddress) {
       alert("Token balance 0. Please mint tokens first!");
