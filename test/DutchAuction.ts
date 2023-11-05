@@ -288,10 +288,13 @@ describe("Dutch Auction contract", function () {
 
             const initialAmount = await ethers.provider.getBalance(auction.getAddress());
 
-            await expect(auction.connect(addr1).placeBid(option)).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage"); 
-            // expect(await auction.getStage()).to.be.equal("Started");
-            // Expect the ether of the account is not changed for auction account because the placeBid is reverted
-            expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(initialAmount);
+            expect(await auction.getStage()).to.be.equal("Ended");
+            checkBalanceTransaction(addr1, await auction.connect(addr1).placeBid(option), 1000000);
+            expect(await auction.connect(addr1).getRefund()).to.be.equal(1000000);
+            expect(await auction.connect(addr1).getPosition()).to.be.equal(0);
+            expect(await auction.connect(addr1).getTokens()).to.be.equal(0);
+            expect(await ethers.provider.getBalance(auction.getAddress())).to.be.equal(initialAmount + BigInt(1000000));
+            expect(await auction.getStage()).to.be.equal("Ended");
            
         })
     });

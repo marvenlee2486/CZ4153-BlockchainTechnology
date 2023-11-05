@@ -89,7 +89,8 @@ contract DutchAuction {
     /**
      * @dev Perform timed transitions after auction ended */ 
     modifier timedTransitions() {
-        if (stage == Stages.AuctionStarted && block.timestamp >= expiresAt)
+        // _updateTokenLeft();
+        if ( stage == Stages.AuctionStarted && (block.timestamp >= expiresAt || tokenLeft == 0))
             _nextStage();
         _;
     }
@@ -251,8 +252,16 @@ contract DutchAuction {
      * @notice User place the amount of value send to this contract as the amount of bid placed.
      * 
      * @dev 
-     */
-    function placeBid() external payable timedTransitions atStage(Stages.AuctionStarted) {
+     */ 
+    function placeBid() external payable atStage(Stages.AuctionStarted) {
+        // This is to avoid revert the changes of _nextStage();
+        if(block.timestamp > expiresAt){
+            lastBidRefund = msg.value;
+            _nextStage();
+            lastBidOwner = msg.sender;
+            return;
+        }
+        
         uint256 currentPrice = _curPrice();
         if(msg.value < currentPrice) revert InvalidBidValue(); // TODO Test Check whether it is refunded.
 
@@ -263,6 +272,7 @@ contract DutchAuction {
         buyersPosition[buyer] += bid;
         
         uint256 refund = msg.value - bid;
+        
         if (refund > 0) {
             lastBidRefund = refund;
             _nextStage();
@@ -275,7 +285,7 @@ contract DutchAuction {
      * 
      * @dev To be called only after auction ended
      */
-    function withdrawTokens () public timedTransitions() atStage(Stages.AuctionEnded){
+    function withdrawTokens () public timedTransitions atStage(Stages.AuctionEnded){
         if (buyersPosition[msg.sender] == 0) revert InvalidWithdrawer();
         
         uint256 bid = buyersPosition[msg.sender];
@@ -298,7 +308,7 @@ contract DutchAuction {
     /**
      * @notice This is for owner to withdraw funds from auction
      */
-    function withdrawOwnerFunds() external onlyOwner() timedTransitions() atStage(Stages.AuctionEnded){
+    function withdrawOwnerFunds() external onlyOwner timedTransitions atStage(Stages.AuctionEnded){
         if (ownerFunds == 0) return;//revert InvalidWithdrawer(); TODO Think see if withdraw token need or not
         uint withdrawAmount = ownerFunds; // (Security) reentry attack
         ownerFunds = 0;
@@ -332,7 +342,7 @@ contract DutchAuction {
      * @notice For owner to know how much money he earned
      * @custom:privacy
      */
-    function getOwnerRevenue() external view onlyOwner() atStage(Stages.AuctionEnded) returns(uint256){
+    function getOwnerRevenue() external view onlyOwner atStage(Stages.AuctionEnded) returns(uint256){
         return ownerFunds;
     }
     
@@ -341,15 +351,19 @@ contract DutchAuction {
      */
     function getStage() external view returns(string memory){
         // might need to do some changes to the stage
+
+        if (stage == Stages.AuctionEnded || 
+            (stage == Stages.AuctionStarted && (block.timestamp >= expiresAt ||
+                                                    tokenAmount - Math.min(_calculateTokenSold(_curPrice()), tokenAmount) == 0))) 
+            return "Ended";
         if (stage == Stages.AuctionStarted) return "Started";
-        else if (stage == Stages.AuctionEnded) return "Ended";
         return "Not Yet Started";
     }
 
     /**
      * @notice For owner to end auction to update the internal state externally
      */
-    function endAuction() external onlyOwner() atStage(Stages.AuctionStarted){
+    function endAuction() external onlyOwner atStage(Stages.AuctionStarted){
         _updateTokenLeft();
         if(tokenLeft == 0 || block.timestamp >= expiresAt)
             _nextStage();

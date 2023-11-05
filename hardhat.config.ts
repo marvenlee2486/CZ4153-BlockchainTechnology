@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox"
 // import '@primitivefi/hardhat-dodoc';
+import "hardhat-gas-reporter";
 import 'hardhat-docgen';
 
 const config: HardhatUserConfig = {
