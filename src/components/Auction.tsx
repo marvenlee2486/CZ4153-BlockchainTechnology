@@ -108,7 +108,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
       return;
     }
     await auction.placeBid({ value: currentPrice });
-    datastore.appendBid(auctionAddress, user.uid, currentPrice);
+    // datastore.appendBid(auctionAddress, user.uid, currentPrice);
     handleGetAuctionData();
   };
 

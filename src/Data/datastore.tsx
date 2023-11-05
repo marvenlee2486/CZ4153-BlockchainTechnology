@@ -68,7 +68,7 @@ export const datastore = {
       ownerUid,
       startingPrice,
       reservePrice,
-      bids: [],
+      // bids: [],
       status: "started",
       timestamp: timestamp,
       endTime: timestamp + duration * 1000,
@@ -76,12 +76,12 @@ export const datastore = {
     datastore.set("auctions", auctions);
   },
 
-  appendBid: (auctionAddress: string, Uid: number, bidAmount: number): void => {
-    const auctions = datastore.get("auctions");
-    if (!auctions) return;
-    const auction = auctions[auctionAddress];
-    if (!auction) return;
-    auction.bids.push({ Uid, bidAmount });
-    datastore.set("auctions", auctions);
-  },
+  // appendBid: (auctionAddress: string, Uid: number, bidAmount: number): void => {
+  //   const auctions = datastore.get("auctions");
+  //   if (!auctions) return;
+  //   const auction = auctions[auctionAddress];
+  //   if (!auction) return;
+  //   auction.bids.push({ Uid, bidAmount });
+  //   datastore.set("auctions", auctions);
+  // },
 };
