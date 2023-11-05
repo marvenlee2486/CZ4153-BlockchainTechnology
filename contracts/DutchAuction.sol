@@ -436,7 +436,7 @@ contract DutchAuction {
     /**
      * @notice To query the expiresAt of the contract
      */
-    function getStage() external view returns (uint256) {
+    function getExpiresAt() external view returns (uint256) {
         return expiresAt;
     }
 }
