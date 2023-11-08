@@ -50,8 +50,8 @@ export function Accounts({
           ? "None"
           : accounts?.map((account, i) => (
               <ul
-                className={`${
-                  i === accounts?.length - 1 && "border-b-2"
+                className={`${i === accounts?.length - 1 && "border-b-2"} ${
+                  i === 0 && "text-green-400"
                 } border-black text-ellipsis m-0 overflow-hidden border-x-2 border-t-2`}
                 key={account}
               >

@@ -11,15 +11,11 @@ const Countdown: React.FC<CountdownProps> = ({
   countdownCallback,
   calculateDiscountedPrice,
 }) => {
-  const [timeRemaining, setTimeRemaining] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(expiresAt - Date.now());
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      if (!expiresAt) {
-        setTimeRemaining(0);
-      } else {
-        setTimeRemaining(expiresAt - Date.now());
-      }
+      setTimeRemaining(expiresAt - Date.now());
       calculateDiscountedPrice();
     }, 1000); // Update every 1000 milliseconds (1 second)
 
@@ -33,11 +29,7 @@ const Countdown: React.FC<CountdownProps> = ({
 export default Countdown;
 
 export function getTimeRemaining(timeRemaining: number) {
-  if (
-    timeRemaining <= 0 ||
-    timeRemaining === undefined ||
-    timeRemaining === null
-  ) {
+  if (timeRemaining <= 0) {
     return "00:00:00:00"; // Adjusted to return zeros if the expiresAt has passed
   }
 

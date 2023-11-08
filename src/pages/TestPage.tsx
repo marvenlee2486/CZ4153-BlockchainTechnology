@@ -7,7 +7,7 @@ import { useUserContext } from "../helpers/UserContext";
 import { ToastContainer, toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Auction from "../components/Auction";
-import { render } from "react-dom";
+import { use } from "chai";
 
 // timer function for auction
 // auctioneer needs to create auction, display approve total_amount_token to confirm
@@ -16,6 +16,7 @@ import { render } from "react-dom";
 function TestPage() {
   const { user } = useUserContext();
   const auctions = datastore.get("auctions");
+  const isSeller = user.role === "seller";
 
   const notify = (message: string) =>
     toast(message, {
@@ -69,6 +70,10 @@ function TestPage() {
     }
   };
 
+  useEffect(() => {
+    handleGetAxelTokenBalance();
+  }, []);
+
   const initialTokenBalance = datastore.getTokenBalance(
     datastore.getTokenAddress(user.uid!)!
   );
@@ -79,8 +84,7 @@ function TestPage() {
       const [signer] = await requestAccount();
       const tokenAddress = datastore.getTokenAddress(user.uid);
       if (!tokenAddress) {
-        alert("No tokens found!");
-        throw new Error("Token address not found");
+        return;
       }
       const token = new ethers.Contract(
         tokenAddress,
@@ -91,7 +95,7 @@ function TestPage() {
       datastore.setTokenBalance(tokenAddress, balance.toString());
       setTokenBalance(balance.toString());
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
@@ -176,7 +180,6 @@ function TestPage() {
       await tx2.wait();
       notify("Token offering approved! Please start auction");
 
-      
       const deployedAuction = new ethers.Contract(
         auctionAddress,
         DutchAuctionArtifact.abi,
@@ -212,7 +215,9 @@ function TestPage() {
       return (
         <div className="flex flex-col w-full gap-2">
           {Object.keys(auctions).map((auctionAddress) => {
-            return <Auction auctionAddress={auctionAddress} />;
+            return (
+              <Auction key={auctionAddress} auctionAddress={auctionAddress} />
+            );
           })}
         </div>
       );
@@ -221,28 +226,30 @@ function TestPage() {
   return (
     <div className="sm:ml-64 mt-14 p-4">
       <div className="flex flex-col items-center justify-start w-full gap-2">
-        <div className="w-full p-2 bg-gray-200">
-          <div>Axel Token Balance: {tokenBalance} AXL</div>
-          <form
-            onSubmit={handleMintAxelToken}
-            className="flex items-center justify-start gap-2"
-          >
-            <input placeholder="Token Amount" type="numbers" required></input>
-            <button
-              type="submit"
-              className="px-12 py-1 text-white bg-green-400 rounded-lg"
+        {isSeller && (
+          <div className="w-full p-2 bg-gray-200">
+            <div>Axel Token Balance: {tokenBalance} AXL</div>
+            <form
+              onSubmit={handleMintAxelToken}
+              className="flex items-center justify-start gap-2"
             >
-              Mint Token
-            </button>
-            <button
-              type="button"
-              className="px-12 py-1 text-white bg-blue-400 rounded-lg"
-              onClick={handleGetAxelTokenBalance}
-            >
-              Refresh Balance
-            </button>
-          </form>
-        </div>
+              <input placeholder="Token Amount" type="numbers" required></input>
+              <button
+                type="submit"
+                className="px-12 py-1 text-white bg-green-400 rounded-lg"
+              >
+                Mint Token
+              </button>
+              <button
+                type="button"
+                className="px-12 py-1 text-white bg-blue-400 rounded-lg"
+                onClick={handleGetAxelTokenBalance}
+              >
+                Refresh Balance
+              </button>
+            </form>
+          </div>
+        )}
 
         {user.role === "seller" && (
           <div className="w-full p-2 bg-gray-400">
