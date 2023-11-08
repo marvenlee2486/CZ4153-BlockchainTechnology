@@ -112,7 +112,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex items-center justify-center w-full h-screen bg-gray-200">
-      <div className="w-[70%] xl flex flex-col items-center justify-center h-[50%] gap-1 p-5 bg-white rounded-sm">
+      <div className="w-[70%] xl flex flex-col items-center justify-center h-[700px] gap-1 p-5 bg-white rounded-sm">
         <div className="flex justify-around">
           <div className="flex flex-col items-center justify-center w-full h-full gap-2 p-5 rounded-sm">
             <Status
@@ -155,7 +155,9 @@ const LoginPage = () => {
         </div>
         <h2>Select a User to Login</h2>
         {userStore.map((user) => {
-          const buttonActive = isAccountActive(user.address, accounts);
+          let buttonActive = false;
+          if (!accounts) buttonActive = false;
+          else buttonActive = isAccountActive(user.address, accounts[0]);
           return (
             <button
               className={`${

@@ -7,7 +7,6 @@ import { ToastContainer, toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Countdown from "./Countdown";
 import { getTimeRemaining } from "./Countdown";
-import { updateBlockchainTimeToNow } from "../helpers/BlockchainTime";
 
 interface AuctionProps {
   auctionAddress: string;
@@ -15,11 +14,16 @@ interface AuctionProps {
 const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
   const { user } = useUserContext();
   const initiData = datastore.getAuction(auctionAddress);
-  const { ownerUid, startingPrice, reservePrice, startingTime, expiresAt } =
-    initiData;
+  const {
+    ownerUid,
+    startingPrice,
+    reservePrice,
+    timestamp: startingTime,
+    expiresAt,
+  } = initiData;
   const isOwner = ownerUid === user.uid;
   const discountRate =
-    startingPrice - reservePrice / (expiresAt - startingTime);
+    (startingPrice - reservePrice) / (expiresAt / 1000 - startingTime / 1000);
   const [auctionData, setAuctionData] = useState({
     currentPrice: 0,
     clearingPrice: reservePrice,
@@ -30,7 +34,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
   });
   const isEnded = auctionData.stage === "Ended";
 
-  const [frontendPrice, setFrontendPrice] = useState(0);
+  const [frontendPrice, setFrontendPrice] = useState("0");
 
   const [ownerRevenue, setOwnerRevenue] = useState(0);
 
@@ -41,17 +45,23 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
   }, []);
 
   const calculateDiscountedPrice = useCallback(() => {
-    const elapsedTime = Date.now() - startingTime;
+    // updates every second
+    const elapsedTime = (Date.now() - startingTime) / 1000;
     const discountedPrice = startingPrice - discountRate * elapsedTime;
-    setFrontendPrice(discountedPrice);
-  }, [startingTime, startingPrice, discountRate]); // Dependencies
+    const frontendPrice = Math.min(discountedPrice, auctionData.currentPrice);
+    const decimal = frontendPrice.toFixed(0);
+    if (frontendPrice < 0) {
+      setFrontendPrice("0");
+    } else {
+      setFrontendPrice(decimal);
+    }
+  }, [startingTime, startingPrice, discountRate, auctionData]); // Dependencies
 
   const countdownCallback = () => {
     // calculateDiscountedPrice();
   };
 
   useEffect(() => {
-    console.log("auction data", auctionData);
     if (auctionData) {
       if (auctionData.stage === "Ended") {
         console.log("auction ended");
@@ -91,7 +101,6 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
     } else {
       const provider = new ethers.BrowserProvider(window?.ethereum);
       const network = (await provider.getNetwork()).chainId.toString();
-      console.log("Connected to network", network);
       if (network !== "1337") {
         alert(
           `Please ensure the following:\n 1.Create and connect to Localhost:8545, chainID 1337\n2. Ensure you are logged into account with address: ${user.address}`
@@ -118,7 +127,13 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
     e.target.reset();
     const [signer] = await requestAccount();
     await handleGetAuctionData();
-    notify("Placing bid at: " + auctionData.currentPrice.toString() + " WEI");
+    notify(
+      "Placing Bid: " +
+        auctionData.currentPrice.toString() +
+        " WEI for current price: " +
+        frontendPrice.toString() +
+        " WEI"
+    );
     const auction = new ethers.Contract(
       auctionAddress,
       DutchAuctionArtifact.abi,
@@ -138,7 +153,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
 
   // update all live data from blockchain. This is called when user clicks refresh data
   const handleGetAuctionData = async () => {
-    await updateBlockchainTimeToNow();
+    // await updateBlockchainTimeToNow();
 
     const [signer] = await requestAccount();
     const auction = new ethers.Contract(
@@ -150,12 +165,11 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
     const currentStage = await auction.getStage();
     const currentPrice = parseInt(await auction.getPrice());
     const buyerPosition = (await auction.getPosition()).toString();
-    console.log(currentStage);
     let currentTokenLeft = 0;
-    let auctionExpiresAt = 0;
+    let auctionExpiresAt: any;
     if (currentStage === "Started") {
       currentTokenLeft = parseInt(await auction.getTokenLeft());
-      auctionExpiresAt = parseInt(await auction.getExpiresAt());
+      auctionExpiresAt = (await auction.getExpiresAt()) * 1000n;
       setAuctionData((prevAuctionData: any) => {
         return {
           ...prevAuctionData,
@@ -163,7 +177,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
           stage: currentStage,
           currentTokenLeft: currentTokenLeft,
           buyerPosition: buyerPosition,
-          expiresAt: auctionExpiresAt,
+          expiresAt: auctionExpiresAt.toString(),
         };
       });
     } else {
@@ -191,6 +205,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
       signer
     );
     await auction.withdrawTokens();
+    location.reload();
   };
 
   // OWNER FUNCTIONS....................................................................................................
@@ -200,6 +215,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
       return;
     }
     datastore.removeAuction(auctionAddress);
+    location.reload();
   };
 
   const handleWithdrawRevenues = async () => {
@@ -211,6 +227,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
       signer
     );
     await auction.withdrawOwnerFunds();
+    location.reload();
   };
 
   const renderOwnedAuction = () => {
@@ -232,7 +249,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
         <div className="flex items-center w-full mb-4">
           <div className="flex items-center mr-4">
             <label className="w-40 font-medium">Current Price:</label>
-            <span className="w-60 ml-2">{auctionData.currentPrice} WEI</span>
+            <span className="w-60 ml-2">{frontendPrice} WEI</span>
           </div>
 
           <div className="flex items-center">
@@ -338,7 +355,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
         <div className="flex items-center w-full mb-4">
           <div className="flex items-center mr-4">
             <label className="w-40 font-medium">Current Price:</label>
-            <span className="w-60 ml-2">{auctionData.currentPrice} WEI</span>
+            <span className="w-60 ml-2">{frontendPrice} WEI</span>
           </div>
 
           <div className="flex items-center">
