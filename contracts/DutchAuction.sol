@@ -223,6 +223,7 @@ contract DutchAuction {
         // atStage(Stages.AuctionStarted) 
         returns (uint256)
     {
+        if(block.timestamp >= expiresAt) return reservePrice;
         return
             (startingPrice *
                 DECIMAL_PLACE -
