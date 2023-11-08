@@ -124,6 +124,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
     const currentTokenLeft = (await auction.getTokenLeft()).toString();
     const currentPosition = (await auction.getPosition()).toString();
     // const auctionTimeEnd = await auction.getExpiresAt().toString()
+    console.log(currentStage, currentPrice, currentTokenLeft, currentPosition);
     setAuctionData({
       currentPrice,
       currentTokenLeft,

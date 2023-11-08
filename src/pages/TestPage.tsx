@@ -160,22 +160,23 @@ function TestPage() {
         signer
       );
 
-      const tokenContractAddress = await token.getAddress();
       const auction = await factory.deploy(
         startingPrice,
         reservePrice,
-        tokenContractAddress,
+        tokenAddress,
         durationSeconds
       );
       //deploy auction (metamask)
       await auction.waitForDeployment();
+      const auctionAddress = await auction.getAddress();
       notify("Auction deployed! Please approve token offering");
 
       //approve token (metamask)
-      await token.approve(auction.getAddress(), tokenOffering);
+      const tx2 = await token.approve(auctionAddress, tokenOffering);
+      await tx2.wait();
       notify("Token offering approved! Please start auction");
 
-      const auctionAddress = await auction.getAddress();
+      
       const deployedAuction = new ethers.Contract(
         auctionAddress,
         DutchAuctionArtifact.abi,
@@ -183,12 +184,14 @@ function TestPage() {
       );
 
       //start auction (metamask)
-      await deployedAuction.startAuction();
+      const tx = await deployedAuction.startAuction();
+      await tx.wait();
       const timestamp = Date.now();
       console.log(timestamp);
       notify("Auction started!");
       const deployedAuctionAddress = await deployedAuction.getAddress();
-
+      console.log(startingPrice, reservePrice, timestamp, durationSeconds);
+      console.log(await deployedAuction.getExpiresAt());
       datastore.appendAuction(
         deployedAuctionAddress,
         user.uid,

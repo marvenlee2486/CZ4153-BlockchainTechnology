@@ -441,12 +441,12 @@ contract DutchAuction {
      */
     function getStage() external view returns (string memory) {
         // might need to do some changes to the stage
-
+        console.log(block.timestamp, expiresAt);
         if (stage == Stages.AuctionEnded || 
-            (stage == Stages.AuctionStarted && (block.timestamp >= expiresAt ||
-                                                    tokenAmount - Math.min(_calculateTokenSold(_curPrice()), tokenAmount) == 0)))
+            (stage == Stages.AuctionStarted && (block.timestamp >= expiresAt
+                                                    )))
             return "Ended";
-        if (stage == Stages.AuctionStarted) return "Started";
+        else if (stage == Stages.AuctionStarted) return "Started";
         return "Not Yet Started";
     }
 
