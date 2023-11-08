@@ -7,7 +7,7 @@ import { ToastContainer, toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Countdown from "./Countdown";
 import { getTimeRemaining } from "./Countdown";
-import { updateBlockchainTimeToNow } from "../helpers/BlockchainTime";
+import { updateBlockchainTimeToNow } from "../helpers/blockchainTime.js";
 
 interface AuctionProps {
   auctionAddress: string;
@@ -139,7 +139,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
   // update all live data from blockchain. This is called when user clicks refresh data
   const handleGetAuctionData = async () => {
     await updateBlockchainTimeToNow();
-
+    
     const [signer] = await requestAccount();
     const auction = new ethers.Contract(
       auctionAddress,
