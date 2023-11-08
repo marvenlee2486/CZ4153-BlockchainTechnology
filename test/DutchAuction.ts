@@ -16,8 +16,8 @@ async function checkBalanceTransaction(addr, txPromise, amount){
     
 
 describe("Dutch Auction contract", function () {
-    const initialAmount = 100;
-    const defaultStartingPrice = 10000;
+    const initialAmount = 100; // initial Token Amount
+    const defaultStartingPrice = 10000; 
     const defaultReservePrice = 5000; 
     const defaultDuration = 20 * 60;
     async function deployTokenFixture() {

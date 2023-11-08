@@ -107,7 +107,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
       alert("Bid must be greater than current price");
       return;
     }
-    await auction.placeBid({ value: currentPrice });
+    await auction.placeBid({ value: bid });
     // datastore.appendBid(auctionAddress, user.uid, currentPrice);
     handleGetAuctionData();
   };
