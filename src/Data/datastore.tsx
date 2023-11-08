@@ -52,6 +52,12 @@ export const datastore = {
   remove: (key: string): void => {
     localStorage.removeItem(key);
   },
+  removeAuction: (auctionAddress: string): void => {
+    const auctions = datastore.get("auctions");
+    if (!auctions) return;
+    delete auctions[auctionAddress];
+    datastore.set("auctions", auctions);
+  },
   clear: (): void => {
     localStorage.clear();
   },
@@ -68,10 +74,8 @@ export const datastore = {
       ownerUid,
       startingPrice,
       reservePrice,
-      // bids: [],
-      status: "started",
       timestamp: timestamp,
-      endTime: timestamp + duration * 1000,
+      expiresAt: timestamp + duration * 1000,
     };
     datastore.set("auctions", auctions);
   },
