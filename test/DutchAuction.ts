@@ -935,6 +935,48 @@ describe("Dutch Auction contract", function () {
             expect(await auction.connect(addr3).getTokens()).to.be.equal(0);
             expect(await auction.connect(owner).getOwnerRevenue()).to.be.equal(0);
         });
+
+        it("Auction ended with no one place Bid", async function () { 
+            const {axelToken, auction, owner, addr3} = await loadFixture(startAuctionFixture);
+            const discountRate = (defaultStartingPrice - defaultReservePrice) / defaultDuration;
+
+            await time.increaseTo(await auction.getExpiresAt() - BigInt(1));
+            
+            expect(await auction.getStage()).to.be.equal("Started")
+            expect(await auction.getTokenLeft()).to.be.equal(100)
+            expect(await auction.getPrice()).to.be.equal(Math.floor(defaultReservePrice + discountRate));
+            await expect(auction.connect(addr3).getRefund()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(addr3).getTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+            await expect(auction.connect(owner).getOwnerRevenue()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
+
+            await time.increase(await auction.getExpiresAt());
+
+            expect(await auction.getStage()).to.be.equal("Ended")
+            expect(await auction.getPrice()).to.be.equal(defaultReservePrice);
+            expect(await auction.connect(addr3).getPosition()).to.be.equal(0);
+            expect(await auction.connect(addr3).getRefund()).to.be.equal(0);
+            expect(await auction.connect(addr3).getTokens()).to.be.equal(0);
+            expect(await auction.connect(owner).getOwnerRevenue()).to.be.equal(0);
+
+            // Calling placeBid after expires will causes internal state of auction to change
+            await auction.connect(addr3).placeBid({value : ethers.parseUnits(String(defaultReservePrice), "wei")});
+            
+            expect(await auction.getStage()).to.be.equal("Ended")
+            expect(await auction.getPrice()).to.be.equal(defaultReservePrice);
+            expect(await auction.connect(addr3).getPosition()).to.be.equal(0);
+            expect(await auction.connect(addr3).getRefund()).to.be.equal(defaultReservePrice);
+            expect(await auction.connect(addr3).getTokens()).to.be.equal(0);
+            expect(await auction.connect(owner).getOwnerRevenue()).to.be.equal(0);
+
+            checkBalanceTransaction(addr3, await auction.connect(addr3).withdrawTokens(), defaultReservePrice); 
+
+            expect(await auction.getStage()).to.be.equal("Ended")
+            expect(await auction.getPrice()).to.be.equal(defaultReservePrice);
+            expect(await auction.connect(addr3).getPosition()).to.be.equal(0);
+            expect(await auction.connect(addr3).getRefund()).to.be.equal(0);
+            expect(await auction.connect(addr3).getTokens()).to.be.equal(0);
+            expect(await auction.connect(owner).getOwnerRevenue()).to.be.equal(0);
+        });
     });
     
     describe("Explicitly test cases", function(){
@@ -1010,13 +1052,25 @@ describe("Dutch Auction contract", function () {
                 const attacker = addr2;
                 const payValue = (initialAmount / 2) * defaultStartingPrice;
                 const option1 = {value : ethers.parseUnits( String(payValue), "wei" )};
-                const option2 = {value : ethers.parseUnits( String(payValue + 1), "wei" )}; // additional one value to getRefund;
+                const option2 = {value : ethers.parseUnits( String(payValue + payValue / 2), "wei" )}; // additional one value to getRefund;
                 await auction.connect(addr1).placeBid(option1);
                 await attackerContract.connect(attacker).placeBid(option2);
-                // await attackerContract.connect(attacker).attack(); 
+                const refundAmount = await attackerContract.getRefund();
 
-                // If reentry attack is succesful, then this should executed with the ability to suck out all money (provided gas enough)
-                await expect(attackerContract.connect(attacker).attack()).to.be.revertedWithCustomError(auction, "InvalidWithdrawer");     
+                // The reason of using to.be.reverted instead of reverted with custom error is because the 'transfer' function have gas cost limit of 2100
+                await expect(attackerContract.connect(attacker).attack()).to.be.reverted;     
+                
+                // If reentry attack is succesful, then this should executed with the ability to suck out a lot of money
+                // await attackerContract.connect(attacker).attack()
+                // console.log(await ethers.provider.getBalance(attackerContract.getAddress()), refundAmount);
+
+                /*
+                Code changes in DutchAuction.sol
+                    // if (refund > 0) {
+                    //     (bool success, ) = msg.sender.call{value: refund}("");// for reentry attack
+                    //     if (!success) revert InvalidWithdrawer();
+                    // }
+                */
             });
 
             it("Attack 3 - Yet another reentry attack", async function(){

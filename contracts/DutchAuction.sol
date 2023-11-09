@@ -330,7 +330,7 @@ contract DutchAuction {
         timedTransitions
         atStage(Stages.AuctionEnded)
     {
-        if (buyersPosition[msg.sender] == 0) revert InvalidWithdrawer();
+        if (buyersPosition[msg.sender] == 0 && (msg.sender != lastBidOwner || lastBidRefund == 0)) revert InvalidWithdrawer();
 
         uint256 bid = buyersPosition[msg.sender];
         uint256 tokenBought = bid / clearingPrice;
@@ -352,6 +352,8 @@ contract DutchAuction {
 
     /**
      * @notice This is for owner to withdraw funds from auction
+     * 
+     * @dev This function returns instead of revert is so that even if no one place Bid. Owner can called this function to endAuction and burn the tokens.
      */
     function withdrawOwnerFunds()
         external
@@ -359,7 +361,7 @@ contract DutchAuction {
         timedTransitions
         atStage(Stages.AuctionEnded)
     {
-        if (ownerFunds == 0) return; //revert InvalidWithdrawer(); TODO Think see if withdraw token need or not
+        if (ownerFunds == 0) return; 
         uint withdrawAmount = ownerFunds; // (Security) reentry attack
         ownerFunds = 0;
         payable(msg.sender).transfer(withdrawAmount);
@@ -390,8 +392,8 @@ contract DutchAuction {
     function getRefund()
         external
         view
+        // atStage(Stages.AuctionEnded)
         returns (
-            // atStage(Stages.AuctionEnded)
             uint256
         )
     {
@@ -419,7 +421,6 @@ contract DutchAuction {
         uint256 _clearingPrice = _getClearingPrice();
         uint256 bid = buyersPosition[msg.sender];
         uint256 tokenBought = bid / _clearingPrice;
-        // console.log(bid, _clearingPrice);
         return tokenBought;
     }
 
