@@ -43,30 +43,27 @@ contract DutchAuction {
     event auctionEndEvent();
 
     ERC20Burnable private immutable token;
-    uint256 private tokenAmount; // TODO can make this immutable by passing this to constructor 
-    uint256 private tokenLeft;
 
     address private immutable owner;
-    address[] private buyers;
-
-    mapping(address => uint256) private buyersPosition; // address, value ETH to commit
-    uint256 private lastBidRefund;
-    address private lastBidOwner;
-
-    uint256 private ownerFunds;
-
     uint256 private immutable startingPrice;
     uint256 private immutable reservePrice;
     uint256 private immutable discountRate;
-    uint256 private clearingPrice;
-
-    uint256 private startAt;
-    uint256 private expiresAt;
     uint256 private immutable duration;
-
     uint256 private constant DECIMAL_PLACE = 10 ** 10;
 
-    Stages private stage = Stages.AuctionConstructed;
+    Stages private stage = Stages.AuctionConstructed;   // 1 byte
+    bool private hasOwnerWithdraw;                      // 1 byte  
+    address private lastBidOwner;                       // 20 byte
+    uint256 private totalTokenSold;                     // 32 byte  
+    uint256 private lastBidRefund;                      // 32 byte
+    uint256 private clearingPrice;                      // 32 byte
+    uint256 private startAt;                            // 32 byte
+    uint256 private expiresAt;                          // 32 byte
+    uint256 private tokenAmount;                        // 32 byte
+    uint256 private tokenLeft;                          // 32 byte
+
+    address[] private buyers; 
+    mapping(address => uint256) private buyersPosition; // address, value ETH to commit
 
     /**
      * @dev a modifier function ensure the function can only be called during certain stage
@@ -113,10 +110,13 @@ contract DutchAuction {
             // Reveal Clearing Price
             _updateTokenLeft();
             clearingPrice = _calculateCorrectPrice();
-            ownerFunds = clearingPrice * (tokenAmount - tokenLeft);
+      
+            totalTokenSold = tokenAmount - tokenLeft;
 
             // burn unused token
             token.burn(tokenLeft);
+        
+            delete buyers;
 
             emit auctionEndEvent();
         }
@@ -329,9 +329,10 @@ contract DutchAuction {
         timedTransitions
         atStage(Stages.AuctionEnded)
     {
-        if (buyersPosition[msg.sender] == 0 && (msg.sender != lastBidOwner || lastBidRefund == 0)) revert InvalidWithdrawer();
 
         uint256 bid = buyersPosition[msg.sender];
+        if (bid == 0 && (msg.sender != lastBidOwner || lastBidRefund == 0)) revert InvalidWithdrawer();
+
         uint256 tokenBought = bid / clearingPrice;
         uint256 amountPaid = tokenBought * clearingPrice;
 
@@ -361,9 +362,9 @@ contract DutchAuction {
         timedTransitions
         atStage(Stages.AuctionEnded)
     {
-        if (ownerFunds == 0) return; 
-        uint withdrawAmount = ownerFunds; // (Security) reentry attack
-        ownerFunds = 0;
+        if (hasOwnerWithdraw) return; 
+        uint withdrawAmount = totalTokenSold * clearingPrice; // (Security) reentry attack
+        hasOwnerWithdraw = true;
         payable(msg.sender).transfer(withdrawAmount);
     }
 
@@ -435,7 +436,8 @@ contract DutchAuction {
         onlyOwner //atStage(Stages.AuctionEnded)
         returns (uint256)
     {
-        if (stage == Stages.AuctionEnded) return ownerFunds;
+        if (hasOwnerWithdraw) return 0;
+        if (stage == Stages.AuctionEnded) return totalTokenSold * clearingPrice;
 
         uint256 _clearingPrice = _getClearingPrice();
         uint256 _ownerFunds = _clearingPrice *
