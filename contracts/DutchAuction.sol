@@ -6,11 +6,8 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 import "hardhat/console.sol";
 import "./ErrorDutchAuction.sol";
 
-// TODO REFACTOR
-// 1. REFACTOR the update logic as its cost a lot of gas if everytime it is revoked (considered caching it)
-// 4. Add proper documentation -  https://docs.soliditylang.org/en/develop/natspec-format.html (unfortunately it is part of the grading tho haha)
-// 5. REFACTOR to Safe Math
-// TODO do we actually need duration as parameter? I know it is better but the documentation said that 20 mins
+// TODO
+// 5. REFACTOR to Safe Math & uint gas optimizer
 
 // For presentation purpose
 // 1. Mentioned that the discount rate is calculated based on duration ... (Bs on this)
@@ -24,7 +21,7 @@ import "./ErrorDutchAuction.sol";
  *
  * Since there is no such cron job / time triggered function, therefore there is easily to have an inconsistent state in blockchain.
  * However, just to query an internal state of contract and update the state would be costly.
- * Such as simple case can be demonstrated in test TODO.
+ * 
  * To ensure consistency, We should abstract two things
  * 1. external view function - When user called an external view function, the blockchain should "seems" like it is correct.
  * 2. external state-changing function - When user called this function, the contract should update the internal state to the correct state and make sure it is updated.
@@ -225,6 +222,9 @@ contract DutchAuction {
         returns (uint256)
     // atStage(Stages.AuctionStarted)
     {
+        if(block.timestamp >= expiresAt) {
+            return reservePrice;
+        }
         return
             (startingPrice *
                 DECIMAL_PLACE -
@@ -266,7 +266,7 @@ contract DutchAuction {
      * @dev this is used as a helper function for all query tokenSold function.
      *
      * It serves as the helper function for 'calculating the correct Price'
-     * It serves as the calculation for all query tokenSold function and pass the _curPrice during bidding stage. TODO proofread english
+     * It serves as the calculation for all query tokenSold function and pass the _curPrice during bidding stage.
      * @param price given a price and calculate the tokenSold if the clearing price is such price
      */
     function _calculateTokenSold(
@@ -303,7 +303,7 @@ contract DutchAuction {
         }
 
         uint256 currentPrice = _curPrice();
-        if (msg.value < currentPrice) revert InvalidBidValue(); // TODO Test Check whether it is refunded.
+        if (msg.value < currentPrice) revert InvalidBidValue();
 
         _updateTokenLeft();
         address buyer = msg.sender;
@@ -370,7 +370,7 @@ contract DutchAuction {
      * @dev This function also act as atStage(Stages.AuctionEnded) modified for all the view function.
      * As when user called the view function during auction ended, internal state of stages may have not changed yet and this function act as an expensive (if not called by view) but yet strict for consistent from user point of view
      */
-    function getClearingPrice() public view returns (uint256) {
+    function _getClearingPrice() private view returns (uint256) {
         if (stage == Stages.AuctionEnded) return clearingPrice;
         else if (
             stage == Stages.AuctionStarted &&
@@ -395,7 +395,7 @@ contract DutchAuction {
             uint256
         )
     {
-        uint256 _clearingPrice = getClearingPrice();
+        uint256 _clearingPrice = _getClearingPrice();
         uint256 bid = buyersPosition[msg.sender];
         uint256 tokenBought = bid / _clearingPrice;
         uint256 amountPaid = tokenBought * _clearingPrice;
@@ -416,7 +416,7 @@ contract DutchAuction {
             uint256
         )
     {
-        uint256 _clearingPrice = getClearingPrice();
+        uint256 _clearingPrice = _getClearingPrice();
         uint256 bid = buyersPosition[msg.sender];
         uint256 tokenBought = bid / _clearingPrice;
         // console.log(bid, _clearingPrice);
@@ -435,7 +435,7 @@ contract DutchAuction {
     {
         if (stage == Stages.AuctionEnded) return ownerFunds;
 
-        uint256 _clearingPrice = getClearingPrice();
+        uint256 _clearingPrice = _getClearingPrice();
         uint256 _ownerFunds = _clearingPrice *
             _calculateTokenSold(_clearingPrice);
         return _ownerFunds;
@@ -460,16 +460,6 @@ contract DutchAuction {
         ) return "Ended";
         if (stage == Stages.AuctionStarted) return "Started";
         return "Not Yet Started";
-    }
-
-    /**
-     * @notice For owner to end auction to update the internal state externally
-     TODO: to be deprecated
-     */
-    function endAuction() external onlyOwner atStage(Stages.AuctionStarted) {
-        _updateTokenLeft();
-        console.log(tokenLeft);
-        if (tokenLeft == 0 || block.timestamp >= expiresAt) _nextStage();
     }
 
     /**

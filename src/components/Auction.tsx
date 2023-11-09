@@ -199,6 +199,8 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
   };
 
   const handleWithdrawTokens = async () => {
+    await updateBlockchainTimeToNow();
+    
     const [signer] = await requestAccount();
     const auction = new ethers.Contract(
       auctionAddress,
@@ -211,6 +213,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
 
   // OWNER FUNCTIONS....................................................................................................
   const handleRemoveAuction = async () => {
+    await updateBlockchainTimeToNow();
     if (!isEnded) {
       alert("Cannot delete, auction still ongoing");
       return;
