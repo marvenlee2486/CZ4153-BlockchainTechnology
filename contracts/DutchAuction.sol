@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.6.0 <0.9.0;
-
+pragma abicoder v2;
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "hardhat/console.sol";
@@ -28,7 +28,9 @@ import "./ErrorDutchAuction.sol";
  *
  * By doing so, we can ensure the consistency of the state and at the same time allow querying without consuming gas.
  *
+ * @custom:securityreentry This function enforced security by ensuring update amount before transfer eth to other account
  * @custom:privacy This function enforced privacy such that only the sender this function can query its own state in this contract
+ * @custom:view This function is costly and it is mainly to ensure the view function are consistent. Please do not call it for any state-changing function
  */
 
 contract DutchAuction {
@@ -41,13 +43,13 @@ contract DutchAuction {
     event auctionEndEvent();
 
     ERC20Burnable private immutable token;
-    uint256 private tokenAmount;
+    uint256 private tokenAmount; // TODO can make this immutable by passing this to constructor 
     uint256 private tokenLeft;
 
     address private immutable owner;
     address[] private buyers;
 
-    mapping(address => uint256) private buyersPosition; //address, value ETH to commit
+    mapping(address => uint256) private buyersPosition; // address, value ETH to commit
     uint256 private lastBidRefund;
     address private lastBidOwner;
 
@@ -65,7 +67,6 @@ contract DutchAuction {
     uint256 private constant DECIMAL_PLACE = 10 ** 10;
 
     Stages private stage = Stages.AuctionConstructed;
-    uint256 revenue = 0;
 
     /**
      * @dev a modifier function ensure the function can only be called during certain stage
@@ -107,7 +108,7 @@ contract DutchAuction {
      * 1. Move the stage of auction to next stage
      * 2. If auction ended, no matter is token sold out or time out, the clearing price is fix here.
      */
-    function _nextStage() internal {
+    function _nextStage() private {
         if (stage == Stages.AuctionStarted) {
             // Reveal Clearing Price
             _updateTokenLeft();
@@ -117,7 +118,7 @@ contract DutchAuction {
             // burn unused token
             token.burn(tokenLeft);
 
-            emit auctionEndEvent(); // for case where 2 users are logged in at the same time
+            emit auctionEndEvent();
         }
         stage = Stages(uint(stage) + 1);
     }
@@ -155,7 +156,7 @@ contract DutchAuction {
     /// @notice This function allowed owner to start an auction. Owner are expected to approve the amount of token transfer beforehand
     /// @dev This function check whether the token Amount approved/allow to transfer is more than zero as well to ensure non-zero token Amount
     function startAuction()
-        public
+        external
         onlyOwner
         atStage(Stages.AuctionConstructed)
     {
@@ -180,26 +181,19 @@ contract DutchAuction {
      * Binary Search Algorithm is using to get the upper bound of the correct price;
      * */
     function _calculateCorrectPrice() private view returns (uint256) {
-        // Doing this to avoid calling getPrice during auctionStart due to long idle and causes math error.
-        uint256 currentPrice;
-        if (block.timestamp >= expiresAt) currentPrice = reservePrice;
-        else
-            currentPrice =
-                (startingPrice *
-                    DECIMAL_PLACE -
-                    discountRate *
-                    (block.timestamp - startAt)) /
-                DECIMAL_PLACE;
+        
+        uint256 currentPrice = _curPrice();
 
         if (_calculateTokenSold(currentPrice) >= tokenAmount) {
-            //binary search
+            // binary search
             uint256 low = currentPrice + 1;
             uint256 high = (address(this).balance - lastBidRefund) /
                 tokenAmount +
                 1;
+            uint256 mid;
 
             while (low < high) {
-                uint256 mid = (low + high) / 2;
+                mid = (low + high) / 2;
                 if (_calculateTokenSold(mid) < tokenAmount) high = mid;
                 else low = mid + 1;
             }
@@ -222,6 +216,7 @@ contract DutchAuction {
         returns (uint256)
     // atStage(Stages.AuctionStarted)
     {
+        // Doing this to avoid calling getPrice during auctionStart due to long idle and causes math error.
         if(block.timestamp >= expiresAt) {
             return reservePrice;
         }
@@ -235,6 +230,7 @@ contract DutchAuction {
     /**
      * @notice Get the current price of the token.
      * @dev This is function only allowed external called and should always return correct value when user call it even though the internal state might not be consistent yet.
+     * @custom:view 
      */
     function getPrice() external view auctionStart returns (uint256) {
         if (stage == Stages.AuctionEnded) {
@@ -246,6 +242,7 @@ contract DutchAuction {
     /**
      * @notice Get the amount of the token left.
      * @dev This is function only allowed external called and should always return correct value when user call it even though the internal 'tokenLeft' might not be consistent yet.
+     * @custom:view 
      */
     function getTokenLeft() external view auctionStart returns (uint256) {
         if (stage == Stages.AuctionEnded) return tokenLeft;
@@ -257,6 +254,7 @@ contract DutchAuction {
     /**
      * @notice Get the amount of a bidder bid so far
      * @custom:privacy
+     * @custom:view 
      */
     function getPosition() external view auctionStart returns (uint256) {
         return buyersPosition[msg.sender];
@@ -271,7 +269,7 @@ contract DutchAuction {
      */
     function _calculateTokenSold(
         uint256 price
-    ) internal view returns (uint256) {
+    ) private view returns (uint256) {
         uint256 tokenSold = 0;
         for (uint256 i = 0; i < buyers.length; i++)
             tokenSold += uint(buyersPosition[buyers[i]] / price);
@@ -281,8 +279,8 @@ contract DutchAuction {
     /**
      * @dev Make sure to call it during auction start only. Checking whether auction have started is a wasteful of gas.
      */
-    function _updateTokenLeft() internal {
-        if (tokenLeft == 0) return; // optimization .. no need to update again if token left is already zero
+    function _updateTokenLeft() private {
+        if (tokenLeft == 0) return; // small optimization .. no need to update again if token left is already zero
         tokenLeft =
             tokenAmount -
             Math.min(_calculateTokenSold(_curPrice()), tokenAmount);
@@ -310,11 +308,11 @@ contract DutchAuction {
         if (buyersPosition[buyer] == 0 && tokenLeft > 0) buyers.push(buyer); //new buyer
         uint256 bid = Math.min(tokenLeft * currentPrice, msg.value);
         buyersPosition[buyer] += bid;
-
-        uint256 refund = msg.value - bid;
-
-        if (refund > 0) {
-            lastBidRefund = refund;
+        
+        // There is a refund needed
+        if (msg.value > bid) {
+            lastBidRefund = msg.value - bid;
+            tokenLeft = 0; // Small optimization to avoid the recomputation of for loop in _updateTokenLeft() in _nextStage()
             _nextStage();
             lastBidOwner = msg.sender;
         }
@@ -324,9 +322,10 @@ contract DutchAuction {
      * @notice This is for bid winner to withdraw tokens and refund.
      *
      * @dev To be called only after auction ended
+     * @custom:securityreentry
      */
     function withdrawTokens()
-        public
+        external
         timedTransitions
         atStage(Stages.AuctionEnded)
     {
@@ -354,6 +353,7 @@ contract DutchAuction {
      * @notice This is for owner to withdraw funds from auction
      * 
      * @dev This function returns instead of revert is so that even if no one place Bid. Owner can called this function to endAuction and burn the tokens.
+     * @custom:securityreentry
      */
     function withdrawOwnerFunds()
         external
@@ -368,18 +368,16 @@ contract DutchAuction {
     }
 
     /**
-     * @notice This function can be called externally to get the clearing Price, but calling it when auction haven,t ended will revert error
-     * @dev This function also act as atStage(Stages.AuctionEnded) modified for all the view function.
+     * @dev This function act as atStage(Stages.AuctionEnded) modified for all the view function. As this might be expensive, please make sure you call it only for view function.
      * As when user called the view function during auction ended, internal state of stages may have not changed yet and this function act as an expensive (if not called by view) but yet strict for consistent from user point of view
+     * @custom:view 
      */
     function _getClearingPrice() private view returns (uint256) {
         if (stage == Stages.AuctionEnded) return clearingPrice;
         else if (
             stage == Stages.AuctionStarted &&
             (block.timestamp >= expiresAt ||
-                tokenAmount -
-                    Math.min(_calculateTokenSold(_curPrice()), tokenAmount) ==
-                0)
+                tokenAmount - Math.min(_calculateTokenSold(_curPrice()), tokenAmount) == 0)
         ) {
             return _calculateCorrectPrice();
         } else revert FunctionInvalidAtThisStage();
@@ -388,6 +386,7 @@ contract DutchAuction {
     /**
      * @notice For user to know what is the amoount of refund get
      * @custom:privacy
+     * @custom:view 
      */
     function getRefund()
         external
@@ -409,6 +408,7 @@ contract DutchAuction {
     /**
      * @notice For user to query the amount of tokens win
      * @custom:privacy
+     * @custom:view 
      */
     function getTokens()
         external
@@ -427,6 +427,7 @@ contract DutchAuction {
     /**
      * @notice For owner to know how much money he earned
      * @custom:privacy
+     * @custom:view 
      */
     function getOwnerRevenue()
         external
@@ -444,10 +445,9 @@ contract DutchAuction {
 
     /**
      * @notice To query the current stage of the contract
+     * @custom:view 
      */
     function getStage() external view returns (string memory) {
-        // might need to do some changes to the stage
-
         if (
             stage == Stages.AuctionEnded ||
             (stage == Stages.AuctionStarted &&
@@ -465,8 +465,18 @@ contract DutchAuction {
 
     /**
      * @notice To query the expiresAt of the contract
+     * @custom:view 
      */
     function getExpiresAt() external view returns (uint256) {
         return expiresAt;
     }
 }
+
+
+/*
+
+Experiment on gas cost
+1. replace expiresAt with its calculation instead of SSTORE but not better.
+    - Lower Methods cost but higher deployment cost. The deployment cost is much more cheaper than in method.
+
+*/
