@@ -1059,7 +1059,8 @@ describe("Dutch Auction contract", function () {
 
                 // The reason of using to.be.reverted instead of reverted with custom error is because the 'transfer' function have gas cost limit of 2100
                 await expect(attackerContract.connect(attacker).attack()).to.be.reverted;     
-                
+                expect(await ethers.provider.getBalance(attackerContract.getAddress())).to.be.equal(0); 
+
                 // If reentry attack is succesful, then this should executed with the ability to suck out a lot of money
                 // await attackerContract.connect(attacker).attack()
                 // console.log(await ethers.provider.getBalance(attackerContract.getAddress()), refundAmount);
@@ -1076,7 +1077,6 @@ describe("Dutch Auction contract", function () {
             it("Attack 3 - Yet another reentry attack", async function(){
                 // Not yet valid anymore
                 // Previous design, extra last bid is immediately refund. However, this have security vulnerability
-                // TODO test
 
                 const {axelToken, auction, owner, addr1, addr2} = await loadFixture(startAuctionFixture);
                 
@@ -1089,6 +1089,15 @@ describe("Dutch Auction contract", function () {
                 const option1 = {value : ethers.parseUnits( String(payValue), "wei" )};
                 const option2 = {value : ethers.parseUnits( String(payValue + 1), "wei" )}; // additional one value to getRefund;
                 await auction.connect(addr1).placeBid(option1);
+                await attackerContract.connect(attacker).placeBid(option2);
+                expect(await ethers.provider.getBalance(attackerContract.getAddress())).to.be.equal(0);
+
+                // Previous implement will possibility causes infinity loop
+                // console.log(await ethers.provider.getBalance(attackerContract.getAddress()));
+                /*
+                    (bool success, ) = msg.sender.call{value: refund}("Fallback");// for reentry attack
+                    if (!success) revert InvalidWithdrawer();
+                */
             });
         });
     });

