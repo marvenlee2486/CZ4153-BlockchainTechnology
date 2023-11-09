@@ -1,10 +1,10 @@
 import express from 'express';
 import { ethers } from 'ethers';
 import helpers from '@nomicfoundation/hardhat-network-helpers';
+import cors from 'cors';
 
 const app = express();
 const port = 3000;
-import cors from 'cors';
 app.use(cors());
 const provider = new ethers.JsonRpcProvider('http://localhost:8545');
 
