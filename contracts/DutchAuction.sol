@@ -308,7 +308,7 @@ contract DutchAuction {
         if (buyersPosition[buyer] == 0 && tokenLeft > 0) buyers.push(buyer); //new buyer
         uint256 bid = Math.min(tokenLeft * currentPrice, msg.value);
         buyersPosition[buyer] += bid;
-        
+  
         // There is a refund needed
         if (msg.value > bid) {
             lastBidRefund = msg.value - bid;

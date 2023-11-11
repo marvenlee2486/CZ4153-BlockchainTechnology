@@ -23,6 +23,10 @@ const config: HardhatUserConfig = {
       chainId: 1337,
       forking: {
         url: "https://eth-mainnet.g.alchemy.com/v2/ckkU_cezJO4QrrINUPsGpRQVCTPAXJWQ",
+      },
+      mining: {
+        auto: false,
+        interval: 5000
       }
     },
     /**
