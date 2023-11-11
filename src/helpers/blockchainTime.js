@@ -18,11 +18,7 @@ export async function updateBlockchainTimeToNow() {
       const blockTime = convertTimestampToLocalDateTime(data.blockTime);
       const blockTimeAfterUpdate = convertTimestampToLocalDateTime(data.blockTimeAfterUpdate);
       const now = convertTimestampToLocalDateTime(data.now);
-      console.log(data.message);
-      console.log('Seconds added:', data.secondsToAdd);
-      console.log('Current blockchain time:', blockTime);
-      console.log('Blockchain time after update:', blockTimeAfterUpdate);
-      console.log('Current real time:', now);
+      console.log(data.message, `Block time before update: ${blockTime}`, `Block time after update: ${blockTimeAfterUpdate}`, `Seconds added: ${data.secondsToAdd}`, `Current time: ${now}`);
     } catch (error) {
       console.error('Error updating blockchain time to now:', error);
     }
