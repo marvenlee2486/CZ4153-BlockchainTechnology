@@ -7,7 +7,7 @@ import { ToastContainer, toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Countdown from "./Countdown";
 import { getTimeRemaining } from "./Countdown";
-import { updateBlockchainTimeToNow } from "../helpers/blockchainTime";
+// import { updateBlockchainTimeToNow } from "../helpers/blockchainTime";
 
 interface AuctionProps {
   auctionAddress: string;
@@ -163,7 +163,7 @@ const Auction: React.FC<AuctionProps> = ({
 
   // update all live data from blockchain. This is called when user clicks refresh data
   const handleGetAuctionData = async () => {
-    await updateBlockchainTimeToNow();
+    // await updateBlockchainTimeToNow();
     console.log("curr", auctionData);
     const [signer] = await requestAccount();
     const auction = new ethers.Contract(
@@ -237,7 +237,7 @@ const Auction: React.FC<AuctionProps> = ({
   };
 
   const handleWithdrawTokens = async () => {
-    await updateBlockchainTimeToNow();
+    // await updateBlockchainTimeToNow();
     if (!isEnded) {
       alert("Cannot withdraw, auction still ongoing");
       return;
@@ -255,7 +255,7 @@ const Auction: React.FC<AuctionProps> = ({
 
   // OWNER FUNCTIONS....................................................................................................
   const handleRemoveAuction = async () => {
-    await updateBlockchainTimeToNow();
+    // await updateBlockchainTimeToNow();
     if (!isEnded) {
       alert("Cannot delete, auction still ongoing");
       return;
