@@ -163,7 +163,7 @@ const RootLayout = () => {
                   />
                 </svg>
                 <span className="whitespace-nowrap flex-1 ml-3">
-                  <div>SignOut</div>
+                  <div>Sign Out</div>
                 </span>
               </div>
             </li>
@@ -188,15 +188,13 @@ const RootLayout = () => {
                 </svg>
 
                 <span className="whitespace-nowrap flex-1 ml-3">
-                  <div>Reset Data</div>
+                  <div>Reset Database</div>
                 </span>
               </div>
             </li>
           </ul>
         </div>
       </aside>
-
-      {/* Renders child of RootLayout in main.tsx based on url */}
       <Outlet />
     </>
   );

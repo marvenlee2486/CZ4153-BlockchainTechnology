@@ -1,5 +1,4 @@
-// "tokens": Map of user IDs ('uid') to minted blockchain token addresses.
-// "tokenBalance": Map of minted token address to token balance.
+// "tokenWallet": Map of user IDs ('uid') to the latest AXL Token Address
 // "auctions": Map of auctionAddress to {ownerUid, startingPrice, reservePrice, status, timestamp, endTime}
 export const datastore = {
   get: (key: string): any => {
@@ -11,17 +10,12 @@ export const datastore = {
     const values = keys.map((key) => ({ [key]: datastore.get(key) }));
     return values;
   },
-  getTokenBalance: (address: string): number => {
-    const balances = datastore.get("tokenBalance");
-    if (!balances) return 0;
-    if (balances[address]) return balances[address];
-    return 0;
-  },
-  getTokenAddress: (uid: number): string | null => {
-    const tokens = datastore.get("tokens");
-    if (!tokens) return null;
-    if (tokens[uid]) return tokens[uid];
-    return null;
+  // get the latest token address
+  getMyTokenAddress: (uid: number): string | null => {
+    const wallets = datastore.get("tokenWallets");
+    if (!wallets) return null;
+    if (!wallets[uid]) return null;
+    return wallets[uid];
   },
   getAuction: (auctionAddress: string): any => {
     const auctions = datastore.get("auctions");
@@ -33,21 +27,18 @@ export const datastore = {
     localStorage.setItem(key, JSON.stringify(value));
     console.log(key + ":", localStorage.getItem(key));
   },
-  setTokenBalance: (address: string, balance: number): void => {
-    const balances = datastore.get("tokenBalance");
-    if (!balances) {
-      datastore.set("tokenBalance", { [address]: balance });
-    } else {
-      datastore.set("tokenBalance", { ...balances, [address]: balance });
-    }
+  // update to latest token address
+  updateMyTokenWallet: (uid: number, tokenAddress: string): void => {
+    const wallets = datastore.get("tokenWallets") || {};
+    datastore.set("tokenWallets", { ...wallets, [uid]: tokenAddress });
   },
-  updateTokens: (uid: number, token: string): void => {
-    const tokens = datastore.get("tokens");
-    if (!tokens) {
-      datastore.set("tokens", { [uid]: token });
-    } else {
-      datastore.set("tokens", { ...tokens, [uid]: token });
-    }
+  updateAuctionTimestamp: (auctionAddress: string, timestamp: number): void => {
+    const auctions = datastore.get("auctions");
+    if (!auctions) return;
+    const auction = auctions[auctionAddress];
+    if (!auction) return;
+    auction.timestamp = timestamp;
+    datastore.set("auctions", auctions);
   },
   remove: (key: string): void => {
     localStorage.removeItem(key);
@@ -67,7 +58,9 @@ export const datastore = {
     startingPrice: number,
     reservePrice: number,
     timestamp: number, // ms since epoch
-    duration: number // in seconds
+    duration: number, // in seconds
+    tokenOffering: number,
+    tokenAddress: string
   ): void => {
     const auctions = datastore.get("auctions") || {};
     auctions[auctionAddress] = {
@@ -76,16 +69,9 @@ export const datastore = {
       reservePrice,
       timestamp: timestamp,
       expiresAt: timestamp + duration * 1000,
+      tokenOffering,
+      tokenAddress,
     };
     datastore.set("auctions", auctions);
   },
-
-  // appendBid: (auctionAddress: string, Uid: number, bidAmount: number): void => {
-  //   const auctions = datastore.get("auctions");
-  //   if (!auctions) return;
-  //   const auction = auctions[auctionAddress];
-  //   if (!auction) return;
-  //   auction.bids.push({ Uid, bidAmount });
-  //   datastore.set("auctions", auctions);
-  // },
 };

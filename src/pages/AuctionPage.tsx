@@ -7,11 +7,6 @@ import { useUserContext } from "../helpers/UserContext";
 import { ToastContainer, toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Auction from "../components/Auction";
-import { use } from "chai";
-
-// timer function for auction
-// auctioneer needs to create auction, display approve total_amount_token to confirm
-// and then start auction.
 
 function AuctionPage() {
   const { user } = useUserContext();
@@ -74,15 +69,11 @@ function AuctionPage() {
     handleGetAxelTokenBalance();
   }, []);
 
-  const initialTokenBalance = datastore.getTokenBalance(
-    datastore.getTokenAddress(user.uid!)!
-  );
-
-  const [tokenBalance, setTokenBalance] = useState(initialTokenBalance);
+  const [tokenBalance, setTokenBalance] = useState<number>(0);
   const handleGetAxelTokenBalance = async () => {
     try {
       const [signer] = await requestAccount();
-      const tokenAddress = datastore.getTokenAddress(user.uid);
+      const tokenAddress = datastore.getMyTokenAddress(user.uid!);
       if (!tokenAddress) {
         return;
       }
@@ -92,8 +83,7 @@ function AuctionPage() {
         signer
       );
       const balance = await token.balanceOf(signer);
-      datastore.setTokenBalance(tokenAddress, balance.toString());
-      setTokenBalance(balance.toString());
+      setTokenBalance(parseInt(balance));
     } catch (error) {
       console.log(error);
     }
@@ -111,21 +101,20 @@ function AuctionPage() {
         signer
       );
       const token = await factory.deploy(tokenValue);
+      notify("Token minting underway! NOTE: Transaction will take approx 5s");
       await token.waitForDeployment();
       const tokenAddress = await token.getAddress();
-      datastore.updateTokens(user.uid!, tokenAddress);
+      datastore.updateMyTokenWallet(user.uid!, tokenAddress);
       handleGetAxelTokenBalance();
+      notify("Mint AXL token transaction completed!");
     } catch (error) {
       console.error(error);
     }
   };
 
-  const initialAuctionAddress = datastore.get("auctionAddress") || null;
-  const [auctionAddress, setAuctionAddress] = useState(initialAuctionAddress);
-
   const handleStartAuction = async (e: any) => {
     e.preventDefault();
-    const tokenAddress = datastore.getTokenAddress(user.uid);
+    const tokenAddress = datastore.getMyTokenAddress(user.uid);
     const startingPrice = parseInt(e.target[0].value);
     const reservePrice = parseInt(e.target[1].value);
     const durationSeconds = parseInt(e.target[2].value) * 60;
@@ -171,15 +160,27 @@ function AuctionPage() {
         durationSeconds
       );
       //deploy auction (metamask)
+      notify("Please accept auction deployment on metamask!");
+      notify(
+        "NOTE: Transaction will take approx 5s, please wait for next notification"
+      );
       await auction.waitForDeployment();
       const auctionAddress = await auction.getAddress();
-      notify("Auction deployed! Please approve token offering");
-
+      notify("Auction deployed! Please approve token offering on metamask");
+      notify(
+        "NOTE: Transaction will take approx 5s, please wait for next notification"
+      );
       //approve token (metamask)
-      const tx2 = await token.approve(auctionAddress, tokenOffering);
-      await tx2.wait();
-      notify("Token offering approved! Please start auction");
-
+      await token.approve(auctionAddress, tokenOffering).then((tx: any) => {
+        tx.wait().then(() => {
+          notify(
+            "Token offering approved! Please start auction through metamask"
+          );
+          notify(
+            "NOTE: Transaction will take approx 5s, please wait for next notification"
+          );
+        });
+      });
       const deployedAuction = new ethers.Contract(
         auctionAddress,
         DutchAuctionArtifact.abi,
@@ -187,23 +188,25 @@ function AuctionPage() {
       );
 
       //start auction (metamask)
-      const tx = await deployedAuction.startAuction();
-      await tx.wait();
-      const timestamp = Date.now();
-      console.log(timestamp);
-      notify("Auction started!");
+      let timestamp = 0;
+      await deployedAuction.startAuction().then((tx: any) => {
+        tx.wait().then(() => {
+          timestamp = Date.now(); // temporary timestamp, will be replaced by blockchain timestamp in future
+        });
+      });
       const deployedAuctionAddress = await deployedAuction.getAddress();
-      console.log(startingPrice, reservePrice, timestamp, durationSeconds);
-      console.log(await deployedAuction.getExpiresAt());
       datastore.appendAuction(
         deployedAuctionAddress,
         user.uid,
         startingPrice,
         reservePrice,
         timestamp,
-        durationSeconds
+        durationSeconds,
+        tokenOffering,
+        tokenAddress
       );
       await handleGetAxelTokenBalance();
+      notify("Auction has started!");
       location.reload(); //refresh
     } catch (error) {
       console.log(error);
@@ -231,30 +234,37 @@ function AuctionPage() {
   return (
     <div className="sm:ml-64 mt-14 p-4">
       <div className="flex flex-col items-center justify-start w-full gap-2">
-        {isSeller && (
-          <div className="w-full p-2 bg-gray-200">
-            <div>Axel Token Balance: {tokenBalance} AXL</div>
-            <form
-              onSubmit={handleMintAxelToken}
-              className="flex items-center justify-start gap-2"
+        <div className="w-full p-2 bg-gray-200">
+          <div className="mb-3 text-lg font-bold">Token Wallet</div>
+          <div>Axel Token Balance: {tokenBalance} AXL</div>
+          <form
+            onSubmit={handleMintAxelToken}
+            className="flex items-center justify-start gap-2"
+          >
+            {isSeller && (
+              <>
+                <input
+                  placeholder="No. of tokens to mint"
+                  type="numbers"
+                  required
+                ></input>
+                <button
+                  type="submit"
+                  className="px-12 py-1 text-white bg-green-400 rounded-lg"
+                >
+                  Mint Token
+                </button>
+              </>
+            )}
+            <button
+              type="button"
+              className="px-12 py-1 text-white bg-blue-400 rounded-lg"
+              onClick={handleGetAxelTokenBalance}
             >
-              <input placeholder="Token Amount" type="numbers" required></input>
-              <button
-                type="submit"
-                className="px-12 py-1 text-white bg-green-400 rounded-lg"
-              >
-                Mint Token
-              </button>
-              <button
-                type="button"
-                className="px-12 py-1 text-white bg-blue-400 rounded-lg"
-                onClick={handleGetAxelTokenBalance}
-              >
-                Refresh Balance
-              </button>
-            </form>
-          </div>
-        )}
+              Refresh Balance
+            </button>
+          </form>
+        </div>
 
         {user.role === "seller" && (
           <div className="w-full p-2 bg-gray-400">

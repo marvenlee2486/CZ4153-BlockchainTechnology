@@ -25,10 +25,13 @@ const Auction: React.FC<AuctionProps> = ({
     reservePrice,
     timestamp: startingTime,
     expiresAt,
+    tokenOffering,
+    tokenAddress,
   } = initiData;
   const isOwner = ownerUid === user.uid;
   const discountRate =
     (startingPrice - reservePrice) / (expiresAt / 1000 - startingTime / 1000);
+  const startingDateTime = new Date(startingTime * 1000);
 
   const [auctionData, setAuctionData] = useState({
     currentPrice: 0,
@@ -41,9 +44,11 @@ const Auction: React.FC<AuctionProps> = ({
 
   const [frontendPrice, setFrontendPrice] = useState("0");
   const isEnded = auctionData.stage === "Ended";
-  const [endedTokenFunds, setEndedTokenFunds] = useState(0);
-  const [endedEthFunds, setEndedEthFunds] = useState(0);
+  const [winToken, setWinToken] = useState(0);
+  const [refundToken, setRefundToken] = useState(0);
+  const [ownerRevenue, setOwnerRevenue] = useState(0);
   const [hideAuction, setHideAuction] = useState(false);
+  const [rdyToBurn, setRdyToBurn] = useState(false);
 
   useEffect(() => {
     if (initiData) {
@@ -138,18 +143,15 @@ const Auction: React.FC<AuctionProps> = ({
       alert("Please enter a valid number");
       return;
     }
-    if (bid < auctionData.currentPrice) {
-      alert("Bid must be greater than current price");
-      alert(`Current Price: ${auctionData.currentPrice}`);
+    if (bid < parseInt(frontendPrice)) {
+      alert(
+        `Bid must be greater than current price! Current Price: ${frontendPrice}`
+      );
       return;
     }
     const [signer] = await requestAccount();
     notify(
-      "Placing Bid: " +
-        auctionData.currentPrice.toString() +
-        " WEI for current price: " +
-        frontendPrice.toString() +
-        " WEI"
+      `Placing Bid: ${bid} WEI at Current Price: ${frontendPrice} WEI. NOTE: Transaction will take approx 5s`
     );
     const auction = new ethers.Contract(
       auctionAddress,
@@ -164,20 +166,23 @@ const Auction: React.FC<AuctionProps> = ({
   // update all live data from blockchain. This is called when user clicks refresh data
   const handleGetAuctionData = async () => {
     // await updateBlockchainTimeToNow();
-    console.log("curr", auctionData);
+    console.log("AuctionData", auctionData);
     const [signer] = await requestAccount();
     const auction = new ethers.Contract(
       auctionAddress,
       DutchAuctionArtifact.abi,
       signer
     );
-
     const currentStage = await auction.getStage();
     const currentPrice = parseInt(await auction.getPrice());
-    console.log("currentPrice", currentPrice);
     const buyerPosition = (await auction.getPosition()).toString();
     let currentTokenLeft = 0;
     let auctionExpiresAt: any;
+    const blockStartAt = parseInt(await auction.getStartAt());
+    if (blockStartAt !== startingTime) {
+      datastore.updateAuctionTimestamp(auctionAddress, blockStartAt);
+    }
+
     if (currentStage === "Started") {
       currentTokenLeft = parseInt(await auction.getTokenLeft());
       auctionExpiresAt = (await auction.getExpiresAt()) * 1000n;
@@ -209,31 +214,31 @@ const Auction: React.FC<AuctionProps> = ({
   };
 
   const handleGetAuctionEnded = async () => {
-    let endedTokenFunds = 0;
-    let endedEthFunds = 0;
-
     const [signer] = await requestAccount();
     const auction = new ethers.Contract(
       auctionAddress,
       DutchAuctionArtifact.abi,
       signer
     );
-
-    if (!isOwner) {
-      endedTokenFunds = parseInt(await auction.getTokens());
-      endedEthFunds = parseInt(await auction.getRefund());
-    } else {
-      endedTokenFunds = parseInt(await auction.getTokens());
-      endedEthFunds = 0;
+    const winToken = parseInt(await auction.getTokens());
+    const refundToken = parseInt(await auction.getRefund());
+    let ownerRevenue = 0;
+    if (isOwner) ownerRevenue = parseInt(await auction.getOwnerRevenue());
+    if (!isOwner && winToken === 0 && refundToken === 0) {
+      setHideAuction(true);
     }
-    if (endedTokenFunds === 0 && endedEthFunds === 0 && isEnded) {
-      if (isOwner) datastore.removeAuction(auctionAddress);
-      else setHideAuction(true);
-      location.reload();
-      return;
+    if (
+      winToken === 0 &&
+      refundToken === 0 &&
+      ownerRevenue === 0 &&
+      isOwner &&
+      auctionData.currentTokenLeft !== 0
+    ) {
+      setRdyToBurn(true);
     }
-    setEndedTokenFunds(endedTokenFunds);
-    setEndedEthFunds(endedEthFunds);
+    setOwnerRevenue(ownerRevenue);
+    setWinToken(winToken);
+    setRefundToken(refundToken);
   };
 
   const handleWithdrawTokens = async () => {
@@ -248,33 +253,51 @@ const Auction: React.FC<AuctionProps> = ({
       DutchAuctionArtifact.abi,
       signer
     );
-    await auction.withdrawTokens();
-    handleGetAxelTokenBalance();
-    location.reload();
+    notify("Withdrawing win tokens & refund from auction!");
+    notify("NOTE: Transaction will take approx 5s");
+    auction
+      .withdrawTokens()
+      .then((res: any) => {
+        res.wait().then(() => {
+          notify("Tokens withdrawed from auction!");
+          handleGetAxelTokenBalance();
+          location.reload();
+        });
+      })
+      .catch((err: any) => {
+        alert(err);
+      });
   };
 
   // OWNER FUNCTIONS....................................................................................................
-  const handleRemoveAuction = async () => {
-    // await updateBlockchainTimeToNow();
-    if (!isEnded) {
-      alert("Cannot delete, auction still ongoing");
-      return;
-    }
-    datastore.removeAuction(auctionAddress);
-    location.reload();
-  };
 
   const handleWithdrawRevenues = async () => {
     if (!isOwner) return;
     const [signer] = await requestAccount();
     const auction = new ethers.Contract(
-      datastore.get("auctionAddress"),
+      auctionAddress,
       DutchAuctionArtifact.abi,
       signer
     );
-    await auction.withdrawOwnerFunds();
-    handleGetAxelTokenBalance();
-    location.reload();
+    notify("Withdrawing all funds from auction!");
+    notify("NOTE: Transaction will take approx 5s");
+    auction
+      .withdrawOwnerFunds()
+      .then((res: any) => {
+        res.wait().then(() => {
+          notify("Funds withdrawed from auction!");
+          handleGetAxelTokenBalance();
+          datastore.removeAuction(auctionAddress);
+          notify("Auction deleted!");
+          location.reload();
+        });
+      })
+      .catch((err: any) => {
+        alert(err);
+      });
+    if (rdyToBurn) {
+      datastore.removeAuction(auctionAddress);
+    }
   };
 
   const renderOwnedAuction = () => {
@@ -292,14 +315,31 @@ const Auction: React.FC<AuctionProps> = ({
             <span className="w-60 ml-2">{auctionData.stage}</span>
           </div>
         </div>
+        <div className="flex items-center w-full mb-4">
+          <div className="flex items-center">
+            <label className=" w-40 font-medium">Auction Start Time:</label>
+            <span className="w-60 ml-2 truncate">
+              {startingDateTime.toLocaleString()}
+            </span>
+          </div>
+
+          <div className="flex items-center">
+            <label className="w-40 font-medium">Starting Price:</label>
+            <span className="w-60 ml-2">{startingPrice} WEI</span>
+          </div>
+        </div>
 
         <div className="flex items-center w-full mb-4">
-          <div className={`${isEnded && "hiden"} flex items-center`}>
+          <div className={`${isEnded && "hidden"} flex items-center`}>
             <label className="w-40 font-medium">Current Price:</label>
             <span className="w-60 ml-2">{frontendPrice} WEI</span>
           </div>
           <div className="flex items-center mr-4">
-            <label className="w-40 font-medium">Reserve Price:</label>
+            {isEnded ? (
+              <label className="w-40 font-medium">Clearing Price:</label>
+            ) : (
+              <label className="w-40 font-medium">Reserve Price:</label>
+            )}
             <span className="w-60 ml-2">{auctionData.clearingPrice} WEI</span>
           </div>
         </div>
@@ -330,12 +370,16 @@ const Auction: React.FC<AuctionProps> = ({
           } flex  items-center w-full mb-4 border-gray-500 border-t py-3`}
         >
           <div className="flex items-center mr-4">
-            <label className="w-40 font-medium">Refund Tokens:</label>
-            <span className="w-60 ml-2">{endedTokenFunds} AXL</span>
+            <label className="w-40 font-medium">Win Tokens:</label>
+            <span className="w-40 ml-2">{winToken} AXL</span>
+          </div>
+          <div className="flex items-center mr-4">
+            <label className="w-40 font-medium">Ethereum Refund:</label>
+            <span className="w-40 ml-2">{refundToken} WEI</span>
           </div>
           <div className="flex items-center mr-4">
             <label className="w-40 font-medium">Auction Revenue:</label>
-            <span className="w-60 ml-2">{endedEthFunds} WEI</span>
+            <span className="w-40 ml-2">{ownerRevenue} WEI</span>
           </div>
         </div>
         <div className="flex items-center w-full mb-4">
@@ -372,18 +416,31 @@ const Auction: React.FC<AuctionProps> = ({
             disabled={!isEnded}
             onClick={handleWithdrawTokens}
           >
-            Withdraw Tokens
+            Withdraw Tokens & Refunds
           </button>
-          <button
-            type="submit"
-            className={`${
-              !isEnded && "opacity-50"
-            } px-12 py-1 text-white bg-blue-400 rounded-lg`}
-            disabled={!isEnded}
-            onClick={handleWithdrawRevenues}
-          >
-            Claim All Funds
-          </button>
+          {rdyToBurn ? (
+            <button
+              type="submit"
+              className={`${
+                !isEnded && "opacity-50"
+              } px-12 py-1 text-white bg-blue-400 rounded-lg`}
+              disabled={!isEnded}
+              onClick={handleWithdrawRevenues}
+            >
+              Burn Tokens & Delete Auction
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className={`${
+                !isEnded && "opacity-50"
+              } px-12 py-1 text-white bg-blue-400 rounded-lg`}
+              disabled={!isEnded}
+              onClick={handleWithdrawRevenues}
+            >
+              Claim All Funds
+            </button>
+          )}
         </div>
         <ToastContainer />
       </div>
@@ -408,6 +465,19 @@ const Auction: React.FC<AuctionProps> = ({
             <span className="w-60 ml-2">{auctionData.stage}</span>
           </div>
         </div>
+        <div className="flex items-center w-full mb-4">
+          <div className="flex items-center">
+            <label className=" w-40 font-medium">Auction Start Time:</label>
+            <span className="w-60 ml-2 truncate">
+              {startingDateTime.toLocaleString()}
+            </span>
+          </div>
+
+          <div className="flex items-center">
+            <label className="w-40 font-medium">Starting Price:</label>
+            <span className="w-60 ml-2">{startingPrice} WEI</span>
+          </div>
+        </div>
 
         <div className="flex items-center w-full mb-4">
           <div className={`${isEnded && "hidden"} flex items-center`}>
@@ -415,8 +485,14 @@ const Auction: React.FC<AuctionProps> = ({
             <span className="w-60 ml-2">{frontendPrice} WEI</span>
           </div>
           <div className="flex items-center mr-4">
-            <label className="w-40 font-medium">Reserve Price:</label>
-            <span className="w-60 ml-2">{auctionData.clearingPrice} WEI</span>
+            <div className="flex items-center mr-4">
+              {isEnded ? (
+                <label className="w-40 font-medium">Clearing Price:</label>
+              ) : (
+                <label className="w-40 font-medium">Reserve Price:</label>
+              )}
+              <span className="w-60 ml-2">{auctionData.clearingPrice} WEI</span>
+            </div>
           </div>
         </div>
         <div className="flex items-center w-full mb-4">
@@ -428,11 +504,14 @@ const Auction: React.FC<AuctionProps> = ({
                 {auctionData.currentTokenLeft} AXL
               </span>
             </div>
-            <label className="w-40 font-medium">Buyer Position:</label>
-            <span className="w-60 ml-2">{auctionData.buyerPosition} WEI</span>
+            <label className="w-40 font-medium"> Initial Token Offering:</label>
+            <span className="w-60 ml-2">{tokenOffering} WEI</span>
           </div>
         </div>
+
         <div className={`${isEnded && "hidden"} flex items-center w-full mb-4`}>
+          <label className="w-40 font-medium">Buyer Position:</label>
+          <span className="w-60 ml-2">{auctionData.buyerPosition} WEI</span>
           <Countdown
             expiresAt={auctionData.expiresAt}
             countdownCallback={countdownCallback}
@@ -445,8 +524,12 @@ const Auction: React.FC<AuctionProps> = ({
           } flex  items-center w-full mb-4 border-gray-500 border-t py-3`}
         >
           <div className="flex items-center mr-4">
-            <label className="w-40 font-medium">Earned Tokens:</label>
-            <span className="w-60 ml-2">{endedTokenFunds} AXL</span>
+            <label className="w-40 font-medium">Win Tokens:</label>
+            <span className="w-60 ml-2">{winToken} AXL</span>
+          </div>
+          <div className="flex items-center mr-4">
+            <label className="w-40 font-medium">Ethereum Refund:</label>
+            <span className="w-60 ml-2">{refundToken} AXL</span>
           </div>
         </div>
         <div className="flex items-center w-full mb-4">
@@ -483,7 +566,7 @@ const Auction: React.FC<AuctionProps> = ({
             disabled={!isEnded}
             onClick={handleWithdrawTokens}
           >
-            Withdraw Tokens
+            Withdraw Tokens & Refunds
           </button>
         </div>
         <ToastContainer />
