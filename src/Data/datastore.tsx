@@ -27,6 +27,14 @@ export const datastore = {
     localStorage.setItem(key, JSON.stringify(value));
     console.log(key + ":", localStorage.getItem(key));
   },
+  // owner withdraw, update to latest token address
+  setTokenWallets(tokenAddress: string): void {
+    const users = datastore.get("users");
+    if (!users) return;
+    for (const uid in users) {
+      datastore.updateMyTokenWallet(parseInt(uid), tokenAddress);
+    }
+  },
   // update to latest token address
   updateMyTokenWallet: (uid: number, tokenAddress: string): void => {
     const wallets = datastore.get("tokenWallets") || {};

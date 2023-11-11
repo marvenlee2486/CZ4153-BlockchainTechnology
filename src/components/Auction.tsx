@@ -175,7 +175,7 @@ const Auction: React.FC<AuctionProps> = ({
     );
     const currentStage = await auction.getStage();
     const currentPrice = parseInt(await auction.getPrice());
-    const buyerPosition = (await auction.getPosition()).toString();
+    const buyerPosition = parseInt(await auction.getPosition());
     let currentTokenLeft = 0;
     let auctionExpiresAt: any;
     const blockStartAt = parseInt(await auction.getStartAt());
@@ -199,6 +199,7 @@ const Auction: React.FC<AuctionProps> = ({
     } else {
       handleGetAuctionEnded();
       const clearingPrice = currentPrice;
+      currentTokenLeft = parseInt(await auction.getTokenLeft());
       setAuctionData((prevAuctionData: any) => {
         return {
           ...prevAuctionData,
@@ -227,6 +228,14 @@ const Auction: React.FC<AuctionProps> = ({
     if (!isOwner && winToken === 0 && refundToken === 0) {
       setHideAuction(true);
     }
+
+    console.log(
+      winToken,
+      refundToken,
+      ownerRevenue,
+      isOwner,
+      auctionData.currentTokenLeft
+    );
     if (
       winToken === 0 &&
       refundToken === 0 &&
@@ -234,7 +243,16 @@ const Auction: React.FC<AuctionProps> = ({
       isOwner &&
       auctionData.currentTokenLeft !== 0
     ) {
+      console.log("ready to burn");
       setRdyToBurn(true);
+    }
+    if (
+      winToken === 0 &&
+      refundToken === 0 &&
+      isOwner &&
+      auctionData.currentTokenLeft === 0
+    ) {
+      setHideAuction(true);
     }
     setOwnerRevenue(ownerRevenue);
     setWinToken(winToken);
@@ -259,9 +277,17 @@ const Auction: React.FC<AuctionProps> = ({
       .withdrawTokens()
       .then((res: any) => {
         res.wait().then(() => {
-          notify("Tokens withdrawed from auction!");
-          handleGetAxelTokenBalance();
-          location.reload();
+          if (isOwner) {
+            datastore.setTokenWallets(tokenAddress); // update all wallets to this token address
+            notify("Tokens and refunds withdrawed from auction!");
+            handleGetAxelTokenBalance();
+            location.reload();
+          } else {
+            datastore.updateMyTokenWallet(user.uid, tokenAddress);
+            notify("Tokens and refundswithdrawed from auction!");
+            handleGetAxelTokenBalance();
+            location.reload();
+          }
         });
       })
       .catch((err: any) => {
@@ -286,21 +312,39 @@ const Auction: React.FC<AuctionProps> = ({
       .then((res: any) => {
         res.wait().then(() => {
           notify("Funds withdrawed from auction!");
-          handleGetAxelTokenBalance();
-          datastore.removeAuction(auctionAddress);
-          notify("Auction deleted!");
-          location.reload();
         });
       })
       .catch((err: any) => {
         alert(err);
       });
+  };
+
+  // in the case of timeout and there are excess tokens
+  const handleBurnToken = async () => {
     if (rdyToBurn) {
-      datastore.removeAuction(auctionAddress);
+      const [signer] = await requestAccount();
+      const auction = new ethers.Contract(
+        auctionAddress,
+        DutchAuctionArtifact.abi,
+        signer
+      );
+      auction
+        .burnToken()
+        .then((res: any) => {
+          res.wait().then(() => {
+            notify("Tokens burned and auction deleted!");
+            datastore.removeAuction(auctionAddress);
+            location.reload();
+          });
+        })
+        .catch((err: any) => {
+          alert(err);
+        });
     }
   };
 
   const renderOwnedAuction = () => {
+    if (hideAuction) return <></>;
     return (
       <div className="w-full p-2 bg-gray-400" key={auctionAddress}>
         <div className="mb-4 text-lg font-bold">Auction</div>
@@ -347,7 +391,7 @@ const Auction: React.FC<AuctionProps> = ({
           <div className="flex items-center"></div>
 
           <div className="flex items-center">
-            <div className={`${isEnded && "hidden"} flex items-center`}>
+            <div className={` flex items-center`}>
               <label className="w-40 font-medium">Auction Token Left:</label>
               <span className="w-60 ml-2">
                 {auctionData.currentTokenLeft} AXL
@@ -403,44 +447,41 @@ const Auction: React.FC<AuctionProps> = ({
 
         <div className="flex items-center gap-4">
           <button
-            type="submit"
+            type="button"
             className="px-12 py-1 text-white bg-blue-400 rounded-lg"
             onClick={handleGetAuctionData}
           >
             Refresh Data
           </button>
           <button
-            className={`${
-              !isEnded && "opacity-50"
+            type="button"
+            className={`${!isEnded && "opacity-50"} ${
+              rdyToBurn && "opacity-50"
             } px-12 py-1 text-white bg-blue-400 rounded-lg`}
-            disabled={!isEnded}
+            disabled={!isEnded || rdyToBurn}
             onClick={handleWithdrawTokens}
           >
             Withdraw Tokens & Refunds
           </button>
-          {rdyToBurn ? (
-            <button
-              type="submit"
-              className={`${
-                !isEnded && "opacity-50"
-              } px-12 py-1 text-white bg-blue-400 rounded-lg`}
-              disabled={!isEnded}
-              onClick={handleWithdrawRevenues}
-            >
-              Burn Tokens & Delete Auction
-            </button>
-          ) : (
-            <button
-              type="submit"
-              className={`${
-                !isEnded && "opacity-50"
-              } px-12 py-1 text-white bg-blue-400 rounded-lg`}
-              disabled={!isEnded}
-              onClick={handleWithdrawRevenues}
-            >
-              Claim All Funds
-            </button>
-          )}
+          <button
+            type="button"
+            className={`${!isEnded && "opacity-50"} ${rdyToBurn && "opacity-50"}
+             px-12 py-1 text-white bg-blue-400 rounded-lg`}
+            disabled={!isEnded || rdyToBurn}
+            onClick={handleWithdrawRevenues}
+          >
+            Claim All Funds
+          </button>
+          <button
+            type="button"
+            className={`${
+              !rdyToBurn && "hidden"
+            } px-12 py-1 text-white bg-blue-400 rounded-lg`}
+            disabled={!isEnded}
+            onClick={handleBurnToken}
+          >
+            Burn Tokens & Delete
+          </button>
         </div>
         <ToastContainer />
       </div>
@@ -552,14 +593,14 @@ const Auction: React.FC<AuctionProps> = ({
 
         <div className="flex items-center gap-4">
           <button
-            type="submit"
+            type="button"
             className="px-12 py-1 text-white bg-blue-400 rounded-lg"
             onClick={handleGetAuctionData}
           >
             Refresh Data
           </button>
           <button
-            type="submit"
+            type="button"
             className={`${
               !isEnded && "opacity-50"
             } px-12 py-1 text-white bg-blue-400 rounded-lg`}

@@ -14,6 +14,10 @@ const Countdown: React.FC<CountdownProps> = ({
   const [timeRemaining, setTimeRemaining] = useState(expiresAt - Date.now());
 
   useEffect(() => {
+    if (expiresAt <= Date.now()) {
+      countdownCallback();
+      return;
+    }
     const intervalId = setInterval(() => {
       const newTimeRemaining = expiresAt - Date.now();
       setTimeRemaining(expiresAt - Date.now());
@@ -29,8 +33,8 @@ const Countdown: React.FC<CountdownProps> = ({
       countdownCallback();
     }, 10000); // Trigger every 10 seconds
     return () => {
-      clearInterval(callbackIntervalId); // Clear the interval on component unmount
-      clearInterval(intervalId); // Clear the interval on component unmount
+      clearInterval(callbackIntervalId);
+      clearInterval(intervalId);
     };
   }, [expiresAt]); // Dependency array ensures that the interval is reset if auction.expiresAt changes
 
