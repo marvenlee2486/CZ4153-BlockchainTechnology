@@ -11,6 +11,11 @@ const {
   useProvider,
   useENSNames,
 } = hooks;
+
+/**
+ * Deprecated not used.
+ * @returns
+ */
 export default function MetaMaskCard() {
   const chainId = useChainId();
   const accounts = useAccounts();

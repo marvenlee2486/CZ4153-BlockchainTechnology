@@ -8,11 +8,19 @@ import { ToastContainer, toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Auction from "../components/Auction";
 
+/**
+ * This is a child of RootLayout.tsx. It renders when user clicks on Auctions in the sidebar. The URl is /auctions:uid
+ * This page handles the functions for minting tokens and starting auctions.
+ * It renders the Auction component for each auction created.
+ * @returns AuctionPage
+ */
 function AuctionPage() {
   const { user } = useUserContext();
   const auctions = datastore.get("auctions");
   const isSeller = user.role === "seller";
+  const [tokenBalance, setTokenBalance] = useState<number>(0);
 
+  // HELPER FUNCTIONS................................................................................................
   const notify = (message: string) =>
     toast(message, {
       position: "top-center",
@@ -65,11 +73,7 @@ function AuctionPage() {
     }
   };
 
-  useEffect(() => {
-    handleGetAxelTokenBalance();
-  }, []);
-
-  const [tokenBalance, setTokenBalance] = useState<number>(0);
+  // BUSINESS LOGIC....................................................................................................
   const handleGetAxelTokenBalance = async () => {
     try {
       const [signer] = await requestAccount();
@@ -104,7 +108,7 @@ function AuctionPage() {
       notify("Token minting underway! NOTE: Transaction will take approx 5s");
       await token.waitForDeployment();
       const tokenAddress = await token.getAddress();
-      datastore.updateMyTokenWallet(user.uid!, tokenAddress);
+      datastore.setTokenWallets(tokenAddress);
       handleGetAxelTokenBalance();
       notify("Mint AXL token transaction completed!");
     } catch (error) {
@@ -136,7 +140,6 @@ function AuctionPage() {
       return;
     }
     e.target.reset();
-
     try {
       const [signer] = await requestAccount();
 
@@ -213,6 +216,15 @@ function AuctionPage() {
     }
   };
 
+  // on initial render
+  useEffect(() => {
+    handleGetAxelTokenBalance();
+  }, []);
+
+  /**
+   * Passes in auction address and a callback to update token balance of the user.
+   * @returns Render Auction Component
+   */
   const renderAuctions = () => {
     if (!auctions) return <></>;
     else

@@ -1,5 +1,8 @@
-// "tokenWallet": Map of user IDs ('uid') to the latest AXL Token Address
-// "auctions": Map of auctionAddress to {ownerUid, startingPrice, reservePrice, status, timestamp, endTime}
+/**
+ * The datastore object is used to interact with the browser's local storage.
+ * It simulates a basic database functionality, primarily for storing and managing data related to user accounts and auctions.
+ */
+
 export const datastore = {
   get: (key: string): any => {
     const value = localStorage.getItem(key);
@@ -10,7 +13,9 @@ export const datastore = {
     const values = keys.map((key) => ({ [key]: datastore.get(key) }));
     return values;
   },
-  // get the latest token address
+  /**
+   * @returns AXEL token address of uid
+   */
   getMyTokenAddress: (uid: number): string | null => {
     const wallets = datastore.get("tokenWallets");
     if (!wallets) return null;
@@ -27,7 +32,11 @@ export const datastore = {
     localStorage.setItem(key, JSON.stringify(value));
     console.log(key + ":", localStorage.getItem(key));
   },
-  // owner withdraw, update to latest token address
+  /**
+   * Sets the AXEL token address of all users to the latest token address. This occurs when the auction owner withdraws Token
+   * or when Seller mints a new Token. This is because if we are only considering AXEL token, then all users should have the same address
+   * to the token contract.
+   */
   setTokenWallets(tokenAddress: string): void {
     const users = datastore.get("users");
     if (!users) return;
@@ -35,11 +44,16 @@ export const datastore = {
       datastore.updateMyTokenWallet(parseInt(uid), tokenAddress);
     }
   },
-  // update to latest token address
+  /**
+   * The token address of the user is updated to the most recent token, when the user withdraws their token from the auction.
+   */
   updateMyTokenWallet: (uid: number, tokenAddress: string): void => {
     const wallets = datastore.get("tokenWallets") || {};
     datastore.set("tokenWallets", { ...wallets, [uid]: tokenAddress });
   },
+  /**
+   * The database auction timestamp was previously set to the current time. This updates to the blockchain timestamp.
+   */
   updateAuctionTimestamp: (auctionAddress: string, timestamp: number): void => {
     const auctions = datastore.get("auctions");
     if (!auctions) return;
@@ -65,10 +79,10 @@ export const datastore = {
     ownerUid: number,
     startingPrice: number,
     reservePrice: number,
-    timestamp: number, // ms since epoch
+    timestamp: number, // auction start time in ms
     duration: number, // in seconds
-    tokenOffering: number,
-    tokenAddress: string
+    tokenOffering: number, // number of tokens offered
+    tokenAddress: string // address of token offered in this auction
   ): void => {
     const auctions = datastore.get("auctions") || {};
     auctions[auctionAddress] = {

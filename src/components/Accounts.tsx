@@ -3,6 +3,11 @@ import { formatEther } from "@ethersproject/units";
 import type { Web3ReactHooks } from "@web3-react/core";
 import { useEffect, useState } from "react";
 
+/**
+ * Deprecated not used.
+ * Uses the Web3React libray to get the balances of the connected accounts.
+ * @returns Component that displays the balances of the connected accounts.
+ */
 function useBalances(
   provider?: ReturnType<Web3ReactHooks["useProvider"]>,
   accounts?: string[]

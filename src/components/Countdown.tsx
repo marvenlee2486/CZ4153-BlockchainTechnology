@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
 
+/**
+ * This component is used to display a countdown timer.
+ * It takes in an expiresAt timestamp and a callback function to be called when the timer reaches zero and every 10s
+ * It also takes in a calculateDiscountedPrice function to be called every second to update the discounted price.
+ * It exports a getTimeRemaining function that can be used to get the time remaining in a readable format.
+ */
 interface CountdownProps {
   expiresAt: number; // ms since epoch
   countdownCallback: () => void;

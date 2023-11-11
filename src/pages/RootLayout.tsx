@@ -2,6 +2,11 @@ import { Outlet, Link } from "react-router-dom";
 import { useUserContext } from "../helpers/UserContext";
 import { datastore } from "../Data/datastore";
 
+/**
+ * This component is the root layout for the application. It is responsible for rendering the navigation bar and the sidebar.
+ * It also renders the child components that are passed to it.
+ * @returns
+ */
 const RootLayout = () => {
   const { user, logout, logoutAndClear } = useUserContext();
   return (

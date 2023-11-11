@@ -2,6 +2,11 @@ import type { Web3ReactHooks } from "@web3-react/core";
 
 import { CHAINS } from "../helpers/chainConfig";
 
+/**
+ * Simple component to display the current chain id.
+ * @param param0
+ * @returns
+ */
 export function Chain({
   chainId,
 }: {

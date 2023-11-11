@@ -3,6 +3,11 @@ import { MetaMask } from "@web3-react/metamask";
 import { useCallback, useEffect, useState } from "react";
 import { CHAINS, getAddChainParameters } from "../helpers/chainConfig";
 
+/**
+ * Deprecated not used.
+ * @param param0
+ * @returns
+ */
 function ChainSelect({
   activeChainId,
   switchChain,

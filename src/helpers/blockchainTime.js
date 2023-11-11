@@ -1,3 +1,6 @@
+/**
+ * For block.timestamp manipulation of local hardhat network. This is because without intervals, the block.timestamp will not change.
+ */
 export async function updateBlockchainTimeToNow() {
     try {
       const response = await fetch('http://localhost:3000/updateTimeToNow', {
