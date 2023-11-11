@@ -7,12 +7,16 @@ import { ToastContainer, toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Countdown from "./Countdown";
 import { getTimeRemaining } from "./Countdown";
-import { updateBlockchainTimeToNow } from "../helpers/BlockchainTime";
+import { updateBlockchainTimeToNow } from "../helpers/blockchainTime";
 
 interface AuctionProps {
   auctionAddress: string;
+  handleGetAxelTokenBalance: () => Promise<void>;
 }
-const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
+const Auction: React.FC<AuctionProps> = ({
+  auctionAddress,
+  handleGetAxelTokenBalance,
+}) => {
   const { user } = useUserContext();
   const initiData = datastore.getAuction(auctionAddress);
   const {
@@ -25,6 +29,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
   const isOwner = ownerUid === user.uid;
   const discountRate =
     (startingPrice - reservePrice) / (expiresAt / 1000 - startingTime / 1000);
+
   const [auctionData, setAuctionData] = useState({
     currentPrice: 0,
     clearingPrice: reservePrice,
@@ -33,11 +38,11 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
     buyerPosition: 0,
     expiresAt: expiresAt,
   });
-  const isEnded = auctionData.stage === "Ended";
 
   const [frontendPrice, setFrontendPrice] = useState("0");
-
-  const [ownerRevenue, setOwnerRevenue] = useState(0);
+  const isEnded = auctionData.stage === "Ended";
+  const [endedTokenFunds, setEndedTokenFunds] = useState(0);
+  const [endedEthFunds, setEndedEthFunds] = useState(0);
 
   useEffect(() => {
     if (initiData) {
@@ -45,22 +50,23 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
     }
   }, []);
 
+  const countdownCallback = () => {
+    // updates every 10 seconds
+    handleGetAuctionData();
+  };
+
   const calculateDiscountedPrice = useCallback(() => {
     // updates every second
     const elapsedTime = (Date.now() - startingTime) / 1000;
     const discountedPrice = startingPrice - discountRate * elapsedTime;
     const frontendPrice = Math.min(discountedPrice, auctionData.currentPrice);
     const decimal = frontendPrice.toFixed(0);
-    if (frontendPrice < 0) {
+    if (frontendPrice <= 0) {
       setFrontendPrice("0");
     } else {
       setFrontendPrice(decimal);
     }
   }, [startingTime, startingPrice, discountRate, auctionData]); // Dependencies
-
-  const countdownCallback = () => {
-    // calculateDiscountedPrice();
-  };
 
   useEffect(() => {
     if (auctionData) {
@@ -124,10 +130,19 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
 
   const handlePlaceBid = async (e: any) => {
     e.preventDefault();
+    await handleGetAuctionData();
     const bid = parseInt(e.target[0].value);
     e.target.reset();
+    if (isNaN(bid)) {
+      alert("Please enter a valid number");
+      return;
+    }
+    if (bid < auctionData.currentPrice) {
+      alert("Bid must be greater than current price");
+      alert(`Current Price: ${auctionData.currentPrice}`);
+      return;
+    }
     const [signer] = await requestAccount();
-    await handleGetAuctionData();
     notify(
       "Placing Bid: " +
         auctionData.currentPrice.toString() +
@@ -140,14 +155,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
       DutchAuctionArtifact.abi,
       signer
     );
-    if (isNaN(bid)) {
-      alert("Please enter a valid number");
-      return;
-    }
-    if (bid < auctionData.currentPrice) {
-      alert("Bid must be greater than current price");
-      return;
-    }
+
     await auction.placeBid({ value: bid });
     handleGetAuctionData();
   };
@@ -155,7 +163,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
   // update all live data from blockchain. This is called when user clicks refresh data
   const handleGetAuctionData = async () => {
     await updateBlockchainTimeToNow();
-
+    console.log("curr", auctionData);
     const [signer] = await requestAccount();
     const auction = new ethers.Contract(
       auctionAddress,
@@ -165,6 +173,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
 
     const currentStage = await auction.getStage();
     const currentPrice = parseInt(await auction.getPrice());
+    console.log("currentPrice", currentPrice);
     const buyerPosition = (await auction.getPosition()).toString();
     let currentTokenLeft = 0;
     let auctionExpiresAt: any;
@@ -182,11 +191,12 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
         };
       });
     } else {
+      handleGetAuctionEnded();
       const clearingPrice = currentPrice;
       setAuctionData((prevAuctionData: any) => {
         return {
           ...prevAuctionData,
-          currentPrice: currentPrice,
+          currentPrice: 0,
           clearingPrice: clearingPrice,
           stage: currentStage,
           currentTokenLeft: currentTokenLeft,
@@ -195,12 +205,14 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
         };
       });
     }
-    // if (isOwner) setOwnerRevenue(parseInt(await auction.getOwnerRevenue()));
   };
 
   const handleWithdrawTokens = async () => {
     await updateBlockchainTimeToNow();
-    
+    if (!isEnded) {
+      alert("Cannot withdraw, auction still ongoing");
+      return;
+    }
     const [signer] = await requestAccount();
     const auction = new ethers.Contract(
       auctionAddress,
@@ -208,7 +220,35 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
       signer
     );
     await auction.withdrawTokens();
+    handleGetAxelTokenBalance();
     location.reload();
+  };
+
+  const handleGetAuctionEnded = async () => {
+    let endedTokenFunds = 0;
+    let endedEthFunds = 0;
+
+    const [signer] = await requestAccount();
+    const auction = new ethers.Contract(
+      auctionAddress,
+      DutchAuctionArtifact.abi,
+      signer
+    );
+
+    if (!isOwner) {
+      endedTokenFunds = parseInt(await auction.getTokens());
+      endedEthFunds = parseInt(await auction.getRefund());
+    } else {
+      endedTokenFunds = parseInt(await auction.getTokens());
+      endedEthFunds = 0;
+    }
+    if (endedTokenFunds === 0 && endedEthFunds === 0 && isEnded) {
+      datastore.removeAuction(auctionAddress);
+      location.reload();
+      return;
+    }
+    setEndedTokenFunds(endedTokenFunds);
+    setEndedEthFunds(endedEthFunds);
   };
 
   // OWNER FUNCTIONS....................................................................................................
@@ -231,6 +271,7 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
       signer
     );
     await auction.withdrawOwnerFunds();
+    handleGetAxelTokenBalance();
     location.reload();
   };
 
@@ -251,57 +292,70 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
         </div>
 
         <div className="flex items-center w-full mb-4">
-          <div className="flex items-center mr-4">
+          <div className={`${isEnded && "hiden"} flex items-center`}>
             <label className="w-40 font-medium">Current Price:</label>
             <span className="w-60 ml-2">{frontendPrice} WEI</span>
           </div>
-
-          <div className="flex items-center">
-            <label className="w-40 font-medium">Token Left:</label>
-            <span className="w-60 ml-2">
-              {auctionData.currentTokenLeft} AXL
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center w-full mb-4">
           <div className="flex items-center mr-4">
             <label className="w-40 font-medium">Reserve Price:</label>
             <span className="w-60 ml-2">{auctionData.clearingPrice} WEI</span>
           </div>
+        </div>
+        <div className="flex items-center w-full mb-4">
+          <div className="flex items-center"></div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium">Ethereum Committed:</label>
+            <div className={`${isEnded && "hidden"} flex items-center`}>
+              <label className="w-40 font-medium">Auction Token Left:</label>
+              <span className="w-60 ml-2">
+                {auctionData.currentTokenLeft} AXL
+              </span>
+            </div>
+            <label className="w-40 font-medium">Buyer Position:</label>
             <span className="w-60 ml-2">{auctionData.buyerPosition} WEI</span>
           </div>
         </div>
-        <div className="flex items-center w-full mb-4">
-          <div className="flex items-center mr-4">
-            <label className="w-40 font-medium">Owner Revenue:</label>
-            <span className="w-60 ml-2">{ownerRevenue} WEI</span>
-          </div>
+        <div className={`${isEnded && "hidden"} flex items-center w-full mb-4`}>
           <Countdown
             expiresAt={auctionData.expiresAt}
             countdownCallback={countdownCallback}
             calculateDiscountedPrice={calculateDiscountedPrice}
           />
         </div>
+        <div
+          className={`${
+            !isEnded && "hidden"
+          } flex  items-center w-full mb-4 border-gray-500 border-t py-3`}
+        >
+          <div className="flex items-center mr-4">
+            <label className="w-40 font-medium">Refund Tokens:</label>
+            <span className="w-60 ml-2">{endedTokenFunds} AXL</span>
+          </div>
+          <div className="flex items-center mr-4">
+            <label className="w-40 font-medium">Auction Revenue:</label>
+            <span className="w-60 ml-2">{endedEthFunds} WEI</span>
+          </div>
+        </div>
         <div className="flex items-center w-full mb-4">
           <div>
             <form id={auctionAddress} onSubmit={handlePlaceBid}>
               <label className="w-40 mr-5 font-medium">Place Bid:</label>
               <input placeholder="(wei)" type="number" min={1} required></input>
+              <button
+                type="submit"
+                className={`${
+                  isEnded && "opacity-50"
+                } px-12 py-1 text-white bg-green-400 rounded-lg ml-5`}
+                form={auctionAddress}
+                disabled={isEnded}
+              >
+                Place Bid
+              </button>
             </form>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <button
-            type="submit"
-            className="px-12 py-1 text-white bg-green-400 rounded-lg"
-            form={auctionAddress}
-          >
-            Place Bid
-          </button>
           <button
             type="submit"
             className="px-12 py-1 text-white bg-blue-400 rounded-lg"
@@ -310,29 +364,25 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
             Refresh Data
           </button>
           <button
-            type="submit"
-            className="px-12 py-1 text-white bg-blue-400 rounded-lg"
+            className={`${
+              !isEnded && "opacity-50"
+            } px-12 py-1 text-white bg-blue-400 rounded-lg`}
+            disabled={!isEnded}
             onClick={handleWithdrawTokens}
           >
             Withdraw Tokens
           </button>
-          {user.role === "seller" && (
-            <button
-              type="submit"
-              className="px-12 py-1 text-white bg-blue-400 rounded-lg"
-              onClick={handleWithdrawRevenues}
-            >
-              Withdraw Revenues
-            </button>
-          )}
+          <button
+            type="submit"
+            className={`${
+              !isEnded && "opacity-50"
+            } px-12 py-1 text-white bg-blue-400 rounded-lg`}
+            disabled={!isEnded}
+            onClick={handleWithdrawRevenues}
+          >
+            Claim All Funds
+          </button>
         </div>
-        <button
-          type="button"
-          className="px-12 py-1 mt-3 text-white bg-blue-400 rounded-lg"
-          onClick={handleRemoveAuction}
-        >
-          Delete Auction
-        </button>
         <ToastContainer />
       </div>
     );
@@ -357,27 +407,43 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
         </div>
 
         <div className="flex items-center w-full mb-4">
-          <div className="flex items-center mr-4">
+          <div className={`${isEnded && "hidden"} flex items-center`}>
             <label className="w-40 font-medium">Current Price:</label>
             <span className="w-60 ml-2">{frontendPrice} WEI</span>
           </div>
-
-          <div className="flex items-center">
-            <label className="w-40 font-medium">Token Left:</label>
-            <span className="w-60 ml-2">
-              {auctionData.currentTokenLeft} AXL
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center w-full mb-4">
           <div className="flex items-center mr-4">
             <label className="w-40 font-medium">Reserve Price:</label>
             <span className="w-60 ml-2">{auctionData.clearingPrice} WEI</span>
           </div>
-
+        </div>
+        <div className="flex items-center w-full mb-4">
+          <div className="flex items-center"></div>
           <div className="flex items-center">
-            <label className="w-40 font-medium">Ethereum Committed:</label>
+            <div className={`${isEnded && "hidden"} flex items-center`}>
+              <label className="w-40 font-medium">Auction Token Left:</label>
+              <span className="w-60 ml-2">
+                {auctionData.currentTokenLeft} AXL
+              </span>
+            </div>
+            <label className="w-40 font-medium">Buyer Position:</label>
             <span className="w-60 ml-2">{auctionData.buyerPosition} WEI</span>
+          </div>
+        </div>
+        <div className={`${isEnded && "hidden"} flex items-center w-full mb-4`}>
+          <Countdown
+            expiresAt={auctionData.expiresAt}
+            countdownCallback={countdownCallback}
+            calculateDiscountedPrice={calculateDiscountedPrice}
+          />
+        </div>
+        <div
+          className={`${
+            !isEnded && "hidden"
+          } flex  items-center w-full mb-4 border-gray-500 border-t py-3`}
+        >
+          <div className="flex items-center mr-4">
+            <label className="w-40 font-medium">Earned Tokens:</label>
+            <span className="w-60 ml-2">{endedTokenFunds} AXL</span>
           </div>
         </div>
         <div className="flex items-center w-full mb-4">
@@ -385,24 +451,20 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
             <form id={auctionAddress} onSubmit={handlePlaceBid}>
               <label className="w-40 mr-5 font-medium">Place Bid:</label>
               <input placeholder="(wei)" type="number" min={1} required></input>
+              <button
+                type="submit"
+                className={`${
+                  isEnded && "opacity-50"
+                } px-12 py-1 text-white bg-green-400 rounded-lg ml-5`}
+                form={auctionAddress}
+              >
+                Place Bid
+              </button>
             </form>
           </div>
-          <Countdown
-            expiresAt={auctionData.expiresAt}
-            countdownCallback={countdownCallback}
-            calculateDiscountedPrice={calculateDiscountedPrice}
-          />
         </div>
 
         <div className="flex items-center gap-4">
-          <button
-            type="submit"
-            className="px-12 py-1 text-white bg-green-400 rounded-lg"
-            form={auctionAddress}
-            disabled={isEnded}
-          >
-            Place Bid
-          </button>
           <button
             type="submit"
             className="px-12 py-1 text-white bg-blue-400 rounded-lg"
@@ -412,7 +474,10 @@ const Auction: React.FC<AuctionProps> = ({ auctionAddress }) => {
           </button>
           <button
             type="submit"
-            className="px-12 py-1 text-white bg-blue-400 rounded-lg"
+            className={`${
+              !isEnded && "opacity-50"
+            } px-12 py-1 text-white bg-blue-400 rounded-lg`}
+            disabled={!isEnded}
             onClick={handleWithdrawTokens}
           >
             Withdraw Tokens

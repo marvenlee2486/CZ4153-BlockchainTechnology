@@ -48,7 +48,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const navigate = useNavigate();
   const login = (userData: User) => {
     setUser(userData);
-    navigate(`/test/:${userData.uid}`);
+    navigate(`/auction/:${userData.uid}`);
   };
 
   const logout = () => {

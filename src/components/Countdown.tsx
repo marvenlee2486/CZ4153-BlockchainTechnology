@@ -15,15 +15,27 @@ const Countdown: React.FC<CountdownProps> = ({
 
   useEffect(() => {
     const intervalId = setInterval(() => {
+      const newTimeRemaining = expiresAt - Date.now();
       setTimeRemaining(expiresAt - Date.now());
       calculateDiscountedPrice();
+      if (newTimeRemaining <= 0) {
+        clearInterval(intervalId); // Stop the interval
+        countdownCallback(); // Call the countdown callback
+      }
     }, 1000); // Update every 1000 milliseconds (1 second)
 
-    return () => clearInterval(intervalId); // Clear the interval on component unmount
+    // Separate interval for triggering countdown callback every 10 seconds
+    const callbackIntervalId = setInterval(() => {
+      countdownCallback();
+    }, 10000); // Trigger every 10 seconds
+    return () => {
+      clearInterval(callbackIntervalId); // Clear the interval on component unmount
+      clearInterval(intervalId); // Clear the interval on component unmount
+    };
   }, [expiresAt]); // Dependency array ensures that the interval is reset if auction.expiresAt changes
 
   return (
-    <div>Time Remaining: {getTimeRemaining(timeRemaining)} (DD:HH:mm:ss)</div>
+    <div>Time Remaining: {getTimeRemaining(timeRemaining)} (DD:HH:MM:SS)</div>
   );
 };
 export default Countdown;
@@ -44,7 +56,7 @@ export function getTimeRemaining(timeRemaining: number) {
   const seconds = totalSeconds % 60; // Modulus 60 to get the remainder seconds
 
   return `
-  ${days.toString().padStart(2, "0")}:${hours
+  ${days.toString().padStart(2, "0")}D:${hours
     .toString()
     .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds
     .toString()

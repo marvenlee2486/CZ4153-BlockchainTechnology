@@ -13,7 +13,7 @@ import { use } from "chai";
 // auctioneer needs to create auction, display approve total_amount_token to confirm
 // and then start auction.
 
-function TestPage() {
+function AuctionPage() {
   const { user } = useUserContext();
   const auctions = datastore.get("auctions");
   const isSeller = user.role === "seller";
@@ -203,6 +203,7 @@ function TestPage() {
         timestamp,
         durationSeconds
       );
+      await handleGetAxelTokenBalance();
       location.reload(); //refresh
     } catch (error) {
       console.log(error);
@@ -216,7 +217,11 @@ function TestPage() {
         <div className="flex flex-col w-full gap-2">
           {Object.keys(auctions).map((auctionAddress) => {
             return (
-              <Auction key={auctionAddress} auctionAddress={auctionAddress} />
+              <Auction
+                key={auctionAddress}
+                auctionAddress={auctionAddress}
+                handleGetAxelTokenBalance={handleGetAxelTokenBalance}
+              />
             );
           })}
         </div>
@@ -302,4 +307,4 @@ function TestPage() {
   );
 }
 
-export default TestPage;
+export default AuctionPage;

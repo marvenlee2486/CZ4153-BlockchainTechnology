@@ -1,5 +1,3 @@
-// // blockchainTime.js
-
 export async function updateBlockchainTimeToNow() {
     try {
       const response = await fetch('http://localhost:3000/updateTimeToNow', {
