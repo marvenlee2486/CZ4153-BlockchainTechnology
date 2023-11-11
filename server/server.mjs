@@ -35,7 +35,7 @@ app.post('/updateTimeToNow', async (req, res) => {
       const blockTimeAfterUpdate = updatedBlock.timestamp;
       // const url = "https://eth-mainnet.g.alchemy.com/v2/ckkU_cezJO4QrrINUPsGpRQVCTPAXJWQ"
       // await helpers.reset(url);
-      res.status(200).json({ message: 'Blockchain time updated to now.', blockTime, blockTimeAfterUpdate, secondsToAdd });
+      res.status(200).json({ message: 'Blockchain time updated to now.', blockTime, blockTimeAfterUpdate, secondsToAdd, now });
     } catch (error) {
       res.status(500).json({ message: 'Failed to update time.', error: error.message });
     }
