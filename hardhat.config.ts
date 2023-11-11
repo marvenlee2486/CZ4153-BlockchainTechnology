@@ -25,7 +25,7 @@ const config: HardhatUserConfig = {
         url: "https://eth-mainnet.g.alchemy.com/v2/ckkU_cezJO4QrrINUPsGpRQVCTPAXJWQ",
       },
       mining: {
-        auto: false,
+        auto: true,
         interval: 5000
       }
     },

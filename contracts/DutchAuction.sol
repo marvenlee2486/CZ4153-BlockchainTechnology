@@ -469,7 +469,7 @@ contract DutchAuction {
      * @notice To query the expiresAt of the contract
      * @custom:view 
      */
-    function getExpiresAt() external view returns (uint256) {
+    function getExpiresAt() auctionStart external view returns (uint256) {
         return expiresAt;
     }
 
@@ -477,7 +477,7 @@ contract DutchAuction {
      * @notice To query the startAt of the contract
      * @custom:view 
      */
-    function getStartAt() external view returns (uint256) {
+    function getStartAt() auctionStart external view returns (uint256) {
         return startAt;
     }
 }
