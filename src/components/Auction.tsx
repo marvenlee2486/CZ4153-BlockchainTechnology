@@ -43,6 +43,7 @@ const Auction: React.FC<AuctionProps> = ({
   const isEnded = auctionData.stage === "Ended";
   const [endedTokenFunds, setEndedTokenFunds] = useState(0);
   const [endedEthFunds, setEndedEthFunds] = useState(0);
+  const [hideAuction, setHideAuction] = useState(false);
 
   useEffect(() => {
     if (initiData) {
@@ -207,23 +208,6 @@ const Auction: React.FC<AuctionProps> = ({
     }
   };
 
-  const handleWithdrawTokens = async () => {
-    await updateBlockchainTimeToNow();
-    if (!isEnded) {
-      alert("Cannot withdraw, auction still ongoing");
-      return;
-    }
-    const [signer] = await requestAccount();
-    const auction = new ethers.Contract(
-      auctionAddress,
-      DutchAuctionArtifact.abi,
-      signer
-    );
-    await auction.withdrawTokens();
-    handleGetAxelTokenBalance();
-    location.reload();
-  };
-
   const handleGetAuctionEnded = async () => {
     let endedTokenFunds = 0;
     let endedEthFunds = 0;
@@ -243,12 +227,30 @@ const Auction: React.FC<AuctionProps> = ({
       endedEthFunds = 0;
     }
     if (endedTokenFunds === 0 && endedEthFunds === 0 && isEnded) {
-      datastore.removeAuction(auctionAddress);
+      if (isOwner) datastore.removeAuction(auctionAddress);
+      else setHideAuction(true);
       location.reload();
       return;
     }
     setEndedTokenFunds(endedTokenFunds);
     setEndedEthFunds(endedEthFunds);
+  };
+
+  const handleWithdrawTokens = async () => {
+    await updateBlockchainTimeToNow();
+    if (!isEnded) {
+      alert("Cannot withdraw, auction still ongoing");
+      return;
+    }
+    const [signer] = await requestAccount();
+    const auction = new ethers.Contract(
+      auctionAddress,
+      DutchAuctionArtifact.abi,
+      signer
+    );
+    await auction.withdrawTokens();
+    handleGetAxelTokenBalance();
+    location.reload();
   };
 
   // OWNER FUNCTIONS....................................................................................................
@@ -391,6 +393,7 @@ const Auction: React.FC<AuctionProps> = ({
   // Withdraw Token, Buyer Position, getRefund, see Refund Value
 
   const renderNonOwnedAuction = () => {
+    if (hideAuction) return <></>;
     return (
       <div className="w-full p-2 bg-gray-400" key={auctionAddress}>
         <div className="mb-4 text-lg font-bold">Auction</div>
