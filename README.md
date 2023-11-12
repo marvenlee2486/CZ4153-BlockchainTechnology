@@ -36,9 +36,9 @@ npm run dev
 
 Debugging:
 
-1. Once you have made transactions, metamask will keep a record of them.
+1. Once you have made any transactions, metamask will keep a record of them.
 2. Thus when you restart your local hardhat blockchain, it will be inconsistent with metamask and thus throw errors.
-3. In order to resolve this, you need to go to metamask settings -> advanced -> clear tab activity data.
+3. In order to resolve this, you need to go to metamask settings -> advanced -> clear tab activity data for each account you made transactions with.
 4. You may also wish to click on "Delete database" to clear all the existing auction and token data tied to the users on the application.
 
 Other Hardhat commands:
