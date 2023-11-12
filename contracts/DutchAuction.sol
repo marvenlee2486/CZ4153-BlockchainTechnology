@@ -6,13 +6,6 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 import "hardhat/console.sol";
 import "./ErrorDutchAuction.sol";
 
-// TODO
-// 5. REFACTOR to Safe Math & uint gas optimizer
-
-// For presentation purpose
-// 1. Mentioned that the discount rate is calculated based on duration ... (Bs on this)
-// 2. Mentioned how we handle with the updates.address
-
 /**
  * @title Dutch Auction Contract
  * @author Lee Zong Yu, Nathan Axel, Koh Jun Kai
