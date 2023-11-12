@@ -31,4 +31,5 @@ To run the coverage report, you may run npx hardhat coverage
 ```
 npx hardhat coverage --solcoverjs ./.solcover.js
 ```
+You may find the coverage report under coverage folder
 

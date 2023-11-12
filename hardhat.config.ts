@@ -21,9 +21,9 @@ const config: HardhatUserConfig = {
     hardhat: {
       // specify a unique identifier for the blockchain network. A chainId helps in preventing replay attacks where a transaction valid on one network could be broadcast on another network. The value 1337 is commonly used for local development networks.
       chainId: 1337,
-      forking: {
-        url: "https://eth-mainnet.g.alchemy.com/v2/ckkU_cezJO4QrrINUPsGpRQVCTPAXJWQ",
-      },
+      // forking: {
+      //   url: "https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY", // You can replace the URL with your own API_KEY
+      // },
       mining: {
         auto: true,
         interval: 5000
