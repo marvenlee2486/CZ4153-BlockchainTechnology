@@ -1,12 +1,35 @@
-// UserContext.tsx
 import React, { createContext, useState, ReactNode } from "react";
 import { datastore } from "../Data/datastore";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "../Data/useLocalStorage";
 import { useContext } from "react";
 
-type role = "user" | "seller" | "admin";
+/**
+ * This file defines the UserContext, UserProvider, and useUserContext hook for managing user authentication and data.
+ *
+ * UserContext:
+ *   - A React context that provides a way to pass user data through the component tree without having to pass it down manually at every level.
+ *   - Contains the current user's data and functions to manipulate this data, such as login, logout, and checking authentication status.
+ *
+ * User Interface:
+ *   - Describes the shape of the user data used throughout the application.
+ *   - Includes fields like uid, username, email, role, and address.
+ *
+ * UserProvider:
+ *   - A component that wraps around part of the application that needs access to user context.
+ *   - Manages the user state using the useLocalStorage hook to persist user data over refreshes in the browser's local storage.
+ *   - Provides functions for login, logout, clearing user data, and checking if a user is authenticated.
+ *   - Any component wrapped by UserProvider can access the user context using the useUserContext hook.
+ *
+ * useUserContext:
+ *   - A custom hook for consuming the UserContext.
+ *   - Ensures that the context is used within a UserProvider.
+ *   - Simplifies the process of accessing the current user's data and authentication functions in any component.
+ *
+ * The UserContext is essential for managing user sessions and roles, especially in applications with different user types and permissions.
+ */
 
+type role = "user" | "seller";
 export interface User {
   uid: number;
   username: string;

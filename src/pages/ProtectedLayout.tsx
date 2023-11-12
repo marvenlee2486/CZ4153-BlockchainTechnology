@@ -4,6 +4,11 @@ import { ethers } from "ethers";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../helpers/UserContext";
 import React from "react";
+
+/**
+ * This page is used to wrap around all the pages that require authentication.
+ * It checks if the user is logged in, and if not, redirects to the login page.
+ */
 export const ProtectedLayout = React.memo(() => {
   const navigate = useNavigate();
   const { isAuthenticated } = useUserContext();

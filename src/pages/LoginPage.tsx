@@ -20,6 +20,13 @@ const {
   useENSNames,
 } = hooks;
 
+/**
+ * This page is the first page that the user sees. It simulates "log in" to the application.
+ * While it links the users to the MetaMask wallet, a user log in separate from metamask is required in order to assign roles easily.
+ * Predefined users are created so that no ETH transactions are required prior to testing. The user can select a user to log in as.
+ * @see src/helpers/UserContext.tsx for login logic
+ */
+
 const LoginPage = () => {
   const chainId = useChainId();
   const accounts = useAccounts();
@@ -53,12 +60,6 @@ const LoginPage = () => {
       address: "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
     },
   ];
-
-  useEffect(() => {
-    if (!isActive) {
-      metaMask.connectEagerly().catch(setError);
-    }
-  }, []);
 
   const alert = (message: string) => {
     toast.error(message, {
@@ -109,6 +110,12 @@ const LoginPage = () => {
       setError(e instanceof Error ? e : new Error("An unknown error occurred"));
     }
   };
+
+  useEffect(() => {
+    if (!isActive) {
+      metaMask.connectEagerly().catch(setError);
+    }
+  }, []);
 
   return (
     <div className="flex items-center justify-center w-full h-screen bg-gray-200">

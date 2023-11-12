@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
 
+/**
+ * This component is used to display a countdown timer.
+ * It takes in an expiresAt timestamp and a callback function to be called when the timer reaches zero and every 10s
+ * It also takes in a calculateDiscountedPrice function to be called every second to update the discounted price.
+ * It exports a getTimeRemaining function that can be used to get the time remaining in a readable format.
+ */
 interface CountdownProps {
   expiresAt: number; // ms since epoch
   countdownCallback: () => void;
@@ -14,6 +20,10 @@ const Countdown: React.FC<CountdownProps> = ({
   const [timeRemaining, setTimeRemaining] = useState(expiresAt - Date.now());
 
   useEffect(() => {
+    if (expiresAt <= Date.now()) {
+      countdownCallback();
+      return;
+    }
     const intervalId = setInterval(() => {
       const newTimeRemaining = expiresAt - Date.now();
       setTimeRemaining(expiresAt - Date.now());
@@ -29,8 +39,8 @@ const Countdown: React.FC<CountdownProps> = ({
       countdownCallback();
     }, 10000); // Trigger every 10 seconds
     return () => {
-      clearInterval(callbackIntervalId); // Clear the interval on component unmount
-      clearInterval(intervalId); // Clear the interval on component unmount
+      clearInterval(callbackIntervalId);
+      clearInterval(intervalId);
     };
   }, [expiresAt]); // Dependency array ensures that the interval is reset if auction.expiresAt changes
 
