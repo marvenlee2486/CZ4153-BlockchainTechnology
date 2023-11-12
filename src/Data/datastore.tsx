@@ -38,19 +38,24 @@ export const datastore = {
    * to the token contract.
    */
   setTokenWallets(tokenAddress: string): void {
-    console.log("tokenAddress:", tokenAddress);
     const users = datastore.get("users");
-    users.forEach((uid: number) => {
-      datastore.updateMyTokenWallet(uid, tokenAddress);
-    });
+    if (!users) return;
+    const currentTokenWallets = datastore.get("tokenWallets") || {};
+    for (const uid in users) {
+      currentTokenWallets[parseInt(uid)] = tokenAddress;
+    }
+    datastore.set("tokenWallets", currentTokenWallets);
   },
+
   /**
    * The token address of the user is updated to the most recent token, when the user withdraws their token from the auction.
    */
   updateMyTokenWallet: (uid: number, tokenAddress: string): void => {
     const wallets = datastore.get("tokenWallets") || {};
-    datastore.set("tokenWallets", { ...wallets, [uid]: tokenAddress });
+    wallets[uid] = tokenAddress;
+    datastore.set("tokenWallets", wallets);
   },
+
   /**
    * The database auction timestamp was previously set to the current time. This updates to the blockchain timestamp.
    */

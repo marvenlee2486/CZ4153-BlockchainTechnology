@@ -60,6 +60,7 @@ const LoginPage = () => {
       address: "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
     },
   ];
+  datastore.set("users", userStore);
 
   const alert = (message: string) => {
     toast.error(message, {
