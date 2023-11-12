@@ -181,6 +181,7 @@ describe("Dutch Auction contract", function () {
         await axelToken.connect(owner).approve(await auction.getAddress(), initialAmount);
         await auction.connect(owner).startAuction();
         const startAt = await time.latest();
+        expect(await auction.getStartAt()).to.be.equal(startAt);
         expect(await auction.getExpiresAt()).to.be.equal(startAt + defaultDuration);
         return {axelToken, auction, owner, addr1, addr2, addr3, startAt};
     };
@@ -1000,6 +1001,8 @@ describe("Dutch Auction contract", function () {
                 await expect(auction.connect(owner).getRefund()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
                 await expect(auction.connect(owner).getTokens()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");
                 await expect(auction.connect(owner).getOwnerRevenue()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage"); 
+                await expect(auction.connect(owner).getStartAt()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage");         
+                await expect(auction.connect(owner).getExpiresAt()).to.be.revertedWithCustomError(auction, "FunctionInvalidAtThisStage"); 
             });
 
             it("Invalid Function called at Auction Started Stage", async function(){
@@ -1025,7 +1028,7 @@ describe("Dutch Auction contract", function () {
         
         // Since we have solved the issue, so we replace the previously failed case to current succesful case by commenting out.
         describe("Attack - Solved Security Vulnerability", function(){
-            it("Attack 1 - Previous Design", async function () {
+            it("Attack 1 - Owner withdraw Tokens after auction started", async function () {
                 const {axelToken, auction, owner, addr1, addr2} = await loadFixture(startAuctionFixture);
                 
                 // Solved 
@@ -1042,7 +1045,7 @@ describe("Dutch Auction contract", function () {
                 */
             });
 
-            it("Attack 2 - Reentry Attack", async function(){
+            it("Attack 2 - Reentry Attack (WithdrawTokens)", async function(){
                 const {axelToken, auction, owner, addr1, addr2} = await loadFixture(startAuctionFixture);
                 
                 const attackerContract = await ethers.deployContract("Attacker", [auction.getAddress()], addr2);
@@ -1074,7 +1077,7 @@ describe("Dutch Auction contract", function () {
                 */
             });
 
-            it("Attack 3 - Yet another reentry attack", async function(){
+            it("Attack 3 - Yet another reentry attack (placeBid)", async function(){
                 // Not yet valid anymore
                 // Previous design, extra last bid is immediately refund. However, this have security vulnerability
 
