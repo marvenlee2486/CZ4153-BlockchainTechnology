@@ -115,6 +115,11 @@ const LoginPage = () => {
     if (!isActive) {
       metaMask.connectEagerly().catch(setError);
     }
+    const users = [];
+    for (let i = 0; i < userStore.length; i++) {
+      users.push(userStore[i].uid);
+    }
+    datastore.set("users", users);
   }, []);
 
   return (

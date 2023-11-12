@@ -8,11 +8,8 @@ const port = 3000;
 app.use(cors());
 const provider = new ethers.JsonRpcProvider('http://localhost:8545');
 
-
-// Enable JSON body parsing for POST requests
 app.use(express.json());
 
-// Route to set the blockchain time to the current real time
 app.post('/updateTimeToNow', async (req, res) => {
     try {
       // Get the current real time

@@ -1,5 +1,6 @@
 /**
- * For block.timestamp manipulation of local hardhat network. This is because without intervals, the block.timestamp will not change.
+ * Deprecated and not used. Enabling both hardhat automine and interval updates will resolve the issue. 
+ * Meant for block.timestamp manipulation of local hardhat network. This is because without intervals, the block.timestamp will not change.
  */
 export async function updateBlockchainTimeToNow() {
     try {

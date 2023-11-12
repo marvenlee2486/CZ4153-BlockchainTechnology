@@ -1,5 +1,9 @@
 import type { AddEthereumChainParameter } from '@web3-react/types'
 
+/**
+ * Deprecated not used. 
+ * Meant for connection configuration for different network chains using different providers with Web3React library. 
+ */
 const ETH: AddEthereumChainParameter['nativeCurrency'] = {
   name: 'Ether',
   symbol: 'ETH',

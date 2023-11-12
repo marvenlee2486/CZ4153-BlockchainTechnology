@@ -105,7 +105,6 @@ function AuctionPage() {
         signer
       );
       const token = await factory.deploy(tokenValue);
-      notify("Token minting underway! NOTE: Transaction will take approx 5s");
       await token.waitForDeployment();
       const tokenAddress = await token.getAddress();
       datastore.setTokenWallets(tokenAddress);
@@ -164,23 +163,16 @@ function AuctionPage() {
       );
       //deploy auction (metamask)
       notify("Please accept auction deployment on metamask!");
-      notify(
-        "NOTE: Transaction will take approx 5s, please wait for next notification"
-      );
+
       await auction.waitForDeployment();
       const auctionAddress = await auction.getAddress();
       notify("Auction deployed! Please approve token offering on metamask");
-      notify(
-        "NOTE: Transaction will take approx 5s, please wait for next notification"
-      );
+
       //approve token (metamask)
       await token.approve(auctionAddress, tokenOffering).then((tx: any) => {
         tx.wait().then(() => {
           notify(
             "Token offering approved! Please start auction through metamask"
-          );
-          notify(
-            "NOTE: Transaction will take approx 5s, please wait for next notification"
           );
         });
       });

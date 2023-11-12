@@ -192,9 +192,18 @@ const Auction: React.FC<AuctionProps> = ({
     );
     const winToken = parseInt(await auction.getTokens());
     const refundToken = parseInt(await auction.getRefund());
-    let ownerRevenue = 0;
+    let ownerRevenue = -1;
     if (isOwner) ownerRevenue = parseInt(await auction.getOwnerRevenue());
     if (!isOwner && winToken === 0 && refundToken === 0) {
+      setHideAuction(true);
+    }
+    if (
+      winToken === 0 &&
+      refundToken === 0 &&
+      isOwner &&
+      auctionData.currentTokenLeft === 0 &&
+      ownerRevenue === 0
+    ) {
       setHideAuction(true);
     }
     if (
@@ -206,14 +215,7 @@ const Auction: React.FC<AuctionProps> = ({
     ) {
       setRdyToBurn(true);
     }
-    if (
-      winToken === 0 &&
-      refundToken === 0 &&
-      isOwner &&
-      auctionData.currentTokenLeft === 0
-    ) {
-      setHideAuction(true);
-    }
+
     setOwnerRevenue(ownerRevenue);
     setWinToken(winToken);
     setRefundToken(refundToken);
@@ -262,7 +264,6 @@ const Auction: React.FC<AuctionProps> = ({
       signer
     );
     notify("Withdrawing win tokens & refund from auction!");
-    notify("NOTE: Transaction will take approx 5s");
     auction
       .withdrawTokens()
       .then((res: any) => {
@@ -294,12 +295,12 @@ const Auction: React.FC<AuctionProps> = ({
       signer
     );
     notify("Withdrawing all funds from auction!");
-    notify("NOTE: Transaction will take approx 5s");
     auction
       .withdrawOwnerFunds()
       .then((res: any) => {
         res.wait().then(() => {
           notify("Funds withdrawed from auction!");
+          location.reload();
         });
       })
       .catch((err: any) => {
@@ -313,24 +314,9 @@ const Auction: React.FC<AuctionProps> = ({
    */
   const handleBurnToken = async () => {
     if (rdyToBurn) {
-      const [signer] = await requestAccount();
-      const auction = new ethers.Contract(
-        auctionAddress,
-        DutchAuctionArtifact.abi,
-        signer
-      );
-      auction
-        .burnToken()
-        .then((res: any) => {
-          res.wait().then(() => {
-            notify("Tokens burned and auction deleted!");
-            datastore.removeAuction(auctionAddress);
-            location.reload();
-          });
-        })
-        .catch((err: any) => {
-          alert(err);
-        });
+      notify("Tokens burned on blockchain and auction deleted!");
+      datastore.removeAuction(auctionAddress);
+      location.reload();
     }
   };
 
@@ -490,7 +476,7 @@ const Auction: React.FC<AuctionProps> = ({
             disabled={!isEnded || rdyToBurn}
             onClick={handleWithdrawRevenues}
           >
-            Claim All Funds
+            Withdraw Owner Revenue
           </button>
           <button
             type="button"
@@ -602,6 +588,7 @@ const Auction: React.FC<AuctionProps> = ({
                   isEnded && "opacity-50"
                 } px-12 py-1 text-white bg-green-400 rounded-lg ml-5`}
                 form={auctionAddress}
+                disabled={isEnded}
               >
                 Place Bid
               </button>

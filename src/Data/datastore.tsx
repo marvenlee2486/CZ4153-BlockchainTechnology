@@ -38,11 +38,11 @@ export const datastore = {
    * to the token contract.
    */
   setTokenWallets(tokenAddress: string): void {
+    console.log("tokenAddress:", tokenAddress);
     const users = datastore.get("users");
-    if (!users) return;
-    for (const uid in users) {
-      datastore.updateMyTokenWallet(parseInt(uid), tokenAddress);
-    }
+    users.forEach((uid: number) => {
+      datastore.updateMyTokenWallet(uid, tokenAddress);
+    });
   },
   /**
    * The token address of the user is updated to the most recent token, when the user withdraws their token from the auction.
