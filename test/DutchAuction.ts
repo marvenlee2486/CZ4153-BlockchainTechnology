@@ -5,6 +5,7 @@ const { ethers , provider} = require("hardhat");
 const { loadFixture, time } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const assert = require('assert');
 
+// This function is to calculate the amount of balance is correct after a transaction
 async function checkBalanceTransaction(addr, txPromise, amount){
     const initialAmount: BigInt = await ethers.provider.getBalance(addr.address);
     const tx = await txPromise;
