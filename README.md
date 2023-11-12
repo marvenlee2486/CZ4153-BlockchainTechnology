@@ -34,31 +34,55 @@ npm run dev
 9. Use Account 0,1,2 for user1, user2, and seller1 respectively
 10. Now you will be able to log into the dutch auction frontend application.
 
+Debugging:
+
+1. Once you have made transactions, metamask will keep a record of them.
+2. Thus when you restart your local hardhat blockchain, it will be inconsistent with metamask and thus throw errors.
+3. In order to resolve this, you need to go to metamask settings -> advanced -> clear tab activity data.
+4. You may also wish to click on "Delete database" to clear all the existing auction and token data tied to the users on the application.
+
 Other Hardhat commands:
 
 ```shell
 npx hardhat accounts
+1. npm install
+2. To produce abi code of the latest contract that will interact with frontend, run:
+```
+
 npx hardhat compile
-npx hardhat clean
-npx hardhat test
+
+```
+
+3. Setup local eth blockchain network using node. It will provide pre-funded accounts also.:
+```
+
 npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
-```
-
 
 ```
-npx hardhat coverage --solcoverjs ./.solcover.js
+
+4. Run the frontend code
 ```
 
-```
-REPORT_GAS=true npx hardhat test
-```
-
-```
 npm run dev
-```
 
 ```
-npx hardhat 
+
+# Development
+## Test Case Report
+To run the test case report together with the reported gas used, run
+```
+
+REPORT_GAS=true npx hardhat test
+
+```
+
+## coverage report
+To run the coverage report, you may run npx hardhat coverage
+```
+
+npx hardhat coverage --solcoverjs ./.solcover.js
+
+```
+You may find the coverage report under coverage folder
+
 ```

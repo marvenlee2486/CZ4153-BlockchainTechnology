@@ -474,12 +474,3 @@ contract DutchAuction {
         return startAt;
     }
 }
-
-
-/*
-
-Experiment on gas cost
-1. replace expiresAt with its calculation instead of SSTORE but not better.
-    - Lower Methods cost but higher deployment cost. The deployment cost is much more cheaper than in method.
-
-*/
